@@ -10,6 +10,7 @@ NAV = [
     ("/gallery", "Gallery"),
     ("/playground", "Playground"),
     ("/interaction", "Interaction"),
+    ("/dashboard", "Dashboard"),
     ("/chart/line-chart", "Chart reference"),
 ]
 
