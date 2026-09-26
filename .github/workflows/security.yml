@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
       - name: Bandit
         run: uvx bandit -r custom_components silverpoint_react_demo/silverpoint_react_demo -ll
 
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
       - name: Export locked requirements
         run: uv export --locked --no-emit-project --format requirements-txt -o requirements.lock.txt
       - name: pip-audit
