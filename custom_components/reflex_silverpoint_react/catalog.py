@@ -45,8 +45,18 @@ class ChartInfo:
 
 #: Props every chart takes.
 COMMON_PROPS: tuple[PropDoc, ...] = (
-    PropDoc("data", "data", "readonly Datum[]", "Rows to draw. If omitted, the demo dataset is rendered (REQ-093)."),
-    PropDoc("ground", "ground", "GroundRef", "Style ground. Defaults to the app provider's, or `silverpoint`."),
+    PropDoc(
+        "data",
+        "data",
+        "readonly Datum[]",
+        "Rows to draw. If omitted, the demo dataset is rendered (REQ-093) and the accessor props (`…_key`, `keys`, `names`) are ignored.",
+    ),
+    PropDoc(
+        "ground",
+        "ground",
+        "GroundRef",
+        "Style ground: `silverpoint` or `cyanotype`, or a ground object. Defaults to the app provider's, or `silverpoint`.",
+    ),
     PropDoc("substrate", "substrate", "SubstrateName", "Prepared substrate within the ground (REQ-046)."),
     PropDoc("mode", "mode", "InkMode", "`ink` by default; `precision` disables inking (REQ-021)."),
     PropDoc("seed", "seed", "Seed", "Seed. If omitted, it is derived from `id` stably (REQ-003)."),

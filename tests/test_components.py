@@ -82,3 +82,60 @@ def test_provider() -> None:
     component = sp.silverpoint_provider(sp.line_chart(), substrate="ochre", locale="es-VE")
     assert component.render()["name"] == "SilverpointProvider"
     assert _props(component)["locale"] == '"es-VE"'
+
+
+def test_version_pins_silverpoint_0_2() -> None:
+    assert sp.SILVERPOINT_VERSION == "0.2.0"
+    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.2.0"
+
+
+def test_cyanotype_ground() -> None:
+    assert _props(sp.bar_chart(ground="cyanotype"))["ground"] == '"cyanotype"'
+    assert _props(sp.silverpoint_provider(sp.line_chart(), ground="cyanotype"))["ground"] == '"cyanotype"'
+
+
+def _silverpoint_imports(component: rx.Component) -> dict[str, list[str]]:
+    from reflex.compiler.utils import compile_imports
+
+    return {i["lib"]: i["rest"] for i in compile_imports(component._get_all_imports()) if "silverpoint" in i["lib"]}
+
+
+def test_dashboard_imports_from_its_subpath() -> None:
+    component = sp.dashboard(sp.dashboard_cell(sp.line_chart(), cell="trend"), sp.bar_chart(), id="ops", title="Ops")
+    imports = _silverpoint_imports(component)
+    assert imports["@silverpoint/react/dashboard"] == ["Dashboard", "DashboardCell"]
+    assert imports["@silverpoint/react"] == ["BarChart", "LineChart"]
+    assert component.render()["name"] == "Dashboard"
+    assert "@silverpoint/react/dashboard-link" in _silverpoint_imports(sp.dashboard_link(sp.line_chart(), link="x"))
+
+
+def test_dashboard_props() -> None:
+    layout = sp.dashboard_layout(
+        ["kpi", sp.dashboard_cell_layout("trend", col_span={"md": 2, "lg": 4}, row_span=2)],
+        columns={"lg": 3},
+        row_height=200,
+        gap=12,
+    )
+    assert layout == {
+        "columns": {"lg": 3},
+        "rowHeight": 200,
+        "gap": 12,
+        "cells": [{"id": "kpi"}, {"id": "trend", "colSpan": {"md": 2, "lg": 4}, "rowSpan": 2}],
+    }
+    props = _props(sp.dashboard(id="ops", title="Ops", layout=layout, link="hour", heading_level=3, ssr_width=900))
+    assert props["id"] == '"ops"'
+    assert props["headingLevel"] == "3"
+    assert props["ssrWidth"] == "900"
+    assert '["key"] : "hour"' in props["link"]
+    assert '["rowHeight"] : 200' in props["layout"]
+    assert _props(sp.dashboard_cell(sp.kpi_card(), cell="kpi"))["cell"] == '"kpi"'
+
+
+def test_link_change_is_wired() -> None:
+    class L(rx.State):
+        @rx.event
+        def linked(self, link: dict | None):
+            pass
+
+    assert "onLinkChange" in str(sp.dashboard(id="d", title="D", link="hour", on_link_change=L.linked).render())
+    assert "onLinkChange" in str(sp.dashboard_link(link={"key": "hour"}, on_link_change=L.linked).render())

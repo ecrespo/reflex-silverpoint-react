@@ -7,10 +7,10 @@
       "dependencies": {
         "@radix-ui/themes": "3.3.0",
         "@react-router/node": "8.4.0",
-        "@silverpoint/core": "0.1.1",
-        "@silverpoint/fonts": "0.1.1",
-        "@silverpoint/grounds": "0.1.1",
-        "@silverpoint/react": "0.1.1",
+        "@silverpoint/core": "0.2.0",
+        "@silverpoint/fonts": "0.2.0",
+        "@silverpoint/grounds": "0.2.0",
+        "@silverpoint/react": "0.2.0",
         "isbot": "5.2.2",
         "lucide-react": "1.26.0",
         "mergician": "v2.0.2",
@@ -277,13 +277,13 @@
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.1", "", {}, "sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw=="],
 
-    "@silverpoint/core": ["@silverpoint/core@0.1.1", "", { "dependencies": { "d3-chord": "^3.0.1", "d3-scale": "^4.0.2", "d3-shape": "^3.2.0" } }, "sha512-zqdtSVP7AeBKv8CMuwDDJ5wJW2L6ZoyRPRiM+n5pUidoTJsUx0KljeUiZ++G2OBv+7k/KtWBh71PdVKeaUsqVg=="],
+    "@silverpoint/core": ["@silverpoint/core@0.2.0", "", { "dependencies": { "d3-chord": "^3.0.1", "d3-scale": "^4.0.2", "d3-shape": "^3.2.0" } }, "sha512-ITjJ/9UvimS6b+DHD/I743xgFff2b9569ix32DCO8u3DmjgFhYESapWnbuBVULVH2uO0OkRJKRzaG3JSAjibmg=="],
 
-    "@silverpoint/fonts": ["@silverpoint/fonts@0.1.1", "", {}, "sha512-sDaKn9T3A+WVj5Gli7CdRlY5PCBYHaADBPv6XfwS8livtb0FDM6/7cRLa+MYvAp/6EmytO34bpFeO4ZWSg9YmQ=="],
+    "@silverpoint/fonts": ["@silverpoint/fonts@0.2.0", "", {}, "sha512-ARK1fCQJQbDSjBFZmSrIs0wj04Gb8pysYMckHeDAS1/DNTaBhfntZBxDoNVQZMeGitols4wmoaA8nUf4QqRh3w=="],
 
-    "@silverpoint/grounds": ["@silverpoint/grounds@0.1.1", "", { "dependencies": { "@silverpoint/core": "0.1.1", "roughjs": "4.6.6" } }, "sha512-H655Ev+8UjN+2OHzls9uhl503JWZTSQdQiuICYXbZOhGXdxv8MP/GX8XKfq9GcxilfWRti7BZCyCsmeDH+eNng=="],
+    "@silverpoint/grounds": ["@silverpoint/grounds@0.2.0", "", { "dependencies": { "@silverpoint/core": "0.2.0", "roughjs": "4.6.6" } }, "sha512-i4/m7W9DdlNB9VlQZEtqEOpuX9noZ61kCPGq2sWFX5VWG7ZHsI2+Zs+xLFJRFeBk+JZgvtnvcM0+ZEGgg0R+uA=="],
 
-    "@silverpoint/react": ["@silverpoint/react@0.1.1", "", { "dependencies": { "@silverpoint/core": "0.1.1", "@silverpoint/grounds": "0.1.1" }, "peerDependencies": { "react": "^18.2.0 || ^19.0.0", "react-dom": "^18.2.0 || ^19.0.0" } }, "sha512-JfhpdJMw4EFZ3gdB/AfqJN1ps0sHJAtB6po07UnRJqOaN4I0wCrR+dgE9q+hrdLumuj9YHoPJ5u+zTto/6VPYA=="],
+    "@silverpoint/react": ["@silverpoint/react@0.2.0", "", { "dependencies": { "@silverpoint/core": "0.2.0", "@silverpoint/grounds": "0.2.0" }, "peerDependencies": { "react": "^18.2.0 || ^19.0.0", "react-dom": "^18.2.0 || ^19.0.0" } }, "sha512-WW6/GzCqYAzbmjyZCz4W8kYe4F75UwPFSmMEULNJKhKw2ozWWVs0MpJ7YQUrW4XUA5cfu+BJJ+CPiEObLSIz0Q=="],
 
     "@socket.io/component-emitter": ["@socket.io/component-emitter@3.1.2", "", {}, "sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA=="],
 

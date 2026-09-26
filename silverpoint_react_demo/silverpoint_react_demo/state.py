@@ -8,7 +8,7 @@ import reflex as rx
 from reflex_silverpoint_react import CHARTS
 
 from .data_tools import initial_datasets, reroll
-from .datasets import VOLVELLE_CHART
+from .datasets import OPS_HOURLY, VOLVELLE_CHART
 
 SIZES: dict[str, tuple[int, int]] = {"sm": (240, 120), "md": (320, 150), "lg": (640, 300)}
 
@@ -25,6 +25,7 @@ class DemoState(rx.State):
     """Controls shared by the gallery, the playground and the interaction page."""
 
     # Ground settings applied through silverpoint_provider.
+    ground: str = "silverpoint"
     substrate: str = "cream"
     mode: str = "ink"
     hatch_fill: str = "tile"
@@ -38,6 +39,10 @@ class DemoState(rx.State):
     gauge_percent: int = 72
     meter_percent: int = 58
     kpi_delta: float = 8.2
+
+    @rx.event
+    def set_ground(self, value: str):
+        self.ground = value
 
     @rx.event
     def set_substrate(self, value: str):
@@ -154,6 +159,7 @@ class PlaygroundState(rx.State):
     """The ground playground: one chart, every rendering choice."""
 
     chart: str = "LineChart"
+    ground: str = "silverpoint"
     substrate: str = "cream"
     mode: str = "ink"
     hatch_fill: str = "tile"
@@ -165,6 +171,10 @@ class PlaygroundState(rx.State):
     @rx.event
     def set_chart(self, value: str):
         self.chart = value
+
+    @rx.event
+    def set_ground(self, value: str):
+        self.ground = value
 
     @rx.event
     def set_substrate(self, value: str):
@@ -217,6 +227,7 @@ class PlaygroundState(rx.State):
             f"from reflex_silverpoint_react import {info.factory_name}\n\n"
             f"{info.factory_name}(\n"
             f"    title={info.chart!r},\n"
+            f"    ground={self.ground!r},\n"
             f"    substrate={self.substrate!r},\n"
             f"    mode={self.mode!r},\n"
             f"    hatch_fill={self.hatch_fill!r},\n"
@@ -228,3 +239,85 @@ class PlaygroundState(rx.State):
             f"    # data=...  (omitted: the chart draws its demo dataset)\n"
             f")"
         )
+
+
+class DashboardState(rx.State):
+    """The dashboard page: ground settings, layout, live data and the linked value."""
+
+    ground: str = "silverpoint"
+    substrate: str = "cream"
+    mode: str = "ink"
+    lg_columns: str = "4"
+
+    ops: list[dict[str, Any]] = [dict(row) for row in OPS_HOURLY]
+    uptime: int = 99
+    capacity: int = 64
+
+    # The latest linked value, from on_link_change.
+    linked: str = "—"
+    link_changes: int = 0
+    pair_linked: str = "—"
+
+    @rx.event
+    def set_ground(self, value: str):
+        self.ground = value
+
+    @rx.event
+    def set_substrate(self, value: str):
+        self.substrate = value
+
+    @rx.event
+    def set_mode(self, value: str):
+        self.mode = value
+
+    @rx.event
+    def set_lg_columns(self, value: str):
+        self.lg_columns = value
+
+    @rx.event
+    def on_link(self, link: dict[str, Any] | None):
+        self.link_changes += 1
+        self.linked = f"{link['key']} = {link['value']}" if link else "— (cleared)"
+
+    @rx.event
+    def on_pair_link(self, link: dict[str, Any] | None):
+        self.pair_linked = f"{link['key']} = {link['value']}" if link else "— (cleared)"
+
+    @rx.event
+    def reroll(self):
+        """A new day of traffic, drawn from the backend."""
+        rng = random.Random()
+        rows = []
+        for row in OPS_HOURLY:
+            hits = max(5, int(row["hits"] * rng.uniform(0.6, 1.4)))
+            p50 = int(row["p50"] * rng.uniform(0.85, 1.15))
+            rows.append(
+                {
+                    "hour": row["hour"],
+                    "hits": hits,
+                    "errors": max(0, int(hits * rng.uniform(0.03, 0.16))),
+                    "p50": p50,
+                    "p95": int(p50 * rng.uniform(1.5, 2.3)),
+                    "load": min(100, int(hits * rng.uniform(0.9, 1.2))),
+                }
+            )
+        self.ops = rows
+        self.uptime = rng.randint(94, 100)
+        self.capacity = rng.randint(30, 95)
+
+    @rx.var
+    def columns(self) -> dict[str, int]:
+        """Columns per breakpoint: one on phones, two on tablets, the chosen number on wide screens."""
+        return {"sm": 1, "md": 2, "lg": int(self.lg_columns)}
+
+    @rx.var
+    def lg_columns_int(self) -> int:
+        return int(self.lg_columns)
+
+    @rx.var
+    def total_hits(self) -> int:
+        return sum(row["hits"] for row in self.ops)
+
+    @rx.var
+    def total_errors(self) -> int:
+        return sum(row["errors"] for row in self.ops)
