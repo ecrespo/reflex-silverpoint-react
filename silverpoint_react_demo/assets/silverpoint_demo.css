@@ -1,0 +1,155 @@
+/*
+ * The demo's own sheet, in the spirit of the silverpoint documentation site: warm paper, graphite
+ * ink, EB Garamond (loaded by the charts themselves through @silverpoint/fonts).
+ */
+:root {
+  --paper: #f5f3ee;
+  --ink: #2f3337;
+  --muted: #4d5257;
+  --rule: #c9c4b8;
+  --card: #ffffff;
+}
+
+html,
+body {
+  background: var(--paper) !important;
+  color: var(--ink);
+}
+
+.sp-demo {
+  font-family: 'EB Garamond', 'Iowan Old Style', Georgia, serif;
+  font-size: 18px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+.sp-demo h1,
+.sp-demo h2,
+.sp-demo h3 {
+  font-family: 'EB Garamond', 'Iowan Old Style', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  margin: 0.4em 0 0.3em;
+}
+
+.sp-demo h1 { font-size: 2.4rem; }
+.sp-demo h2 { font-size: 1.7rem; }
+.sp-demo h3 { font-size: 1.25rem; }
+
+.sp-demo p { margin: 0.35em 0; }
+
+.sp-demo a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+
+.sp-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 28px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.sp-brand { font-size: 1.5rem; font-weight: 500; letter-spacing: 0.04em; }
+.sp-brand a { text-decoration: none; }
+.sp-brand small { color: var(--muted); font-size: 0.9rem; margin-left: 8px; }
+
+.sp-nav { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+.sp-nav a { text-decoration: none; color: var(--muted); }
+.sp-nav a:hover { color: var(--ink); text-decoration: underline; }
+
+.sp-main { max-width: 1180px; margin: 0 auto; padding: 16px 24px 48px; }
+
+.sp-footer { border-top: 1px solid var(--rule); padding: 16px 24px; color: var(--muted); font-size: 0.9rem; }
+
+.sp-lede { color: var(--muted); max-width: 46rem; }
+
+.sp-card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 12px;
+  min-width: 0;
+}
+
+.sp-card-title { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.sp-card-title a { font-size: 0.95rem; }
+.sp-card-title span { color: var(--muted); font-size: 0.85rem; }
+
+.sp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin: 8px 0 24px;
+}
+
+.sp-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin: 8px 0 24px; }
+
+.sp-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px 20px;
+  padding: 12px 14px;
+  margin: 12px 0 18px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+
+.sp-control { display: flex; flex-direction: column; gap: 4px; }
+.sp-control label { font-size: 0.85rem; color: var(--muted); }
+
+.sp-demo select,
+.sp-demo input[type='number'] {
+  font: inherit;
+  font-size: 1rem;
+  padding: 4px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.sp-button {
+  font: inherit;
+  font-size: 1rem;
+  padding: 5px 14px;
+  border: 1px solid var(--ink);
+  border-radius: 3px;
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+}
+.sp-button:hover { background: var(--ink); color: var(--paper); }
+
+.sp-code {
+  font-family: ui-monospace, 'JetBrains Mono', Menlo, monospace;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  background: #2f3337;
+  color: #f5f3ee;
+  border-radius: 4px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 8px 0 16px;
+}
+
+.sp-note {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 0.85rem;
+  background: var(--paper);
+  border: 1px dashed var(--rule);
+  border-radius: 3px;
+  padding: 8px 10px;
+  overflow-wrap: anywhere;
+}
+
+.sp-props { width: 100%; border-collapse: collapse; margin: 8px 0 24px; font-size: 0.95rem; }
+.sp-props th,
+.sp-props td { text-align: left; vertical-align: top; padding: 6px 10px; border-bottom: 1px solid var(--rule); }
+.sp-props code { font-family: ui-monospace, Menlo, monospace; font-size: 0.82rem; }
+
+.sp-family { margin-top: 18px; border-bottom: 1px solid var(--rule); }
+
+.sp-chart-lg { max-width: 680px; }
