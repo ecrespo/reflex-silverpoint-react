@@ -1044,6 +1044,22 @@ ORBIT_CHART: Rows = [
 ]
 
 #: Every dataset (the activity grid excepted: it is generated), by chart slug.
+# One day of a service, every two hours. Every row has an ``hour``: the field the dashboards link on.
+OPS_HOURLY: Rows = [
+    {"hour": "00", "hits": 18, "errors": 2, "p50": 110, "p95": 190, "load": 22},
+    {"hour": "02", "hits": 14, "errors": 1, "p50": 104, "p95": 170, "load": 18},
+    {"hour": "04", "hits": 11, "errors": 1, "p50": 98, "p95": 160, "load": 15},
+    {"hour": "06", "hits": 16, "errors": 3, "p50": 112, "p95": 185, "load": 21},
+    {"hour": "08", "hits": 34, "errors": 5, "p50": 131, "p95": 240, "load": 44},
+    {"hour": "10", "hits": 58, "errors": 7, "p50": 150, "p95": 290, "load": 63},
+    {"hour": "12", "hits": 71, "errors": 9, "p50": 162, "p95": 330, "load": 78},
+    {"hour": "14", "hits": 66, "errors": 6, "p50": 158, "p95": 305, "load": 72},
+    {"hour": "16", "hits": 74, "errors": 8, "p50": 166, "p95": 340, "load": 81},
+    {"hour": "18", "hits": 88, "errors": 12, "p50": 180, "p95": 385, "load": 92},
+    {"hour": "20", "hits": 62, "errors": 6, "p50": 149, "p95": 280, "load": 66},
+    {"hour": "22", "hits": 41, "errors": 4, "p50": 127, "p95": 220, "load": 47},
+]
+
 DATASETS: dict[str, Rows] = {
     "line-chart": LINE_CHART,
     "step-chart": STEP_CHART,

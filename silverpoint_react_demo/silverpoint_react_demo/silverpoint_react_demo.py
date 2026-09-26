@@ -5,6 +5,7 @@ Pages:
     /gallery        Every chart, with ground controls and demo-vs-state data.
     /playground     One chart, every rendering choice, and the Python to reproduce it.
     /interaction    Events, custom tooltips, a turning volvelle, live data and SVG export.
+    /dashboard      The Dashboard of silverpoint 0.2: a laid-out grid, linked charts, the cyanotype ground.
     /chart/<slug>   One page per chart, with the reference of its props.
 """
 
@@ -17,7 +18,14 @@ from reflex_silverpoint_react import (
     FAMILIES,
     ChartInfo,
     PropDoc,
+    activity_grid,
+    area_chart,
     bar_chart,
+    dashboard,
+    dashboard_cell,
+    dashboard_cell_layout,
+    dashboard_layout,
+    dashboard_link,
     donut_chart,
     download_svg,
     gauge_arc,
@@ -28,16 +36,18 @@ from reflex_silverpoint_react import (
     line_chart,
     meter_chart,
     radar_chart,
+    range_band_chart,
     sankey_chart,
     silverpoint_provider,
     tooltip_template,
     volvelle_chart,
 )
 
-from .datasets import BAR_CHART, DONUT_CHART, HEATMAP_CHART, KEY_PROPS, LINE_CHART, VOLVELLE_CHART
+from .datasets import BAR_CHART, DONUT_CHART, HEATMAP_CHART, KEY_PROPS, LINE_CHART, OPS_HOURLY, VOLVELLE_CHART
 from .layout import button, card, code, page, select
-from .state import SIZES, DemoState, InteractionState, PlaygroundState
+from .state import SIZES, DashboardState, DemoState, InteractionState, PlaygroundState
 
+GROUNDS = ["silverpoint", "cyanotype"]
 SUBSTRATES = ["cream", "green", "blue", "ochre"]
 MODES = ["ink", "precision"]
 HATCH_FILLS = ["tile", "per-shape"]
@@ -195,6 +205,26 @@ def index() -> rx.Component:
             ),
             class_name="sp-grid",
         ),
+        rx.el.h2("Two grounds: silverpoint and cyanotype"),
+        rx.el.p(
+            'New in silverpoint 0.2: ground="cyanotype", a white line on Prussian blue. Where silverpoint builds '
+            "tone by hatching, cyanotype builds it by the weight of an exact line, so nothing is hatched. It has one "
+            "substrate, prussian, and prints on it whatever substrate a chart names."
+        ),
+        rx.el.div(
+            card(bar_chart(title="Units sold · silverpoint", footer_right='ground="silverpoint"')),
+            card(bar_chart(title="Units sold · cyanotype", ground="cyanotype", footer_right='ground="cyanotype"')),
+            card(donut_chart(title="Budget · cyanotype", ground="cyanotype", center_label="%")),
+            card(heatmap_chart(title="Load · cyanotype", ground="cyanotype", footer_right="tone by line weight")),
+            class_name="sp-grid",
+        ),
+        rx.el.h2("New in 0.2: dashboards"),
+        rx.el.p(
+            "dashboard() lays charts out in a titled grid from a data-only layout, sizes each chart to its cell, and "
+            "can link them: hover an hour in one chart and every chart marks the same hour. ",
+            rx.el.a("Open the dashboard page", href="/dashboard"),
+            ".",
+        ),
         rx.el.p(
             rx.el.a("See the 33 charts in the gallery", href="/gallery"),
             ", try every rendering choice in the ",
@@ -224,6 +254,7 @@ def gallery() -> rx.Component:
             class_name="sp-lede",
         ),
         rx.el.div(
+            select("Ground", DemoState.ground, GROUNDS, DemoState.set_ground),
             select("Substrate", DemoState.substrate, SUBSTRATES, DemoState.set_substrate),
             select("Mode", DemoState.mode, MODES, DemoState.set_mode),
             select("Hatch fill", DemoState.hatch_fill, HATCH_FILLS, DemoState.set_hatch_fill),
@@ -245,7 +276,7 @@ def gallery() -> rx.Component:
             ),
             class_name="sp-controls",
         ),
-        silverpoint_provider(*families, substrate=DemoState.substrate, mode=DemoState.mode),
+        silverpoint_provider(*families, ground=DemoState.ground, substrate=DemoState.substrate, mode=DemoState.mode),
     )
 
 
@@ -254,6 +285,7 @@ def gallery() -> rx.Component:
 
 def playground() -> rx.Component:
     common = {
+        "ground": PlaygroundState.ground,
         "substrate": PlaygroundState.substrate,
         "mode": PlaygroundState.mode,
         "hatch_fill": PlaygroundState.hatch_fill,
@@ -267,12 +299,13 @@ def playground() -> rx.Component:
     return page(
         rx.el.h1("Ground playground"),
         rx.el.p(
-            "One chart, every rendering choice. The data never changes: only the substrate, the inking, the way "
+            "One chart, every rendering choice. The data never changes: only the ground, the substrate, the inking, the way "
             "tone is hatched, the frame, the size and the seed of the hand.",
             class_name="sp-lede",
         ),
         rx.el.div(
             select("Chart", PlaygroundState.chart, [info.chart for info in CHARTS], PlaygroundState.set_chart),
+            select("Ground", PlaygroundState.ground, GROUNDS, PlaygroundState.set_ground),
             select("Substrate", PlaygroundState.substrate, SUBSTRATES, PlaygroundState.set_substrate),
             select("Mode", PlaygroundState.mode, MODES, PlaygroundState.set_mode),
             select("Hatch fill", PlaygroundState.hatch_fill, HATCH_FILLS, PlaygroundState.set_hatch_fill),
@@ -430,6 +463,175 @@ def interaction() -> rx.Component:
     )
 
 
+# ── Dashboard ───────────────────────────────────────────────────────────────────────────
+
+OPS_KEYS = {"x_key": "hour"}
+
+DASHBOARD_CODE = """from reflex_silverpoint_react import (
+    dashboard, dashboard_cell, dashboard_cell_layout, dashboard_layout, kpi_card, line_chart, bar_chart,
+)
+
+dashboard(
+    dashboard_cell(kpi_card(title="Revenue", metric="thousands", delta=6.4), cell="revenue"),
+    dashboard_cell(line_chart(data=State.ops, x_key="hour", value_key="hits", title="Traffic"), cell="traffic"),
+    dashboard_cell(bar_chart(data=State.ops, x_key="hour", value_key="errors", title="Errors"), cell="errors"),
+    id="ops",
+    title="Operations",
+    description="Service health over the last day.",
+    layout=dashboard_layout(
+        ["revenue", dashboard_cell_layout("traffic", col_span={"md": 2, "lg": 3}, row_span=2), "errors"],
+        columns={"sm": 1, "md": 2, "lg": 4},
+    ),
+    link="hour",                      # link the charts on the rows' "hour" field
+    on_link_change=State.on_link,     # receives {"key": "hour", "value": "18"} or None
+)"""
+
+LINK_CODE = """dashboard_link(
+    rx.el.div(line_chart(data=rows, x_key="hour", value_key="hits"),
+              bar_chart(data=rows, x_key="hour", value_key="errors")),
+    link="hour",
+    on_link_change=State.on_pair_link,
+)"""
+
+
+def ops_dashboard() -> rx.Component:
+    """The linked operations dashboard, fed from ``DashboardState``."""
+    ops = DashboardState.ops
+    return dashboard(
+        dashboard_cell(kpi_card(title="Revenue", metric="thousands", delta=6.4, value=128), cell="revenue"),
+        dashboard_cell(kpi_card(title="Active users", metric="hundreds", delta=2.1, value=42), cell="users"),
+        dashboard_cell(kpi_card(title="Churn", metric="per cent", delta=-0.4, value=1.8), cell="churn"),
+        dashboard_cell(kpi_card(title="NPS", metric="points", delta=3, value=61), cell="nps"),
+        dashboard_cell(
+            line_chart(
+                data=ops,
+                **OPS_KEYS,
+                value_key="hits",
+                title="Traffic",
+                value=DashboardState.total_hits,
+                unit="hits",
+                footer_left="hits every two hours",
+                footer_right="last 24 h",
+            ),
+            cell="traffic",
+        ),
+        dashboard_cell(
+            bar_chart(data=ops, **OPS_KEYS, value_key="errors", title="Errors", value=DashboardState.total_errors),
+            cell="errors",
+        ),
+        dashboard_cell(area_chart(data=ops, **OPS_KEYS, value_key="load", title="Load", unit="%"), cell="load"),
+        dashboard_cell(
+            range_band_chart(data=ops, **OPS_KEYS, low_key="p50", high_key="p95", title="Latency p50–p95", unit="ms"),
+            cell="latency",
+        ),
+        dashboard_cell(gauge_arc(percent=DashboardState.uptime, caption="Uptime", title="Uptime"), cell="uptime"),
+        dashboard_cell(
+            meter_chart(percent=DashboardState.capacity, caption="Capacity used", title="Capacity"), cell="capacity"
+        ),
+        dashboard_cell(activity_grid(title="Deploys", weeks=40), cell="activity"),
+        id="ops",
+        title="Operations",
+        description="Service health over the last day: headline figures, traffic, errors, latency and load. "
+        "Hover or focus an hour in any chart: the others mark the same hour.",
+        layout=dashboard_layout(
+            [
+                "revenue",
+                "users",
+                "churn",
+                "nps",
+                dashboard_cell_layout("traffic", col_span={"md": 2, "lg": 3}, row_span=2),
+                "errors",
+                "uptime",
+                dashboard_cell_layout("latency", col_span={"md": 2, "lg": 2}),
+                "load",
+                "capacity",
+                dashboard_cell_layout("activity", col_span={"md": 2, "lg": DashboardState.lg_columns_int}),
+            ],
+            columns=DashboardState.columns,
+        ),
+        link="hour",
+        on_link_change=DashboardState.on_link,
+        ground=DashboardState.ground,
+        substrate=DashboardState.substrate,
+        mode=DashboardState.mode,
+    )
+
+
+def kpi_strip() -> rx.Component:
+    """A dashboard without link: unmarked children are placed in source order, span 1."""
+    return dashboard(
+        kpi_card(title="Revenue", metric="thousands", delta=6.4),
+        kpi_card(title="Orders", metric="orders per day", delta=8.2),
+        kpi_card(title="Active users", metric="hundreds", delta=2.1),
+        kpi_card(title="Refunds", metric="per day", delta=-1.5),
+        dashboard_cell(line_chart(data=LINE_CHART, **KEY_PROPS["line-chart"], title="Hits per hour"), cell="trend"),
+        id="kpi-strip",
+        title="This week",
+        heading_level=3,
+        layout=dashboard_layout(
+            [dashboard_cell_layout("trend", col_span={"md": 2, "lg": 4})],
+            row_height=200,
+            gap=12,
+        ),
+        substrate="ochre",
+    )
+
+
+def dashboard_page() -> rx.Component:
+    return page(
+        rx.el.h1("Dashboard"),
+        rx.el.p(
+            "New in silverpoint 0.2. dashboard() lays charts out in a titled grid from a data-only layout "
+            "(columns, spans and row height per breakpoint: sm, md from 640 px, lg from 1024 px, measured on the "
+            "dashboard itself), sizes each chart to its cell, and passes the ground, substrate, mode and locale to "
+            "every chart inside. With link, the charts share one linked value.",
+            class_name="sp-lede",
+        ),
+        rx.el.div(
+            select("Ground", DashboardState.ground, GROUNDS, DashboardState.set_ground),
+            select("Substrate", DashboardState.substrate, SUBSTRATES, DashboardState.set_substrate),
+            select("Mode", DashboardState.mode, MODES, DashboardState.set_mode),
+            select("Wide columns", DashboardState.lg_columns, ["3", "4"], DashboardState.set_lg_columns),
+            button("New day of data", on_click=DashboardState.reroll),
+            class_name="sp-controls",
+        ),
+        rx.el.p(
+            rx.el.strong("on_link_change: "),
+            DashboardState.linked,
+            " · changes: ",
+            DashboardState.link_changes,
+            class_name="sp-note",
+        ),
+        ops_dashboard(),
+        rx.el.h3("In your code"),
+        code(DASHBOARD_CODE),
+        rx.el.h2("Cells in source order"),
+        rx.el.p(
+            "Only children that need a named cell take a dashboard_cell: here, the trend that spans the whole width. "
+            "The four KPI cards are unmarked: they follow the named cells, in source order, span 1. The layout sets a shorter row "
+            "and a tighter gap; heading_level=3 nests the title under this page's headings."
+        ),
+        kpi_strip(),
+        rx.el.h2("Linking charts you lay out yourself"),
+        rx.el.p(
+            "dashboard_link is the link boundary on its own: any charts below it, in any layout, are linked on "
+            "the datum field you name. It adds no element."
+        ),
+        dashboard_link(
+            rx.el.div(
+                card(line_chart(data=OPS_HOURLY, **OPS_KEYS, value_key="hits", title="Hits")),
+                card(bar_chart(data=OPS_HOURLY, **OPS_KEYS, value_key="errors", title="Errors")),
+                card(area_chart(data=OPS_HOURLY, **OPS_KEYS, value_key="load", title="Load", ground="cyanotype")),
+                class_name="sp-grid",
+            ),
+            link="hour",
+            on_link_change=DashboardState.on_pair_link,
+        ),
+        rx.el.p(rx.el.strong("Linked: "), DashboardState.pair_linked, class_name="sp-note"),
+        code(LINK_CODE),
+    )
+
+
 # ── One page per chart ──────────────────────────────────────────────────────────────────
 
 
@@ -520,5 +722,6 @@ app.add_page(index, title="silverpoint for Reflex")
 app.add_page(gallery, route="/gallery", title="Gallery · silverpoint for Reflex")
 app.add_page(playground, route="/playground", title="Playground · silverpoint for Reflex")
 app.add_page(interaction, route="/interaction", title="Interaction · silverpoint for Reflex")
+app.add_page(dashboard_page, route="/dashboard", title="Dashboard · silverpoint for Reflex")
 for _info in CHARTS:
     app.add_page(chart_page(_info), route=f"/chart/{_info.slug}", title=f"{_info.chart} · silverpoint for Reflex")

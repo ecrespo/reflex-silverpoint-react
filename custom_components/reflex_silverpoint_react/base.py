@@ -5,7 +5,7 @@ on a prepared ground, tone built from hatching, and white heightening on the liv
 irregularity lives only in the ornament; the data geometry is exact, and every chart has a
 ``precision`` mode that switches the inking off.
 
-The npm side is ``@silverpoint/react`` (client components), ``@silverpoint/grounds`` (the
+The npm side is ``@silverpoint/react`` (client components, and since 0.2 the ``Dashboard`` grid), ``@silverpoint/grounds`` (the
 stylesheet that colours the strokes, required) and ``@silverpoint/fonts`` (self-hosted
 EB Garamond). Both stylesheets are imported once by any page that renders a chart.
 """
@@ -15,7 +15,7 @@ from typing import Any, Literal
 import reflex as rx
 
 #: The silverpoint npm release these wrappers are written against.
-SILVERPOINT_VERSION = "0.1.1"
+SILVERPOINT_VERSION = "0.2.0"
 
 #: The npm package every chart is imported from (the barrel; it is side-effect free, so the
 #: bundler keeps only the charts a page uses).
@@ -27,6 +27,12 @@ SILVERPOINT_STYLESHEETS = (
     "@silverpoint/grounds/styles.css",
 )
 
+#: The grounds ``@silverpoint/grounds`` registers by default. ``silverpoint`` builds tone by
+#: hatching; ``cyanotype`` (new in 0.2) by the weight of an exact white line on Prussian blue.
+GroundName = Literal["silverpoint", "cyanotype"]
+
+#: The ``silverpoint`` ground's substrates. ``cyanotype`` has one substrate (``prussian``) and
+#: prints on it whatever substrate a chart names.
 Substrate = Literal["cream", "green", "blue", "ochre"]
 InkMode = Literal["ink", "precision"]
 Chrome = Literal["card", "bare"]
@@ -88,8 +94,8 @@ class SilverpointChart(_SilverpointBase):
     # Rows to draw. If omitted, the chart renders its own demo dataset.
     data: rx.Var[list[dict[str, Any]]]
 
-    # Style ground, by name (``"silverpoint"``) or as a complete ground object.
-    ground: rx.Var[str | dict[str, Any]]
+    # Style ground, by name (``"silverpoint"`` or ``"cyanotype"``) or as a complete ground object.
+    ground: rx.Var[GroundName | str | dict[str, Any]]
 
     # Prepared substrate within the ground: cream (default), green, blue or ochre.
     substrate: rx.Var[Substrate]
@@ -164,8 +170,8 @@ class SilverpointProvider(_SilverpointBase):
 
     tag = "SilverpointProvider"
 
-    # Style ground for every chart below.
-    ground: rx.Var[str | dict[str, Any]]
+    # Style ground for every chart below: ``"silverpoint"``, ``"cyanotype"`` or a ground object.
+    ground: rx.Var[GroundName | str | dict[str, Any]]
 
     # Substrate for every chart below.
     substrate: rx.Var[Substrate]
