@@ -54,6 +54,13 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+      - name: Validate trove classifiers (PyPI rejects unknown ones)
+        run: |
+          uvx --python 3.12 --with trove-classifiers python -c "
+          import tomllib, trove_classifiers as t
+          bad = [c for c in tomllib.load(open('pyproject.toml', 'rb'))['project']['classifiers'] if c not in t.classifiers]
+          assert not bad, f'Invalid classifiers: {bad}'
+          "
       - name: Build sdist and wheel
         run: uv build
       - name: Twine check
