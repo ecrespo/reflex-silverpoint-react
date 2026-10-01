@@ -7,10 +7,22 @@ prepared ground, tone built from hatching, and white heightening on the live val
 The hand-drawn irregularity lives only in the ornament. The data geometry is exact, and every chart
 has a `precision` mode that turns the inking off.
 
-It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) 0.2.0 and exposes
-**all 33 charts**, the **`Dashboard`** (a laid-out, linkable grid of charts), the
-`SilverpointProvider`, both grounds (`silverpoint` and `cyanotype`), the interaction events, custom
-readouts and the imperative handle (SVG export and geometry) as Python.
+It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) 0.3.0 and exposes
+**all 33 charts**, the **`Dashboard`** (a laid-out, linkable grid of charts), the **17 UI
+components** (buttons, inputs, tabs, cards, alerts…), the `SilverpointProvider`, both grounds
+(`silverpoint` and `cyanotype`), the interaction events, custom readouts and the imperative handle
+(SVG export and geometry) as Python.
+
+### New in 0.3
+
+- **17 UI components**, drawn as the charts are: `sp_button`, `sp_input`, `sp_checkbox`,
+  `sp_switch`, `sp_radio_group`, `sp_slider`, `sp_rate`, `sp_segmented`, `sp_tabs` (with
+  `sp_tab_panel`), `sp_steps`, `sp_card`, `sp_tag`, `sp_badge`, `sp_divider`, `sp_progress`,
+  `sp_alert` and `sp_skeleton`. Native controls underneath, controlled from Python. See
+  [UI components](#ui-components).
+- `UI_COMPONENTS` and `UI_DEMOS`: the catalog's 17 components, their 45 reference states, and
+  `ui_demo(slug, state)` to render any of them.
+- `substrate="prussian"` is accepted everywhere (the `cyanotype` ground's substrate).
 
 ### New in 0.2
 
@@ -32,7 +44,8 @@ uv add reflex-silverpoint-react
 Nothing else to do on the JavaScript side: Reflex installs `@silverpoint/react`,
 `@silverpoint/core`, `@silverpoint/grounds` and `@silverpoint/fonts`, and every chart imports the two
 stylesheets it needs (`@silverpoint/grounds/styles.css` and the self-hosted EB Garamond of
-`@silverpoint/fonts/fonts.css`). No Tailwind, no CDN.
+`@silverpoint/fonts/fonts.css`); the UI components also import `@silverpoint/grounds/ui.css`. No
+Tailwind, no CDN.
 
 Requires Reflex 0.9.12 or later (React 19).
 
@@ -166,6 +179,88 @@ dashboard(
   can also pass a plain dict.
 - The layout values and the charts' props can be state vars.
 
+## UI components
+
+New in silverpoint 0.3: seventeen interface components with frames hand-drawn by each ground's own
+inker and tone laid as hatching (`silverpoint`) or as the weight of an exact white line
+(`cyanotype`). Each is a native control underneath (a `<button>`, an `<input>`, a `<fieldset>` of
+radios), so forms submit natively and the keyboard follows the WAI-ARIA patterns. They are imported
+from `@silverpoint/react/ui`.
+
+![The UI components in the demo app](docs/ui-components.png)
+
+| Group | Components |
+|---|---|
+| Actions | `sp_button` |
+| Data entry | `sp_input`, `sp_checkbox`, `sp_radio_group`, `sp_switch`, `sp_slider`, `sp_rate`, `sp_segmented` |
+| Navigation | `sp_tabs` + `sp_tab_panel`, `sp_steps` |
+| Data display | `sp_card`, `sp_tag`, `sp_badge`, `sp_divider` |
+| Feedback | `sp_progress`, `sp_alert`, `sp_skeleton` |
+
+```python
+from reflex_silverpoint_react import sp_button, sp_input, sp_switch, sp_tab_panel, sp_tabs, ui_item
+
+
+class State(rx.State):
+    city: str = "Caracas"
+    precision: bool = False
+    view: str = "traffic"
+
+    @rx.event
+    def set_city(self, value: str):  # on_change gets the value, not an event
+        self.city = value
+
+    @rx.event
+    def set_precision(self, value: bool):
+        self.precision = value
+
+    @rx.event
+    def set_view(self, value: str):
+        self.view = value
+
+    @rx.event
+    def save(self, form: dict):
+        print(form)  # {"city": "Caracas", ...}: the native inputs submit under their name
+
+
+rx.el.form(
+    sp_input(
+        label="City",
+        name="city",
+        value=State.city,
+        on_change=State.set_city,
+        invalid=State.city == "",
+        message="Required: pick a city",
+    ),
+    sp_switch(label="Precision", checked=State.precision, on_change=State.set_precision),
+    sp_tabs(
+        sp_tab_panel(line_chart(...), value="traffic"),
+        sp_tab_panel(bar_chart(...), value="errors"),
+        items=[ui_item("traffic", "Traffic"), ui_item("errors", "Errors")],
+        value=State.view,
+        on_change=State.set_view,
+    ),
+    sp_button("Save", type="submit", variant="primary"),
+    on_submit=State.save,
+)
+```
+
+- **Shared props**: `id`, `ground`, `substrate`, `mode`, `seed`, `size` (`sm`/`md`/`lg`) and
+  `class_name`. Like charts, they fall back to the dashboard, then to `silverpoint_provider`.
+- **Values**: value components are controlled (`value=` / `checked=` with `on_change`) or
+  uncontrolled (`default_value=` / `default_checked=`). `on_change` receives the new value itself (a
+  string, a bool or a number), never a DOM event.
+- **Items**: `ui_item(key, label, disabled=False)` for tabs, segmented and radio groups;
+  `step_item(key, title, description=None, status=None)` for steps.
+- **Slots**: children are a button's or tag's text, a card's or alert's body; `sp_card` also takes
+  `extra` and `footer`, and `sp_input` takes `prefix` and `suffix` (components or text).
+- **Close events**: `sp_tag(closable=True, on_close=...)` and `sp_alert(closable=True, on_close=...)`.
+- `UI_COMPONENTS` is the catalog (group, declared states, props reference) and `UI_DEMOS` the 45
+  reference states upstream ships; `ui_demo("radio-group", "selected", ground="cyanotype")` renders
+  one, uncontrolled.
+- Text inputs controlled from state make a round trip per keystroke; for long text, prefer
+  `default_value` and read the value on submit.
+
 ## Interaction
 
 ```python
@@ -237,8 +332,10 @@ controls, demo datasets vs data from Python state with a re-roll), **Playground*
 rendering choice and the Python that reproduces it), **Interaction** (events, custom readout, a
 volvelle that turns on click, live KPI/gauge/meter, SVG and geometry export), **Dashboard** (a
 linked operations dashboard fed from Python state with ground, substrate, mode and column controls, a
-KPI strip, and `dashboard_link` on its own) and one **reference page per chart** (`/chart/<slug>`)
-with its props. The Gallery and Playground also get a ground control, for `cyanotype`.
+KPI strip, and `dashboard_link` on its own), **UI components** (`/ui`: the components controlled from
+Python state with a native form submit, and the three reference panels of the upstream example apps
+in silverpoint ink, precision and cyanotype), one **reference page per chart** (`/chart/<slug>`) and
+one per UI component (`/ui/<slug>`: every declared state on both grounds, usage and props). The Gallery and Playground also get a ground control, for `cyanotype`.
 
 ![Interaction page](docs/interaction.png)
 

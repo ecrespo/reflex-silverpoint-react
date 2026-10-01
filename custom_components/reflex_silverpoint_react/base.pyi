@@ -14,11 +14,11 @@ from reflex_base.event import (
 from reflex_base.vars.base import Var
 from reflex_components_core.core.breakpoints import Breakpoints
 
-SILVERPOINT_VERSION = "0.2.0"
+SILVERPOINT_VERSION = "0.3.0"
 SILVERPOINT_LIBRARY = ...
 SILVERPOINT_STYLESHEETS = ("@silverpoint/fonts/fonts.css", "@silverpoint/grounds/styles.css")
 GroundName: TypeAlias = Literal["silverpoint", "cyanotype"]
-Substrate: TypeAlias = Literal["cream", "green", "blue", "ochre"]
+Substrate: TypeAlias = Literal["cream", "green", "blue", "ochre", "prussian"]
 InkMode: TypeAlias = Literal["ink", "precision"]
 Chrome: TypeAlias = Literal["card", "bare"]
 HatchFill: TypeAlias = Literal["tile", "per-shape"]
@@ -96,8 +96,8 @@ class SilverpointChart(_SilverpointBase):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -207,8 +207,8 @@ class SilverpointProvider(_SilverpointBase):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         locale: Var[str] | str | None = None,

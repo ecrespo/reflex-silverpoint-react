@@ -100,8 +100,8 @@ class Dashboard(_SubpathComponent):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         locale: Var[str] | str | None = None,

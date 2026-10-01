@@ -5,9 +5,10 @@ on a prepared ground, tone built from hatching, and white heightening on the liv
 irregularity lives only in the ornament; the data geometry is exact, and every chart has a
 ``precision`` mode that switches the inking off.
 
-The npm side is ``@silverpoint/react`` (client components, and since 0.2 the ``Dashboard`` grid), ``@silverpoint/grounds`` (the
-stylesheet that colours the strokes, required) and ``@silverpoint/fonts`` (self-hosted
-EB Garamond). Both stylesheets are imported once by any page that renders a chart.
+The npm side is ``@silverpoint/react`` (client components; since 0.2 the ``Dashboard`` grid and
+since 0.3 the ``Sp`` UI components), ``@silverpoint/grounds`` (the stylesheet that colours the
+strokes, required, plus ``ui.css`` for the UI components) and ``@silverpoint/fonts`` (self-hosted
+EB Garamond). The stylesheets are imported once by any page that renders a chart or a component.
 """
 
 from typing import Any, Literal
@@ -15,7 +16,7 @@ from typing import Any, Literal
 import reflex as rx
 
 #: The silverpoint npm release these wrappers are written against.
-SILVERPOINT_VERSION = "0.2.0"
+SILVERPOINT_VERSION = "0.3.0"
 
 #: The npm package every chart is imported from (the barrel; it is side-effect free, so the
 #: bundler keeps only the charts a page uses).
@@ -31,9 +32,9 @@ SILVERPOINT_STYLESHEETS = (
 #: hatching; ``cyanotype`` (new in 0.2) by the weight of an exact white line on Prussian blue.
 GroundName = Literal["silverpoint", "cyanotype"]
 
-#: The ``silverpoint`` ground's substrates. ``cyanotype`` has one substrate (``prussian``) and
-#: prints on it whatever substrate a chart names.
-Substrate = Literal["cream", "green", "blue", "ochre"]
+#: The substrates of the two grounds: ``silverpoint`` has cream, green, blue and ochre;
+#: ``cyanotype`` has one, ``prussian``, and prints on it whatever substrate a component names.
+Substrate = Literal["cream", "green", "blue", "ochre", "prussian"]
 InkMode = Literal["ink", "precision"]
 Chrome = Literal["card", "bare"]
 HatchFill = Literal["tile", "per-shape"]

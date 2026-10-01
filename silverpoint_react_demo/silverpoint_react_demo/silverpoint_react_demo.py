@@ -1,4 +1,4 @@
-"""Demo of reflex-silverpoint-react: the 33 silverpoint charts in Reflex.
+"""Demo of reflex-silverpoint-react: the 33 silverpoint charts and the 17 UI components in Reflex.
 
 Pages:
     /               Start: quickstart, provider, precision mode.
@@ -7,6 +7,8 @@ Pages:
     /interaction    Events, custom tooltips, a turning volvelle, live data and SVG export.
     /dashboard      The Dashboard of silverpoint 0.2: a laid-out grid, linked charts, the cyanotype ground.
     /chart/<slug>   One page per chart, with the reference of its props.
+    /ui             The UI components of silverpoint 0.3: wired to Python, and the reference panels.
+    /ui/<slug>      One page per UI component, every declared state and its props.
 """
 
 from typing import Any
@@ -16,6 +18,7 @@ from reflex_silverpoint_react import (
     CHARTS,
     COMMON_PROPS,
     FAMILIES,
+    UI_COMPONENTS,
     ChartInfo,
     PropDoc,
     activity_grid,
@@ -39,6 +42,13 @@ from reflex_silverpoint_react import (
     range_band_chart,
     sankey_chart,
     silverpoint_provider,
+    sp_alert,
+    sp_button,
+    sp_checkbox,
+    sp_progress,
+    sp_segmented,
+    sp_switch,
+    sp_tag,
     tooltip_template,
     volvelle_chart,
 )
@@ -46,6 +56,7 @@ from reflex_silverpoint_react import (
 from .datasets import BAR_CHART, DONUT_CHART, HEATMAP_CHART, KEY_PROPS, LINE_CHART, OPS_HOURLY, VOLVELLE_CHART
 from .layout import button, card, code, page, select
 from .state import SIZES, DashboardState, DemoState, InteractionState, PlaygroundState
+from .ui_pages import ui_component_page, ui_page
 
 GROUNDS = ["silverpoint", "cyanotype"]
 SUBSTRATES = ["cream", "green", "blue", "ochre"]
@@ -82,7 +93,7 @@ def gallery_card(info: ChartInfo) -> rx.Component:
         rx.el.div(
             rx.el.a(info.chart, href=f"/chart/{info.slug}"),
             rx.el.span(info.family),
-            class_name="sp-card-title",
+            class_name="demo-card-title",
         ),
         rx.cond(DemoState.use_state_data, state_chart(info, **common), info.factory(**common)),
     )
@@ -224,6 +235,38 @@ def index() -> rx.Component:
             "can link them: hover an hour in one chart and every chart marks the same hour. ",
             rx.el.a("Open the dashboard page", href="/dashboard"),
             ".",
+        ),
+        rx.el.h2("New in 0.3: UI components"),
+        rx.el.p(
+            "Seventeen interface components drawn as the charts are: buttons, inputs, checkboxes, switches, radio "
+            "groups, sliders, rates, segmented controls, tabs, steps, cards, tags, badges, dividers, progress, alerts "
+            "and skeletons. Native controls underneath, controlled from Python. ",
+            rx.el.a("Open the UI components page", href="/ui"),
+            ".",
+        ),
+        rx.el.div(
+            *[
+                rx.el.div(
+                    sp_button("Primary", variant="primary", ground=ground),
+                    sp_button("Delete", variant="danger", ground=ground),
+                    sp_segmented(
+                        label="Period",
+                        name=f"start-period-{ground}",
+                        items=[{"key": k, "label": k.title()} for k in ("day", "week", "month")],
+                        default_value="week",
+                        ground=ground,
+                    ),
+                    sp_switch(label="Precision", default_checked=True, ground=ground),
+                    sp_checkbox(label="Baseline", default_checked=True, ground=ground),
+                    sp_tag("draft", tone=2, ground=ground),
+                    sp_progress(label="Upload", value=64, ground=ground),
+                    sp_alert("cyanotype is the second ground.", kind="info", title="Two grounds", ground=ground),
+                    class_name=f"demo-ui-panel demo-ui-row sp-ground-{ground}",
+                    custom_attrs={"data-substrate": "prussian" if ground == "cyanotype" else "cream"},
+                )
+                for ground in GROUNDS
+            ],
+            class_name="sp-grid-2",
         ),
         rx.el.p(
             rx.el.a("See the 33 charts in the gallery", href="/gallery"),
@@ -725,3 +768,6 @@ app.add_page(interaction, route="/interaction", title="Interaction · silverpoin
 app.add_page(dashboard_page, route="/dashboard", title="Dashboard · silverpoint for Reflex")
 for _info in CHARTS:
     app.add_page(chart_page(_info), route=f"/chart/{_info.slug}", title=f"{_info.chart} · silverpoint for Reflex")
+app.add_page(ui_page, route="/ui", title="UI components · silverpoint for Reflex")
+for _ui in UI_COMPONENTS:
+    app.add_page(ui_component_page(_ui), route=f"/ui/{_ui.slug}", title=f"{_ui.component} · silverpoint for Reflex")

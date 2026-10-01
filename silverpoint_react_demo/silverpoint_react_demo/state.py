@@ -321,3 +321,157 @@ class DashboardState(rx.State):
     @rx.var
     def total_errors(self) -> int:
         return sum(row["errors"] for row in self.ops)
+
+
+TAGS = ["draft", "review", "silverpoint", "cyanotype"]
+RELEASE_STEPS = ["Install", "Import", "Configure", "Publish"]
+
+
+class UiState(rx.State):
+    """The UI components page: controlled components bound to Python, and what they report."""
+
+    # The panel's look, itself set by UI components.
+    ground: str = "silverpoint"
+    substrate: str = "cream"
+    precision: bool = False
+    size: str = "md"
+
+    # A settings form: every component controlled from here.
+    city: str = "Caracas"
+    newsletter: bool = True
+    quality: int = 3
+    volume: int = 30
+    series: str = "hits"
+    view: str = "traffic"
+
+    # Components driven by buttons.
+    tags: list[str] = list(TAGS)
+    alert_open: bool = True
+    progress: int = 40
+    step: int = 1
+    inbox: int = 12
+
+    # What the components reported, latest first, and the last native form submission.
+    events: list[str] = []
+    submitted: str = "—"
+
+    def _log(self, text: str):
+        self.events = [text, *self.events][:8]
+
+    @rx.event
+    def set_ground(self, value: str):
+        self.ground = value
+        self._log(f"radio_group on_change → {value!r}")
+
+    @rx.event
+    def set_substrate(self, value: str):
+        self.substrate = value
+        self._log(f"segmented on_change → {value!r}")
+
+    @rx.event
+    def set_precision(self, value: bool):
+        self.precision = value
+        self._log(f"switch on_change → {value!r}")
+
+    @rx.event
+    def set_size(self, value: str):
+        self.size = value
+        self._log(f"segmented on_change → {value!r}")
+
+    @rx.event
+    def set_city(self, value: str):
+        self.city = value
+
+    @rx.event
+    def set_newsletter(self, value: bool):
+        self.newsletter = value
+        self._log(f"checkbox on_change → {value!r}")
+
+    @rx.event
+    def set_quality(self, value: float):
+        self.quality = int(value)
+        self._log(f"rate on_change → {int(value)}")
+
+    @rx.event
+    def set_volume(self, value: float):
+        self.volume = int(value)
+
+    @rx.event
+    def set_series(self, value: str):
+        self.series = value
+        self._log(f"segmented on_change → {value!r}")
+
+    @rx.event
+    def set_view(self, value: str):
+        self.view = value
+        self._log(f"tabs on_change → {value!r}")
+
+    @rx.event
+    def remove_tag(self, tag: str):
+        self.tags = [t for t in self.tags if t != tag]
+        self._log(f"tag on_close → {tag!r}")
+
+    @rx.event
+    def reset_tags(self):
+        self.tags = list(TAGS)
+
+    @rx.event
+    def close_alert(self):
+        self.alert_open = False
+        self._log("alert on_close")
+
+    @rx.event
+    def open_alert(self):
+        self.alert_open = True
+
+    @rx.event
+    def advance(self):
+        self.progress = min(100, self.progress + 20)
+
+    @rx.event
+    def restart(self):
+        self.progress = 0
+
+    @rx.event
+    def next_step(self):
+        self.step = min(len(RELEASE_STEPS) - 1, self.step + 1)
+
+    @rx.event
+    def previous_step(self):
+        self.step = max(0, self.step - 1)
+
+    @rx.event
+    def receive(self):
+        self.inbox += 1
+
+    @rx.event
+    def read_all(self):
+        self.inbox = 0
+
+    @rx.event
+    def submit(self, form: dict[str, Any]):
+        """A native form submit: the components' inputs submit under their ``name``."""
+        # Reflex also reports the inputs by their id (``form_city``…); keep what the browser submits.
+        native = {key: value for key, value in form.items() if not key.startswith("form_")}
+        self.submitted = json.dumps(native, ensure_ascii=False)
+        self._log("form on_submit")
+
+    @rx.var
+    def mode(self) -> str:
+        return "precision" if self.precision else "ink"
+
+    @rx.var
+    def city_invalid(self) -> bool:
+        return not self.city.strip()
+
+    @rx.var
+    def city_message(self) -> str:
+        return "Required: pick a city" if not self.city.strip() else f"{len(self.city)} characters"
+
+    @rx.var
+    def progress_label(self) -> str:
+        return "Done" if self.progress >= 100 else "Upload"
+
+    @rx.var
+    def release_items(self) -> list[dict[str, str]]:
+        return [{"key": title.lower(), "title": title} for title in RELEASE_STEPS]
