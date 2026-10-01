@@ -38,7 +38,7 @@ body {
 
 .sp-demo p { margin: 0.35em 0; }
 
-.sp-demo a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+.sp-demo a:not(.sp-ui) { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
 
 .sp-header {
   display: flex;
@@ -63,7 +63,7 @@ body {
 
 .sp-lede { color: var(--muted); max-width: 46rem; }
 
-.sp-card {
+.demo-card {
   background: var(--card);
   border: 1px solid var(--rule);
   border-radius: 4px;
@@ -71,9 +71,9 @@ body {
   min-width: 0;
 }
 
-.sp-card-title { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 6px; }
-.sp-card-title a { font-size: 0.95rem; }
-.sp-card-title span { color: var(--muted); font-size: 0.85rem; }
+.demo-card-title { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.demo-card-title a { font-size: 0.95rem; }
+.demo-card-title span { color: var(--muted); font-size: 0.85rem; }
 
 .sp-grid {
   display: grid;
@@ -110,7 +110,7 @@ body {
   color: var(--ink);
 }
 
-.sp-button {
+.demo-button {
   font: inherit;
   font-size: 1rem;
   padding: 5px 14px;
@@ -120,7 +120,7 @@ body {
   color: var(--ink);
   cursor: pointer;
 }
-.sp-button:hover { background: var(--ink); color: var(--paper); }
+.demo-button:hover { background: var(--ink); color: var(--paper); }
 
 .sp-code {
   font-family: ui-monospace, 'JetBrains Mono', Menlo, monospace;
@@ -153,3 +153,52 @@ body {
 .sp-family { margin-top: 18px; border-bottom: 1px solid var(--rule); }
 
 .sp-chart-lg { max-width: 680px; }
+
+/* The UI components page: the reference panels of silverpoint 0.3, as the upstream example apps lay
+   them out. Each panel stands on its own ground's substrate, so cyanotype's white line shows. */
+.demo-ui-panels { display: flex; flex-direction: column; gap: 24px; margin: 8px 0 24px; }
+
+.demo-ui-panel {
+  padding: 20px 24px 28px;
+  background: var(--sp-substrate);
+  color: var(--sp-text);
+  box-shadow: inset 0 0 0 1px var(--sp-rule);
+  border-radius: 4px;
+}
+
+.sp-demo .demo-ui-panel > h2 { margin: 0; font-size: 1.4rem; }
+
+.demo-ui-panel-note { margin: 2px 0 16px; color: var(--sp-text-muted); font-style: italic; }
+
+.demo-ui-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 20px 32px;
+}
+
+.sp-demo .demo-ui-section > h3 {
+  margin: 0 0 10px;
+  color: var(--sp-text-muted);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.demo-ui-items { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+
+.demo-ui-items > .sp-card,
+.demo-ui-items > .sp-alert,
+.demo-ui-items > .sp-slider,
+.demo-ui-items > .sp-steps,
+.demo-ui-items > .sp-tabs,
+.demo-ui-items > .sp-skeleton,
+.demo-ui-items > .sp-divider,
+.demo-ui-items > [data-shape='line'] {
+  flex: 1 1 100%;
+}
+
+.demo-ui-stack { display: flex; flex-direction: column; gap: 14px; }
+.demo-ui-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+
+.demo-ui-row > [data-shape='line'] { flex: 1 1 220px; }

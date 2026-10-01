@@ -34,8 +34,8 @@ class LineChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -157,8 +157,8 @@ class StepChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -279,8 +279,8 @@ class SparklineRows(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -402,8 +402,8 @@ class KpiCard(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -524,8 +524,8 @@ class BarChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -645,8 +645,8 @@ class StackedBarChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -766,8 +766,8 @@ class ComposedChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -887,8 +887,8 @@ class WaterfallChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -1006,8 +1006,8 @@ class FunnelChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -1125,8 +1125,8 @@ class BulletChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -1245,8 +1245,8 @@ class PyramidChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -1368,8 +1368,8 @@ class CandlestickChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -1493,8 +1493,8 @@ class AreaChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -1613,8 +1613,8 @@ class RangeBandChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -1733,8 +1733,8 @@ class StreamChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -1854,8 +1854,8 @@ class ScatterChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -1976,8 +1976,8 @@ class BubbleChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -2098,8 +2098,8 @@ class HeatmapChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -2220,8 +2220,8 @@ class TreemapChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -2342,8 +2342,8 @@ class ActivityGrid(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -2463,8 +2463,8 @@ class SankeyChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -2584,8 +2584,8 @@ class ChordRing(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -2707,8 +2707,8 @@ class DonutChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -2829,8 +2829,8 @@ class RadarChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -2948,8 +2948,8 @@ class PolarBarChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -3066,8 +3066,8 @@ class RadialArcGroup(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -3184,8 +3184,8 @@ class RadialRings(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -3303,8 +3303,8 @@ class GaugeArc(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -3423,8 +3423,8 @@ class MeterChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -3543,8 +3543,8 @@ class CoxcombChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -3664,8 +3664,8 @@ class WindRose(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -3785,8 +3785,8 @@ class VolvelleChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,
@@ -3905,8 +3905,8 @@ class OrbitChart(SilverpointChart):
         | dict[str, Any]
         | str
         | None = None,
-        substrate: Literal["blue", "cream", "green", "ochre"]
-        | Var[Literal["blue", "cream", "green", "ochre"]]
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
         | None = None,
         mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
         seed: Var[int | str] | int | str | None = None,

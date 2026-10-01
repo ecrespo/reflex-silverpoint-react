@@ -11,6 +11,7 @@ NAV = [
     ("/playground", "Playground"),
     ("/interaction", "Interaction"),
     ("/dashboard", "Dashboard"),
+    ("/ui", "UI components"),
     ("/chart/line-chart", "Chart reference"),
 ]
 
@@ -57,7 +58,7 @@ def card(*children: rx.Component, **props: Any) -> rx.Component:
     Returns:
         The card.
     """
-    class_name = " ".join(filter(None, ["sp-card", props.pop("class_name", "")]))
+    class_name = " ".join(filter(None, ["demo-card", props.pop("class_name", "")]))
     return rx.el.div(*children, class_name=class_name, **props)
 
 
@@ -108,4 +109,4 @@ def button(text: str, **props: Any) -> rx.Component:
     Returns:
         The button.
     """
-    return rx.el.button(text, class_name="sp-button", type="button", **props)
+    return rx.el.button(text, class_name="demo-button", type="button", **props)
