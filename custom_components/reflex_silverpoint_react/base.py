@@ -16,7 +16,7 @@ from typing import Any, Literal
 import reflex as rx
 
 #: The silverpoint npm release these wrappers are written against.
-SILVERPOINT_VERSION = "0.3.0"
+SILVERPOINT_VERSION = "0.6.0"
 
 #: The npm package every chart is imported from (the barrel; it is side-effect free, so the
 #: bundler keeps only the charts a page uses).

@@ -1,10 +1,10 @@
-"""Demo of reflex-silverpoint-react: the 33 silverpoint charts and the 17 UI components in Reflex.
+"""Demo of reflex-silverpoint-react: the 60 silverpoint charts and the 17 UI components in Reflex.
 
 Pages:
     /               Start: quickstart, provider, precision mode.
     /gallery        Every chart, with ground controls and demo-vs-state data.
     /playground     One chart, every rendering choice, and the Python to reproduce it.
-    /interaction    Events, custom tooltips, a turning volvelle, live data and SVG export.
+    /interaction    Events, custom tooltips, a turning volvelle, drill-down, live data and SVG export.
     /dashboard      The Dashboard of silverpoint 0.2: a laid-out grid, linked charts, the cyanotype ground.
     /chart/<slug>   One page per chart, with the reference of its props.
     /ui             The UI components of silverpoint 0.3: wired to Python, and the reference panels.
@@ -49,11 +49,22 @@ from reflex_silverpoint_react import (
     sp_segmented,
     sp_switch,
     sp_tag,
+    squarified_treemap,
+    sunburst_chart,
     tooltip_template,
     volvelle_chart,
 )
 
-from .datasets import BAR_CHART, DONUT_CHART, HEATMAP_CHART, KEY_PROPS, LINE_CHART, OPS_HOURLY, VOLVELLE_CHART
+from .datasets import (
+    BAR_CHART,
+    BUDGET,
+    DONUT_CHART,
+    HEATMAP_CHART,
+    KEY_PROPS,
+    LINE_CHART,
+    OPS_HOURLY,
+    VOLVELLE_CHART,
+)
 from .layout import button, card, code, page, select
 from .state import SIZES, DashboardState, DemoState, InteractionState, PlaygroundState
 from .ui_pages import ui_component_page, ui_page
@@ -144,7 +155,7 @@ def index() -> rx.Component:
             "Charts drawn in the manner of a Renaissance silverpoint drawing: a fine silver line on a "
             "prepared ground, tone built from hatching, and white heightening on the live value. The "
             "hand-drawn irregularity lives only in the ornament; the data geometry is exact, and every "
-            "chart has a precision mode that turns the inking off. All 33 charts of @silverpoint/react, "
+            "chart has a precision mode that turns the inking off. All 60 charts of @silverpoint/react, "
             "as Python components.",
             class_name="sp-lede",
         ),
@@ -269,7 +280,7 @@ def index() -> rx.Component:
             class_name="sp-grid-2",
         ),
         rx.el.p(
-            rx.el.a("See the 33 charts in the gallery", href="/gallery"),
+            rx.el.a("See the 60 charts in the gallery", href="/gallery"),
             ", try every rendering choice in the ",
             rx.el.a("playground", href="/playground"),
             ", or wire events in ",
@@ -444,6 +455,40 @@ def interaction() -> rx.Component:
                 rx.el.p("index_value = ", InteractionState.volvelle_value, class_name="sp-note"),
             ),
             class_name="sp-grid-2",
+        ),
+        rx.el.h2("Drill down a hierarchy"),
+        rx.el.p(
+            "New in silverpoint 0.6. SquarifiedTreemap and SunburstChart keep no root of their own: a click, Enter or "
+            "Space on a node sends its id to Python through on_root_change, the state stores it and passes it back as "
+            "root_id. Both charts read the same state, so they drill together. Activate the centre or the frame to go "
+            "back up."
+        ),
+        rx.el.div(
+            card(
+                squarified_treemap(
+                    data=BUDGET,
+                    **KEY_PROPS["squarified-treemap"],
+                    root_id=InteractionState.budget_root,
+                    on_root_change=InteractionState.drill,
+                    title="City budget",
+                    height=280,
+                ),
+            ),
+            card(
+                sunburst_chart(
+                    data=BUDGET,
+                    **KEY_PROPS["sunburst-chart"],
+                    root_id=InteractionState.budget_root,
+                    on_root_change=InteractionState.drill,
+                    title="City budget",
+                    height=280,
+                ),
+            ),
+            class_name="sp-grid-2",
+        ),
+        card(
+            rx.el.p(rx.el.strong("Drawn as root: "), InteractionState.budget_path, class_name="sp-note"),
+            button("Back to the top", on_click=InteractionState.drill_to_top),
         ),
         rx.el.h2("Live values from the backend"),
         rx.el.div(
