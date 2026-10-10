@@ -69,7 +69,7 @@ jobs:
         run: |
           uv venv /tmp/wheel-env
           uv pip install --python /tmp/wheel-env dist/*.whl
-          /tmp/wheel-env/bin/python -c "import reflex_silverpoint_react as sp; assert len(sp.CHARTS) == 33; print(sp.SILVERPOINT_VERSION)"
+          /tmp/wheel-env/bin/python -c "import reflex_silverpoint_react as sp; assert len(sp.CHARTS) == 60; print(sp.SILVERPOINT_VERSION)"
 
   demo:
     name: Compile demo app

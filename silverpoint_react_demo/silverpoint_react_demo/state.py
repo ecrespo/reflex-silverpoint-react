@@ -7,8 +7,8 @@ from typing import Any
 import reflex as rx
 from reflex_silverpoint_react import CHARTS
 
-from .data_tools import initial_datasets, reroll
-from .datasets import OPS_HOURLY, VOLVELLE_CHART
+from .data_tools import drill_path, initial_datasets, reroll
+from .datasets import BUDGET, OPS_HOURLY, VOLVELLE_CHART
 
 SIZES: dict[str, tuple[int, int]] = {"sm": (240, 120), "md": (320, 150), "lg": (640, 300)}
 
@@ -100,6 +100,9 @@ class InteractionState(rx.State):
     volvelle_ring: int = 0
     volvelle_value: str = "Mon"
 
+    # Drill-down of the budget hierarchy: the node drawn as root, None for the data root.
+    budget_root: str | None = None
+
     # A live KPI series.
     kpi_series: list[dict[str, Any]] = [
         {"value": v} for v in (118, 124, 121, 132, 140, 136, 129, 142, 151, 147, 155, 162, 158, 171)
@@ -143,6 +146,19 @@ class InteractionState(rx.State):
         if ring in labels:
             self.volvelle_ring = labels.index(ring)
             self.volvelle_value = str(datum.get("segment", ""))
+
+    @rx.var
+    def budget_path(self) -> str:
+        return " › ".join(drill_path(BUDGET, self.budget_root))
+
+    @rx.event
+    def drill(self, node_id: str | None):
+        """A treemap or sunburst node was activated: draw it as root (``None`` goes back to the top)."""
+        self.budget_root = node_id
+
+    @rx.event
+    def drill_to_top(self):
+        self.budget_root = None
 
     @rx.event
     def tick_kpi(self):

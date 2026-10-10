@@ -8,7 +8,10 @@ from typing import Any
 from .datasets import DATASETS, Rows
 
 #: Fields that are positions, sizes of tiles or identifiers, never re-rolled.
-_FIXED_FIELDS = {"period", "cols", "rows", "bearing", "level"}
+_FIXED_FIELDS = {"period", "cols", "rows", "bearing", "level", "month", "season", "year"}
+
+#: Charts whose ``x`` and ``y`` are grid positions, never re-rolled.
+_GRID_CHARTS = {"vector-field-chart"}
 
 #: Charts whose values are read on a 0-100 scale.
 _PERCENT_CHARTS = {"bullet-chart", "pyramid-chart", "heatmap-chart", "radial-rings"}
@@ -117,11 +120,12 @@ def reroll(slug: str, rows: Rows, rng: random.Random) -> Rows:
     if slug == "volvelle-chart":
         return copy.deepcopy(rows)
     ceiling = 100 if slug in _PERCENT_CHARTS else None
+    fixed = _FIXED_FIELDS | {"x", "y"} if slug in _GRID_CHARTS else _FIXED_FIELDS
     fresh: Rows = []
     for row in rows:
         new: dict[str, Any] = {}
         for key, value in row.items():
-            if key in _FIXED_FIELDS:
+            if key in fixed:
                 new[key] = value
             elif isinstance(value, list):
                 new[key] = [
@@ -136,4 +140,28 @@ def reroll(slug: str, rows: Rows, rng: random.Random) -> Rows:
     if slug == "range-band-chart":
         for row in fresh:
             row["low"], row["high"] = min(row["low"], row["high"]), max(row["low"], row["high"])
+    if slug == "error-bar-chart":
+        for row in fresh:
+            row["low"], row["effect"], row["high"] = sorted((row["low"], row["effect"], row["high"]))
     return fresh
+
+
+def drill_path(rows: Rows, node_id: str | None) -> list[str]:
+    """The names from the root of a hierarchy down to one node: the breadcrumb of a drill-down.
+
+    Args:
+        rows: The hierarchy, one row per node with ``id``, ``parent`` and ``name``.
+        node_id: The node drawn as root; ``None`` (or an unknown id) for the data root.
+
+    Returns:
+        The names, the data root first.
+    """
+    by_id = {row["id"]: row for row in rows}
+    names: list[str] = []
+    row = by_id.get(node_id) if node_id is not None else None
+    while row is not None:
+        names.append(row["name"])
+        row = by_id.get(row["parent"]) if row["parent"] is not None else None
+    if not names:
+        names = [next(row["name"] for row in rows if row["parent"] is None)]
+    return names[::-1]
