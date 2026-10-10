@@ -10,9 +10,30 @@ def _props(component: rx.Component) -> dict[str, str]:
     return dict(prop.split(":", 1) for prop in rendered["props"])
 
 
-def test_catalog_has_33_charts() -> None:
-    assert len(sp.CHARTS) == 33
-    assert len({info.slug for info in sp.CHARTS}) == 33
+#: Every chart @silverpoint/react 0.6.0 exports, as its README lists them ("The 60 charts").
+UPSTREAM_CHARTS_0_6 = {
+    "LineChart", "StepChart", "SparklineRows", "KpiCard", "BarChart", "StackedBarChart",
+    "ComposedChart", "WaterfallChart", "FunnelChart", "BulletChart", "PyramidChart",
+    "CandlestickChart", "AreaChart", "RangeBandChart", "StreamChart", "DonutChart", "RadarChart",
+    "PolarBarChart", "RadialArcGroup", "RadialRings", "GaugeArc", "MeterChart", "ScatterChart",
+    "BubbleChart", "HeatmapChart", "TreemapChart", "SankeyChart", "ActivityGrid", "CoxcombChart",
+    "WindRose", "VolvelleChart", "ChordRing", "OrbitChart",
+    # since 0.6.0: distributions, comparisons, ranks and uncertainty
+    "HistogramChart", "EcdfChart", "BoxPlotChart", "ViolinChart", "RidgelineChart", "BeeswarmChart",
+    "LollipopChart", "DumbbellChart", "SlopeChart", "BumpChart", "ErrorBarChart", "IntervalChart",
+    "DivergingBarChart", "ConnectedScatterChart",
+    # since 0.6.0: hierarchies, parts of a whole, many dimensions and polar charts
+    "WaffleChart", "MarimekkoChart", "SquarifiedTreemap", "SunburstChart", "TreeChart",
+    "ParallelCoordinatesChart", "PolarLineChart", "PolarScatterChart",
+    # since 0.6.0: fields and networks
+    "DensityBinChart", "ContourChart", "DelaunayChart", "VectorFieldChart", "NetworkChart",
+}  # fmt: skip
+
+
+def test_catalog_has_the_60_charts_of_silverpoint_0_6() -> None:
+    assert len(sp.CHARTS) == 60
+    assert len({info.slug for info in sp.CHARTS}) == 60
+    assert {info.chart for info in sp.CHARTS} == UPSTREAM_CHARTS_0_6
     assert sp.chart_by_slug("wind-rose").chart == "WindRose"
     assert sp.chart_by_name("OrbitChart").factory is sp.orbit_chart
 
@@ -84,9 +105,9 @@ def test_provider() -> None:
     assert _props(component)["locale"] == '"es-VE"'
 
 
-def test_version_pins_silverpoint_0_3() -> None:
-    assert sp.SILVERPOINT_VERSION == "0.3.0"
-    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.3.0"
+def test_version_pins_silverpoint_0_6() -> None:
+    assert sp.SILVERPOINT_VERSION == "0.6.0"
+    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.6.0"
 
 
 def test_cyanotype_ground() -> None:
@@ -139,6 +160,88 @@ def test_link_change_is_wired() -> None:
 
     assert "onLinkChange" in str(sp.dashboard(id="d", title="D", link="hour", on_link_change=L.linked).render())
     assert "onLinkChange" in str(sp.dashboard_link(link={"key": "hour"}, on_link_change=L.linked).render())
+
+
+# ── The second catalog (silverpoint 0.6) ─────────────────────────────────────────────────
+
+
+def test_new_families_group_the_0_6_charts() -> None:
+    assert sp.FAMILIES[-3:] == ("Distributions & comparisons", "Hierarchies & dimensions", "Fields & networks")
+    assert sp.chart_by_slug("violin-chart").family == "Distributions & comparisons"
+    assert sp.chart_by_slug("sunburst-chart").family == "Hierarchies & dimensions"
+    assert sp.chart_by_name("NetworkChart").factory is sp.network_chart
+    assert sp.chart_by_slug("squarified-treemap").factory is sp.squarified_treemap
+
+
+def test_0_6_charts_import_from_the_barrel() -> None:
+    imports = _silverpoint_imports(sp.dashboard(sp.violin_chart(), sp.network_chart(), id="d", title="D"))
+    assert imports["@silverpoint/react"] == ["NetworkChart", "ViolinChart"]
+
+
+def test_0_6_snake_case_maps_to_camel_case() -> None:
+    props = _props(sp.histogram_chart(value_key="minutes", bins=[0, 10, 20], cumulative=True, orientation="rows"))
+    assert props["valueKey"] == '"minutes"'
+    assert props["bins"] == "[0, 10, 20]"
+    assert props["cumulative"] == "true"
+    assert _props(sp.histogram_chart(bins=12))["bins"] == "12"
+    props = _props(sp.dumbbell_chart(start_key="y2024", end_key="y2025", names=["2024", "2025"], end_marker="arrow"))
+    assert props["startKey"] == '"y2024"'
+    assert props["endMarker"] == '"arrow"'
+    assert props["names"] == '["2024", "2025"]'
+    props = _props(sp.diverging_bar_chart(label_key="question", levels=["No", "Meh", "Yes"], neutral=1, percent=False))
+    assert props["levels"] == '["No", "Meh", "Yes"]'
+    assert props["neutral"] == "1"
+    props = _props(sp.parallel_coordinates_chart(dimensions=["mass", "price"], domains={"mass": [0, 20]}))
+    assert props["dimensions"] == '["mass", "price"]'
+    assert '["mass"] : [0, 20]' in props["domains"]
+    props = _props(sp.squarified_treemap(id_key="id", parent_key="parent", root_id="eu", depth=2))
+    assert props["parentKey"] == '"parent"'
+    assert props["rootId"] == '"eu"'
+    props = _props(sp.vector_field_chart(u_key="u", v_key="v", scale=0.5))
+    assert (props["uKey"], props["vKey"], props["scale"]) == ('"u"', '"v"', "0.5")
+    assert _props(sp.contour_chart(source="grid", levels=[0.2, 0.5], filled=False))["source"] == '"grid"'
+    assert _props(sp.density_bin_chart(bin_shape="rect", bin_size=10))["binShape"] == '"rect"'
+    assert _props(sp.interval_chart(lane_key="crew", axis="date"))["laneKey"] == '"crew"'
+    assert _props(sp.polar_line_chart(angle_key="month", period=12, start_angle=90))["startAngle"] == "90"
+    assert _props(sp.polar_scatter_chart(radius_key="distance"))["radiusKey"] == '"distance"'
+    assert _props(sp.bump_chart(series_key="team", order="ascending", series=4))["seriesKey"] == '"team"'
+    assert _props(sp.error_bar_chart(estimate_key="effect", reference=0))["estimateKey"] == '"effect"'
+    assert _props(sp.tree_chart(orientation="vertical"))["orientation"] == '"vertical"'
+    assert _props(sp.delaunay_chart(mesh="voronoi"))["mesh"] == '"voronoi"'
+    assert _props(sp.waffle_chart(cells=50, columns=5))["cells"] == "50"
+    assert _props(sp.marimekko_chart(column_key="region", segment_key="channel"))["segmentKey"] == '"channel"'
+    assert _props(sp.beeswarm_chart(radius=4))["radius"] == "4"
+    assert _props(sp.ridgeline_chart(group_key="service", overlap=0.3))["groupKey"] == '"service"'
+    assert _props(sp.box_plot_chart(whisker=2, outliers=False))["outliers"] == "false"
+    assert _props(sp.violin_chart(bandwidth=3, quartiles=False))["bandwidth"] == "3"
+    assert _props(sp.ecdf_chart(markers=[0.5, 0.9]))["markers"] == "[0.5, 0.9]"
+    assert _props(sp.lollipop_chart(sort="descending"))["sort"] == '"descending"'
+    assert _props(sp.slope_chart(label_key="clinic"))["labelKey"] == '"clinic"'
+    assert _props(sp.connected_scatter_chart(arrows=False))["arrows"] == "false"
+
+
+def test_network_nodes() -> None:
+    node = sp.network_node("a", label="Alpha", group="core", x=10, y=20)
+    assert node == {"id": "a", "label": "Alpha", "group": "core", "x": 10, "y": 20}
+    assert sp.network_node("b") == {"id": "b"}
+    props = _props(sp.network_chart(source_key="from", nodes=[node], iterations=120))
+    assert props["sourceKey"] == '"from"'
+    assert props["iterations"] == "120"
+    assert '["id"] : "a"' in props["nodes"]
+
+
+def test_root_change_is_wired_on_the_drillable_charts() -> None:
+    class D(rx.State):
+        root: str | None = None
+
+        @rx.event
+        def drill(self, node_id: str | None):
+            self.root = node_id
+
+    for factory in (sp.squarified_treemap, sp.sunburst_chart):
+        assert "onRootChange" in str(factory(root_id=D.root, on_root_change=D.drill).render())
+    assert "on_root_change" not in sp.TreeChart.get_props()
+    assert "on_root_change" in sp.SquarifiedTreemap.get_event_triggers()
 
 
 # ── UI components (silverpoint 0.3) ──────────────────────────────────────────────────────

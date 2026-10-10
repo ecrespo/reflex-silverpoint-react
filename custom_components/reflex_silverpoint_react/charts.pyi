@@ -4010,3 +4010,3573 @@ class OrbitChart(SilverpointChart):
             The component."""
 
 orbit_chart = OrbitChart.create
+
+class _HierarchyChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        id_key: Var[str] | str | None = None,
+        parent_key: Var[str] | str | None = None,
+        label_key: Var[str] | str | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> _HierarchyChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            id_key: Key of each row in `data` to read.
+            parent_key: The parent's id; `null` for the root.
+            label_key: Key of each row in `data` to read.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+class _DrillableChart(_HierarchyChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        id_key: Var[str] | str | None = None,
+        parent_key: Var[str] | str | None = None,
+        label_key: Var[str] | str | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_root_change: EventType[Any] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> _DrillableChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            id_key: Key of each row in `data` to read.
+            parent_key: The parent's id; `null` for the root.
+            label_key: Key of each row in `data` to read.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            on_root_change: A node was activated: the id to draw as root, ``None`` for the data root. The chart keeps no root of its own: store the id in state and pass it back as ``root_id``.
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+class HistogramChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        value_key: Var[str] | str | None = None,
+        bins: Var[int | list[float | int]] | int | list[float | int] | None = None,
+        cumulative: Var[bool] | bool | None = None,
+        orientation: Literal["columns", "rows"] | Var[Literal["columns", "rows"]] | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> HistogramChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            value_key: Key of each row in `data` to read.
+            bins: A number asks for that many equal-width bins over the niced extent; an array gives the thresholds, increasing. Freedman–Diaconis by default, Sturges when the IQR is 0.
+            cumulative: Turns the counts into a running total.
+            orientation: no description
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+histogram_chart = HistogramChart.create
+
+class EcdfChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        value_key: Var[str] | str | None = None,
+        group_key: Var[str] | str | None = None,
+        markers: Var[list[float | int]] | list[float | int] | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> EcdfChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            value_key: Key of each row in `data` to read.
+            group_key: Two groups at most are drawn.
+            markers: Quantiles, in 0-1, drawn as rules.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+ecdf_chart = EcdfChart.create
+
+class BoxPlotChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        value_key: Var[str] | str | None = None,
+        group_key: Var[str] | str | None = None,
+        whisker: Var[float | int] | float | None = None,
+        outliers: Var[bool] | bool | None = None,
+        orientation: Literal["columns", "rows"] | Var[Literal["columns", "rows"]] | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> BoxPlotChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            value_key: Key of each row in `data` to read.
+            group_key: Key of each row in `data` to read.
+            whisker: Whisker reach as a multiple of the IQR; 1.5 by default.
+            outliers: Draws the observations past the whiskers; `true` by default.
+            orientation: no description
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+box_plot_chart = BoxPlotChart.create
+
+class ViolinChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        value_key: Var[str] | str | None = None,
+        group_key: Var[str] | str | None = None,
+        bandwidth: Var[float | int] | float | None = None,
+        quartiles: Var[bool] | bool | None = None,
+        orientation: Literal["columns", "rows"] | Var[Literal["columns", "rows"]] | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> ViolinChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            value_key: Key of each row in `data` to read.
+            group_key: Key of each row in `data` to read.
+            bandwidth: Kernel bandwidth in data units, shared by every group; Silverman's rule by default.
+            quartiles: Marks the quartiles inside each violin; `true` by default.
+            orientation: no description
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+violin_chart = ViolinChart.create
+
+class RidgelineChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        value_key: Var[str] | str | None = None,
+        group_key: Var[str] | str | None = None,
+        bandwidth: Var[float | int] | float | None = None,
+        overlap: Var[float | int] | float | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> RidgelineChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            value_key: Key of each row in `data` to read.
+            group_key: The group of an observation; one ridge per group.
+            bandwidth: Kernel bandwidth in data units, shared by every group; Silverman's rule by default.
+            overlap: How far a ridge reaches into the one behind it, 0-1; 0.5 by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+ridgeline_chart = RidgelineChart.create
+
+class BeeswarmChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        value_key: Var[str] | str | None = None,
+        group_key: Var[str] | str | None = None,
+        label_key: Var[str] | str | None = None,
+        radius: Var[float | int] | float | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> BeeswarmChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            value_key: Key of each row in `data` to read.
+            group_key: Key of each row in `data` to read.
+            label_key: Names the point in the readout and the table.
+            radius: Point radius in px; 3 by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+beeswarm_chart = BeeswarmChart.create
+
+class LollipopChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        x_key: Var[str] | str | None = None,
+        value_key: Var[str] | str | None = None,
+        orientation: Literal["columns", "rows"] | Var[Literal["columns", "rows"]] | None = None,
+        sort: Literal["ascending", "descending", "none"]
+        | Var[Literal["ascending", "descending", "none"]]
+        | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> LollipopChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            x_key: Key of each row in `data` to read.
+            value_key: Key of each row in `data` to read.
+            orientation: no description
+            sort: Order of the categories; `none` keeps the data order.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+lollipop_chart = LollipopChart.create
+
+class DumbbellChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        label_key: Var[str] | str | None = None,
+        start_key: Var[str] | str | None = None,
+        end_key: Var[str] | str | None = None,
+        names: Var[list[str]] | list[str] | None = None,
+        end_marker: Literal["arrow", "dot"] | Var[Literal["arrow", "dot"]] | None = None,
+        orientation: Literal["columns", "rows"] | Var[Literal["columns", "rows"]] | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> DumbbellChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            label_key: Key of each row in `data` to read.
+            start_key: Key of each row in `data` to read.
+            end_key: Key of each row in `data` to read.
+            names: Titles of the two values; `['start', 'end']` by default.
+            end_marker: `arrow` encodes the direction from the first value to the second.
+            orientation: `rows` by default: long category names read across.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+dumbbell_chart = DumbbellChart.create
+
+class SlopeChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        label_key: Var[str] | str | None = None,
+        start_key: Var[str] | str | None = None,
+        end_key: Var[str] | str | None = None,
+        names: Var[list[str]] | list[str] | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> SlopeChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            label_key: Key of each row in `data` to read.
+            start_key: Key of each row in `data` to read.
+            end_key: Key of each row in `data` to read.
+            names: Titles of the two periods; `['start', 'end']` by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+slope_chart = SlopeChart.create
+
+class BumpChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        x_key: Var[str] | str | None = None,
+        series_key: Var[str] | str | None = None,
+        value_key: Var[str] | str | None = None,
+        order: Literal["ascending", "descending"] | Var[Literal["ascending", "descending"]] | None = None,
+        series: Var[int] | int | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> BumpChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            x_key: Key of each row in `data` to read.
+            series_key: Key of each row in `data` to read.
+            value_key: Key of each row in `data` to read.
+            order: `descending` gives rank 1 to the highest value (the default).
+            series: Series drawn, the best-ranked first; all by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+bump_chart = BumpChart.create
+
+class ErrorBarChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        label_key: Var[str] | str | None = None,
+        estimate_key: Var[str] | str | None = None,
+        low_key: Var[str] | str | None = None,
+        high_key: Var[str] | str | None = None,
+        reference: Var[float | int] | float | None = None,
+        orientation: Literal["columns", "rows"] | Var[Literal["columns", "rows"]] | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> ErrorBarChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            label_key: Key of each row in `data` to read.
+            estimate_key: Key of each row in `data` to read.
+            low_key: Key of each row in `data` to read.
+            high_key: Key of each row in `data` to read.
+            reference: A reference value drawn as a dotted rule.
+            orientation: `rows` by default, as a forest plot reads.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+error_bar_chart = ErrorBarChart.create
+
+class IntervalChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        lane_key: Var[str] | str | None = None,
+        start_key: Var[str] | str | None = None,
+        end_key: Var[str] | str | None = None,
+        label_key: Var[str] | str | None = None,
+        axis: Literal["date", "number"] | Var[Literal["date", "number"]] | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> IntervalChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            lane_key: Key of each row in `data` to read.
+            start_key: Key of each row in `data` to read.
+            end_key: Key of each row in `data` to read.
+            label_key: Key of each row in `data` to read.
+            axis: `date` reads ISO `YYYY-MM-DD` days in UTC; `number` by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+interval_chart = IntervalChart.create
+
+class DivergingBarChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        label_key: Var[str] | str | None = None,
+        levels: Var[list[str]] | list[str] | None = None,
+        neutral: Var[int | None] | int | None = None,
+        percent: Var[bool] | bool | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> DivergingBarChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            label_key: Key of each row in `data` to read.
+            levels: The level columns, most negative first.
+            neutral: Index of the neutral level, split across the centre; `null` for none. The middle one by default.
+            percent: Normalises each row to 100 %; `true` by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+diverging_bar_chart = DivergingBarChart.create
+
+class ConnectedScatterChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        x_key: Var[str] | str | None = None,
+        y_key: Var[str] | str | None = None,
+        label_key: Var[str] | str | None = None,
+        arrows: Var[bool] | bool | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> ConnectedScatterChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            x_key: Key of each row in `data` to read.
+            y_key: Key of each row in `data` to read.
+            label_key: Key of each row in `data` to read.
+            arrows: Draws direction marks along the path; `true` by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+connected_scatter_chart = ConnectedScatterChart.create
+
+class WaffleChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        name_key: Var[str] | str | None = None,
+        value_key: Var[str] | str | None = None,
+        cells: Var[int] | int | None = None,
+        columns: Var[int] | int | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> WaffleChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            name_key: Key of each row in `data` to read.
+            value_key: Key of each row in `data` to read.
+            cells: Cells in the grid; 100 by default.
+            columns: Cells per row; 10 by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+waffle_chart = WaffleChart.create
+
+class MarimekkoChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        column_key: Var[str] | str | None = None,
+        segment_key: Var[str] | str | None = None,
+        value_key: Var[str] | str | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> MarimekkoChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            column_key: Key of each row in `data` to read.
+            segment_key: Key of each row in `data` to read.
+            value_key: Key of each row in `data` to read.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+marimekko_chart = MarimekkoChart.create
+
+class SquarifiedTreemap(_DrillableChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        value_key: Var[str] | str | None = None,
+        depth: Var[int] | int | None = None,
+        root_id: Var[str | None] | str | None = None,
+        id_key: Var[str] | str | None = None,
+        parent_key: Var[str] | str | None = None,
+        label_key: Var[str] | str | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_root_change: EventType[Any] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> SquarifiedTreemap:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            value_key: Read on leaves; an internal node is the sum of its children.
+            depth: Levels drawn below the root; all by default.
+            root_id: The node drawn as root, controlled; the data root by default.
+            id_key: Key of each row in `data` to read.
+            parent_key: The parent's id; `null` for the root.
+            label_key: Key of each row in `data` to read.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            on_root_change: A node was activated: the id to draw as root, ``None`` for the data root. The chart keeps no root of its own: store the id in state and pass it back as ``root_id``.
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+squarified_treemap = SquarifiedTreemap.create
+
+class SunburstChart(_DrillableChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        value_key: Var[str] | str | None = None,
+        depth: Var[int] | int | None = None,
+        root_id: Var[str | None] | str | None = None,
+        id_key: Var[str] | str | None = None,
+        parent_key: Var[str] | str | None = None,
+        label_key: Var[str] | str | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_root_change: EventType[Any] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> SunburstChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            value_key: Read on leaves; an internal node is the sum of its children.
+            depth: Rings drawn below the root; all by default.
+            root_id: The node drawn as root, controlled; the data root by default.
+            id_key: Key of each row in `data` to read.
+            parent_key: The parent's id; `null` for the root.
+            label_key: Key of each row in `data` to read.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            on_root_change: A node was activated: the id to draw as root, ``None`` for the data root. The chart keeps no root of its own: store the id in state and pass it back as ``root_id``.
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+sunburst_chart = SunburstChart.create
+
+class TreeChart(_HierarchyChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        value_key: Var[str] | str | None = None,
+        orientation: Literal["horizontal", "vertical"] | Var[Literal["horizontal", "vertical"]] | None = None,
+        id_key: Var[str] | str | None = None,
+        parent_key: Var[str] | str | None = None,
+        label_key: Var[str] | str | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> TreeChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            value_key: Key of each row in `data` to read.
+            orientation: no description
+            id_key: Key of each row in `data` to read.
+            parent_key: The parent's id; `null` for the root.
+            label_key: Key of each row in `data` to read.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+tree_chart = TreeChart.create
+
+class ParallelCoordinatesChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        label_key: Var[str] | str | None = None,
+        dimensions: Var[list[str]] | list[str] | None = None,
+        domains: Var[dict[str, list[float | int]]] | dict[str, list[float | int]] | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> ParallelCoordinatesChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            label_key: Key of each row in `data` to read.
+            dimensions: The dimension columns, in axis order.
+            domains: Axis domains by dimension; derived from the data when omitted.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+parallel_coordinates_chart = ParallelCoordinatesChart.create
+
+class PolarLineChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        angle_key: Var[str] | str | None = None,
+        value_key: Var[str] | str | None = None,
+        period: Var[float | int] | float | None = None,
+        start_angle: Var[float | int] | float | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> PolarLineChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            angle_key: In the units of `period`.
+            value_key: The radius, `≥ 0`.
+            period: One turn, in the units of the angle; when set, the line closes.
+            start_angle: Where the angle 0 sits, in degrees clockwise from 12 o'clock; 0 by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+polar_line_chart = PolarLineChart.create
+
+class PolarScatterChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        angle_key: Var[str] | str | None = None,
+        radius_key: Var[str] | str | None = None,
+        size_key: Var[str] | str | None = None,
+        period: Var[float | int] | float | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> PolarScatterChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            angle_key: In the units of `period`.
+            radius_key: The radius, `≥ 0`.
+            size_key: Key of each row in `data` to read.
+            period: One turn, in the units of the angle; 360 by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+polar_scatter_chart = PolarScatterChart.create
+
+class DensityBinChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        x_key: Var[str] | str | None = None,
+        y_key: Var[str] | str | None = None,
+        bin_shape: Literal["hexagon", "rect"] | Var[Literal["hexagon", "rect"]] | None = None,
+        bin_size: Var[float | int] | float | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> DensityBinChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            x_key: Key of each row in `data` to read.
+            y_key: Key of each row in `data` to read.
+            bin_shape: no description
+            bin_size: Bin size in px; 14 by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+density_bin_chart = DensityBinChart.create
+
+class ContourChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        source: Literal["grid", "points"] | Var[Literal["grid", "points"]] | None = None,
+        x_key: Var[str] | str | None = None,
+        y_key: Var[str] | str | None = None,
+        value_key: Var[str] | str | None = None,
+        levels: Var[int | list[float | int]] | int | list[float | int] | None = None,
+        filled: Var[bool] | bool | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> ContourChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            source: `points` estimates a density from a point cloud; `grid` reads a regular grid of values.
+            x_key: Key of each row in `data` to read.
+            y_key: Key of each row in `data` to read.
+            value_key: The grid value (`source: 'grid'`).
+            levels: A count of levels, or the thresholds, increasing: in the grid's values, or as shares of the density's peak.
+            filled: Fills the bands between levels; `true` by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+contour_chart = ContourChart.create
+
+class DelaunayChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        x_key: Var[str] | str | None = None,
+        y_key: Var[str] | str | None = None,
+        label_key: Var[str] | str | None = None,
+        mesh: Literal["delaunay", "voronoi"] | Var[Literal["delaunay", "voronoi"]] | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> DelaunayChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            x_key: Key of each row in `data` to read.
+            y_key: Key of each row in `data` to read.
+            label_key: Key of each row in `data` to read.
+            mesh: no description
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+delaunay_chart = DelaunayChart.create
+
+class VectorFieldChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        x_key: Var[str] | str | None = None,
+        y_key: Var[str] | str | None = None,
+        u_key: Var[str] | str | None = None,
+        v_key: Var[str] | str | None = None,
+        scale: Var[float | int] | float | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> VectorFieldChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            x_key: Key of each row in `data` to read.
+            y_key: Key of each row in `data` to read.
+            u_key: Key of each row in `data` to read.
+            v_key: Key of each row in `data` to read.
+            scale: Arrow length per unit of magnitude; fitted to the grid by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+vector_field_chart = VectorFieldChart.create
+
+class NetworkChart(SilverpointChart):
+    @classmethod
+    def create(
+        cls,
+        *children,
+        source_key: Var[str] | str | None = None,
+        target_key: Var[str] | str | None = None,
+        value_key: Var[str] | str | None = None,
+        nodes: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        iterations: Var[int] | int | None = None,
+        data: Var[list[dict[str, Any]]] | list[dict[str, Any]] | None = None,
+        ground: Literal["cyanotype", "silverpoint"]
+        | Var[Literal["cyanotype", "silverpoint"] | dict[str, Any] | str]
+        | dict[str, Any]
+        | str
+        | None = None,
+        substrate: Literal["blue", "cream", "green", "ochre", "prussian"]
+        | Var[Literal["blue", "cream", "green", "ochre", "prussian"]]
+        | None = None,
+        mode: Literal["ink", "precision"] | Var[Literal["ink", "precision"]] | None = None,
+        seed: Var[int | str] | int | str | None = None,
+        height: Var[float | int] | float | None = None,
+        width: Var[float | int] | float | None = None,
+        chrome: Literal["bare", "card"] | Var[Literal["bare", "card"]] | None = None,
+        hatch_fill: Literal["per-shape", "tile"] | Var[Literal["per-shape", "tile"]] | None = None,
+        title: Var[str] | str | None = None,
+        badge: Var[str] | str | None = None,
+        value: Var[float | int | str] | float | str | None = None,
+        unit: Var[str] | str | None = None,
+        footer_left: Var[str] | str | None = None,
+        footer_right: Var[str] | str | None = None,
+        label: Var[str] | str | None = None,
+        description: Var[str] | str | None = None,
+        data_table: Literal["hidden", "none", "visible"] | Var[Literal["hidden", "none", "visible"]] | None = None,
+        locale: Var[str] | str | None = None,
+        number_format: Var[dict[str, Any]] | dict[str, Any] | None = None,
+        tooltip: Any | Var[Any] | None = None,
+        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
+        key: Any | None = None,
+        id: Any | None = None,
+        ref: Var | None = None,
+        class_name: Any | None = None,
+        custom_attrs: dict[str, Any | Var] | None = None,
+        on_active_change: EventType[Any] | None = None,
+        on_blur: EventType[()] | None = None,
+        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
+        on_focus: EventType[()] | None = None,
+        on_mount: EventType[()] | None = None,
+        on_mouse_down: EventType[()] | None = None,
+        on_mouse_enter: EventType[()] | None = None,
+        on_mouse_leave: EventType[()] | None = None,
+        on_mouse_move: EventType[()] | None = None,
+        on_mouse_out: EventType[()] | None = None,
+        on_mouse_over: EventType[()] | None = None,
+        on_mouse_up: EventType[()] | None = None,
+        on_scroll: EventType[()] | None = None,
+        on_scroll_end: EventType[()] | None = None,
+        on_select: EventType[Any] | None = None,
+        on_unmount: EventType[()] | None = None,
+        **props,
+    ) -> NetworkChart:
+        """Create the component.
+
+        Args:
+            *children: The children of the component.
+            source_key: Key of each row in `data` to read.
+            target_key: Key of each row in `data` to read.
+            value_key: 1 by default.
+            nodes: The nodes, as data; the distinct ends of the links by default.
+            iterations: Layout iterations; 300 by default.
+            data: no description
+            ground: no description
+            substrate: no description
+            mode: no description
+            seed: no description
+            height: no description
+            width: no description
+            chrome: no description
+            hatch_fill: no description
+            title: no description
+            badge: no description
+            value: no description
+            unit: no description
+            footer_left: no description
+            footer_right: no description
+            label: no description
+            description: no description
+            data_table: no description
+            locale: no description
+            number_format: no description
+            tooltip: no description
+            style: The style of the component.
+            key: A unique key for the component.
+            id: The id for the component.
+            ref: The Var to pass as the ref to the component.
+            class_name: The class name for the component.
+            custom_attrs: Attributes passed directly to the component.
+            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
+            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
+            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
+            on_context_menu: Fired when the user right-clicks on an element.
+            on_double_click: Fired when the user double-clicks on an element.
+            on_mouse_down: Fired when the user presses a mouse button on an element.
+            on_mouse_enter: Fired when the mouse pointer enters the element.
+            on_mouse_leave: Fired when the mouse pointer leaves the element.
+            on_mouse_move: Fired when the mouse pointer moves over the element.
+            on_mouse_out: Fired when the mouse pointer moves out of the element.
+            on_mouse_over: Fired when the mouse pointer moves onto the element.
+            on_mouse_up: Fired when the user releases a mouse button on an element.
+            on_scroll: Fired when the user scrolls the element.
+            on_scroll_end: Fired when scrolling ends on the element.
+            on_mount: Fired when the component is mounted to the page.
+            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
+            on_active_change: no description
+            on_select: no description
+            **props: The props of the component.
+
+        Returns:
+            The component."""
+
+network_chart = NetworkChart.create
+
+def network_node(
+    node_id: str, *, label: str | None = None, group: str | None = None, x: float | None = None, y: float | None = None
+) -> dict[str, Any]: ...

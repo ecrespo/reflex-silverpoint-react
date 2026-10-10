@@ -3,8 +3,13 @@
 Values are the ones in ``packages/core/src/charts/*/demo.ts`` of the silverpoint repository.
 ``WIND_ROSE`` is the real record silverpoint ships: 742 hourly METAR reports of wind at
 Des Moines International Airport, March 2024 (Iowa Environmental Mesonet).
+
+The datasets of the second catalog (silverpoint 0.6) are larger, so they live in
+``datasets_0_6.json``, copied from ``@silverpoint/core@0.6.0``. Several charts share one, as upstream.
 """
 
+import json
+from pathlib import Path
 from typing import Any
 
 Rows = list[dict[str, Any]]
@@ -1043,6 +1048,28 @@ ORBIT_CHART: Rows = [
     },
 ]
 
+# ── The second catalog (silverpoint 0.6) ─────────────────────────────────────────────────
+
+_SECOND_CATALOG: dict[str, Rows] = json.loads((Path(__file__).parent / "datasets_0_6.json").read_text())
+
+#: Reading times and devices: the histogram, the ECDF and the beeswarm.
+OBSERVATIONS: Rows = _SECOND_CATALOG["observations"]
+#: Response times per service: the box plot, the violin and the ridgeline.
+LATENCIES: Rows = _SECOND_CATALOG["latencies"]
+#: Two years per clinic: the dumbbell and the slope chart.
+CLINICS: Rows = _SECOND_CATALOG["clinics"]
+#: A city budget as a hierarchy (``id``, ``parent``): the squarified treemap, the sunburst and the tree.
+BUDGET: Rows = _SECOND_CATALOG["budget"]
+#: An x-y point cloud: the density bins and the contours.
+POINT_CLOUD: Rows = _SECOND_CATALOG["point_cloud"]
+#: The nodes of the network, with their groups.
+NETWORK_NODES: Rows = _SECOND_CATALOG["network_nodes"]
+
+#: The Likert levels of the diverging bar chart, most negative first.
+LIKERT_LEVELS = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]
+#: The dimensions of the parallel coordinates, in axis order.
+BIKE_DIMENSIONS = ["mass", "gears", "price", "range", "rating"]
+
 #: Every dataset (the activity grid excepted: it is generated), by chart slug.
 # One day of a service, every two hours. Every row has an ``hour``: the field the dashboards link on.
 OPS_HOURLY: Rows = [
@@ -1091,6 +1118,33 @@ DATASETS: dict[str, Rows] = {
     "wind-rose": WIND_ROSE,
     "volvelle-chart": VOLVELLE_CHART,
     "orbit-chart": ORBIT_CHART,
+    "histogram-chart": OBSERVATIONS,
+    "ecdf-chart": OBSERVATIONS,
+    "box-plot-chart": LATENCIES,
+    "violin-chart": LATENCIES,
+    "ridgeline-chart": LATENCIES,
+    "beeswarm-chart": OBSERVATIONS,
+    "lollipop-chart": _SECOND_CATALOG["lollipop"],
+    "dumbbell-chart": CLINICS,
+    "slope-chart": CLINICS,
+    "bump-chart": _SECOND_CATALOG["bump"],
+    "error-bar-chart": _SECOND_CATALOG["error_bar"],
+    "interval-chart": _SECOND_CATALOG["interval"],
+    "diverging-bar-chart": _SECOND_CATALOG["likert"],
+    "connected-scatter-chart": _SECOND_CATALOG["connected_scatter"],
+    "waffle-chart": _SECOND_CATALOG["waffle"],
+    "marimekko-chart": _SECOND_CATALOG["marimekko"],
+    "squarified-treemap": BUDGET,
+    "sunburst-chart": BUDGET,
+    "tree-chart": BUDGET,
+    "parallel-coordinates-chart": _SECOND_CATALOG["bikes"],
+    "polar-line-chart": _SECOND_CATALOG["polar_line"],
+    "polar-scatter-chart": _SECOND_CATALOG["polar_scatter"],
+    "density-bin-chart": POINT_CLOUD,
+    "contour-chart": POINT_CLOUD,
+    "delaunay-chart": _SECOND_CATALOG["delaunay"],
+    "vector-field-chart": _SECOND_CATALOG["vector_field"],
+    "network-chart": _SECOND_CATALOG["network_links"],
 }
 
 #: The field names each dataset uses, as the chart props that name them.
@@ -1101,4 +1155,31 @@ KEY_PROPS: dict[str, dict[str, Any]] = {
     "stacked-bar-chart": {"x_key": "x", "keys": ["free", "pro", "team"], "names": ["Free", "Pro", "Team"]},
     "stream-chart": {"x_key": "x", "keys": ["organic", "paid"]},
     "kpi-card": {"metric": "orders per day", "delta": 8.2},
+    "histogram-chart": {"value_key": "minutes"},
+    "ecdf-chart": {"value_key": "minutes", "group_key": "device"},
+    "box-plot-chart": {"value_key": "ms", "group_key": "service"},
+    "violin-chart": {"value_key": "ms", "group_key": "service"},
+    "ridgeline-chart": {"value_key": "ms", "group_key": "service"},
+    "beeswarm-chart": {"value_key": "minutes", "label_key": "reader"},
+    "lollipop-chart": {"x_key": "branch", "value_key": "loans"},
+    "dumbbell-chart": {"label_key": "clinic", "start_key": "y2024", "end_key": "y2025", "names": ["2024", "2025"]},
+    "slope-chart": {"label_key": "clinic", "start_key": "y2024", "end_key": "y2025", "names": ["2024", "2025"]},
+    "bump-chart": {"x_key": "season", "series_key": "team", "value_key": "points"},
+    "error-bar-chart": {"label_key": "arm", "estimate_key": "effect", "low_key": "low", "high_key": "high"},
+    "interval-chart": {"lane_key": "crew", "start_key": "from", "end_key": "to", "label_key": "task", "axis": "date"},
+    "diverging-bar-chart": {"label_key": "question", "levels": LIKERT_LEVELS},
+    "connected-scatter-chart": {"x_key": "fare", "y_key": "riders", "label_key": "year"},
+    "waffle-chart": {"name_key": "use", "value_key": "kwh"},
+    "marimekko-chart": {"column_key": "region", "segment_key": "channel", "value_key": "sales"},
+    "squarified-treemap": {"id_key": "id", "parent_key": "parent", "label_key": "name", "value_key": "amount"},
+    "sunburst-chart": {"id_key": "id", "parent_key": "parent", "label_key": "name", "value_key": "amount"},
+    "tree-chart": {"id_key": "id", "parent_key": "parent", "label_key": "name", "value_key": "amount"},
+    "parallel-coordinates-chart": {"label_key": "model", "dimensions": BIKE_DIMENSIONS},
+    "polar-line-chart": {"angle_key": "month", "value_key": "rain", "period": 12},
+    "polar-scatter-chart": {"angle_key": "bearing", "radius_key": "distance"},
+    "density-bin-chart": {"x_key": "x", "y_key": "y"},
+    "contour-chart": {"x_key": "x", "y_key": "y"},
+    "delaunay-chart": {"x_key": "x", "y_key": "y", "label_key": "label"},
+    "vector-field-chart": {"x_key": "x", "y_key": "y", "u_key": "u", "v_key": "v"},
+    "network-chart": {"source_key": "source", "target_key": "target", "value_key": "weight", "nodes": NETWORK_NODES},
 }

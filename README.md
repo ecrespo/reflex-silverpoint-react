@@ -7,11 +7,25 @@ prepared ground, tone built from hatching, and white heightening on the live val
 The hand-drawn irregularity lives only in the ornament. The data geometry is exact, and every chart
 has a `precision` mode that turns the inking off.
 
-It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) 0.3.0 and exposes
-**all 33 charts**, the **`Dashboard`** (a laid-out, linkable grid of charts), the **17 UI
+It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) 0.6.0 and exposes
+**all 60 charts**, the **`Dashboard`** (a laid-out, linkable grid of charts), the **17 UI
 components** (buttons, inputs, tabs, cards, alerts…), the `SilverpointProvider`, both grounds
 (`silverpoint` and `cyanotype`), the interaction events, custom readouts and the imperative handle
 (SVG export and geometry) as Python.
+
+### New in 0.6
+
+- **27 new charts**, the second catalog of silverpoint 0.6:
+  - distributions & comparisons: `histogram_chart`, `ecdf_chart`, `box_plot_chart`, `violin_chart`,
+    `ridgeline_chart`, `beeswarm_chart`, `lollipop_chart`, `dumbbell_chart`, `slope_chart`,
+    `bump_chart`, `error_bar_chart`, `interval_chart`, `diverging_bar_chart`, `connected_scatter_chart`;
+  - hierarchies & dimensions: `waffle_chart`, `marimekko_chart`, `squarified_treemap`,
+    `sunburst_chart`, `tree_chart`, `parallel_coordinates_chart`, `polar_line_chart`,
+    `polar_scatter_chart`;
+  - fields & networks: `density_bin_chart`, `contour_chart`, `delaunay_chart`, `vector_field_chart`,
+    `network_chart` (with the `network_node` helper).
+- **Drill-down** on `squarified_treemap` and `sunburst_chart`: `root_id` plus the `on_root_change`
+  event. See [Drill-down](#drill-down).
 
 ### New in 0.3
 
@@ -83,7 +97,7 @@ Props are the React props in `snake_case`: `xKey` → `x_key`, `hatchFill` → `
 `footerRight` → `footer_right`, `centerLabel` → `center_label`, and so on. `data` and every prop can
 be a Reflex state var.
 
-## The 33 charts
+## The 60 charts
 
 | Family | Charts |
 |---|---|
@@ -93,10 +107,59 @@ be a Reflex state var.
 | Points & grids | `scatter_chart`, `bubble_chart`, `heatmap_chart`, `treemap_chart`, `activity_grid` |
 | Flows | `sankey_chart`, `chord_ring` |
 | Radial | `donut_chart`, `radar_chart`, `polar_bar_chart`, `radial_arc_group`, `radial_rings`, `gauge_arc`, `meter_chart`, `coxcomb_chart`, `wind_rose`, `volvelle_chart`, `orbit_chart` |
+| Distributions & comparisons (0.6) | `histogram_chart`, `ecdf_chart`, `box_plot_chart`, `violin_chart`, `ridgeline_chart`, `beeswarm_chart`, `lollipop_chart`, `dumbbell_chart`, `slope_chart`, `bump_chart`, `error_bar_chart`, `interval_chart`, `diverging_bar_chart`, `connected_scatter_chart` |
+| Hierarchies & dimensions (0.6) | `waffle_chart`, `marimekko_chart`, `squarified_treemap`, `sunburst_chart`, `tree_chart`, `parallel_coordinates_chart`, `polar_line_chart`, `polar_scatter_chart` |
+| Fields & networks (0.6) | `density_bin_chart`, `contour_chart`, `delaunay_chart`, `vector_field_chart`, `network_chart` |
 
 Every factory has a class of the same name in `PascalCase` (`LineChart`, `WindRose`…).
 `reflex_silverpoint_react.CHARTS` is the whole catalog with each chart's family and the reference of
 its own props (`COMMON_PROPS` holds the shared ones), handy for galleries and documentation.
+
+With your own `data`, `ridgeline_chart` needs `group_key`, `diverging_bar_chart` needs `levels` (the
+level columns, most negative first) and `parallel_coordinates_chart` needs `dimensions` (the columns,
+in axis order). The demo datasets ignore them.
+
+`network_chart` lays its nodes out by force, the same on the server and in every browser for a given
+`seed`. Pass `nodes` to name and group them, built with `network_node`. A node with an `x` and a `y`
+is drawn there, and when every node has both no layout runs:
+
+```python
+from reflex_silverpoint_react import network_chart, network_node
+
+network_chart(
+    data=State.links,  # [{"source": "a", "target": "b", "weight": 3}, ...]
+    source_key="source",
+    target_key="target",
+    value_key="weight",
+    nodes=[network_node("a", label="Archive", group="storage"), network_node("b", label="Billing")],
+)
+```
+
+### Drill-down
+
+`squarified_treemap` and `sunburst_chart` drill down under your control. The chart keeps no root of
+its own: a click, Enter or Space on a node sends its id to `on_root_change` (the parent's id from the
+centre or the frame, `None` at the top), and you pass it back as `root_id`:
+
+```python
+class Budget(rx.State):
+    root: str | None = None
+
+    @rx.event
+    def drill(self, node_id: str | None):
+        self.root = node_id
+
+
+squarified_treemap(
+    data=rows,  # one row per node: {"id": ..., "parent": ... or None, "name": ..., "amount": ...}
+    id_key="id",
+    parent_key="parent",
+    label_key="name",
+    value_key="amount",
+    root_id=Budget.root,
+    on_root_change=Budget.drill,
+)
+```
 
 ## Props every chart shares
 
@@ -327,10 +390,10 @@ cd silverpoint_react_demo
 uv run reflex run
 ```
 
-Pages: **Start** (quickstart, provider, ink vs precision), **Gallery** (the 33 charts, ground
+Pages: **Start** (quickstart, provider, ink vs precision), **Gallery** (the 60 charts, ground
 controls, demo datasets vs data from Python state with a re-roll), **Playground** (one chart, every
 rendering choice and the Python that reproduces it), **Interaction** (events, custom readout, a
-volvelle that turns on click, live KPI/gauge/meter, SVG and geometry export), **Dashboard** (a
+volvelle that turns on click, a treemap and a sunburst that drill down together, live KPI/gauge/meter, SVG and geometry export), **Dashboard** (a
 linked operations dashboard fed from Python state with ground, substrate, mode and column controls, a
 KPI strip, and `dashboard_link` on its own), **UI components** (`/ui`: the components controlled from
 Python state with a native form submit, and the three reference panels of the upstream example apps
