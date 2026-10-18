@@ -1,2 +1,2 @@
-reflex==0.9.12
-reflex-silverpoint-react
+reflex==0.10.0
+reflex-silverpoint-react[timeline]

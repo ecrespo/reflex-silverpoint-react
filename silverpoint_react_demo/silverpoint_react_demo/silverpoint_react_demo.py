@@ -9,6 +9,9 @@ Pages:
     /chart/<slug>   One page per chart, with the reference of its props.
     /ui             The UI components of silverpoint 0.3: wired to Python, and the reference panels.
     /ui/<slug>      One page per UI component, every declared state and its props.
+    /components     Reflex-composed components: table, pagination, overlays, toasts… (0.7).
+    /palettes       Colour for every chart and component: presets and a palette builder (0.7).
+    /timeline       Knight Lab TimelineJS drawn in silverpoint (0.7).
 """
 
 from typing import Any
@@ -18,6 +21,7 @@ from reflex_silverpoint_react import (
     CHARTS,
     COMMON_PROPS,
     FAMILIES,
+    PALETTES,
     UI_COMPONENTS,
     ChartInfo,
     PropDoc,
@@ -41,6 +45,7 @@ from reflex_silverpoint_react import (
     radar_chart,
     range_band_chart,
     sankey_chart,
+    silverpoint_palette,
     silverpoint_provider,
     sp_alert,
     sp_button,
@@ -65,6 +70,7 @@ from .datasets import (
     OPS_HOURLY,
     VOLVELLE_CHART,
 )
+from .extra_pages import components_page, palettes_page, timeline_page
 from .layout import button, card, code, page, select
 from .state import SIZES, DashboardState, DemoState, InteractionState, PlaygroundState
 from .ui_pages import ui_component_page, ui_page
@@ -73,6 +79,7 @@ GROUNDS = ["silverpoint", "cyanotype"]
 SUBSTRATES = ["cream", "green", "blue", "ochre"]
 MODES = ["ink", "precision"]
 HATCH_FILLS = ["tile", "per-shape"]
+PALETTE_CHOICES = ["none", *PALETTES]
 
 
 # ── Charts fed from state ─────────────────────────────────────────────────────────────────
@@ -312,6 +319,7 @@ def gallery() -> rx.Component:
             select("Substrate", DemoState.substrate, SUBSTRATES, DemoState.set_substrate),
             select("Mode", DemoState.mode, MODES, DemoState.set_mode),
             select("Hatch fill", DemoState.hatch_fill, HATCH_FILLS, DemoState.set_hatch_fill),
+            select("Palette", DemoState.palette, PALETTE_CHOICES, DemoState.set_palette),
             rx.el.div(
                 rx.el.label("Data"),
                 rx.el.div(
@@ -330,7 +338,12 @@ def gallery() -> rx.Component:
             ),
             class_name="sp-controls",
         ),
-        silverpoint_provider(*families, ground=DemoState.ground, substrate=DemoState.substrate, mode=DemoState.mode),
+        silverpoint_palette(
+            silverpoint_provider(
+                *families, ground=DemoState.ground, substrate=DemoState.substrate, mode=DemoState.mode
+            ),
+            palette=DemoState.palette_fields,
+        ),
     )
 
 
@@ -349,6 +362,7 @@ def playground() -> rx.Component:
         "width": PlaygroundState.width,
         "height": PlaygroundState.height,
         "footer_right": "silverpoint",
+        "palette": PlaygroundState.palette_fields,
     }
     return page(
         rx.el.h1("Ground playground"),
@@ -363,6 +377,7 @@ def playground() -> rx.Component:
             select("Substrate", PlaygroundState.substrate, SUBSTRATES, PlaygroundState.set_substrate),
             select("Mode", PlaygroundState.mode, MODES, PlaygroundState.set_mode),
             select("Hatch fill", PlaygroundState.hatch_fill, HATCH_FILLS, PlaygroundState.set_hatch_fill),
+            select("Palette", PlaygroundState.palette, PALETTE_CHOICES, PlaygroundState.set_palette),
             select("Chrome", PlaygroundState.chrome, ["card", "bare"], PlaygroundState.set_chrome),
             select(
                 "Data table", PlaygroundState.data_table, ["hidden", "visible", "none"], PlaygroundState.set_data_table
@@ -816,3 +831,6 @@ for _info in CHARTS:
 app.add_page(ui_page, route="/ui", title="UI components · silverpoint for Reflex")
 for _ui in UI_COMPONENTS:
     app.add_page(ui_component_page(_ui), route=f"/ui/{_ui.slug}", title=f"{_ui.component} · silverpoint for Reflex")
+app.add_page(components_page, route="/components", title="More components · silverpoint for Reflex")
+app.add_page(palettes_page, route="/palettes", title="Palettes · silverpoint for Reflex")
+app.add_page(timeline_page, route="/timeline", title="Timeline · silverpoint for Reflex")

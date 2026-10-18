@@ -1,0 +1,39 @@
+# Local checks that mirror .github/workflows/quality.yml.
+#   uv tool install pre-commit   (or: pipx install pre-commit)
+#   pre-commit install
+#   pre-commit run --all-files
+exclude: ^(silverpoint_react_demo/(\.web|reflex\.lock)/|.*\.pyi$|uv\.lock$)
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=2048"]
+
+  # ruff runs from the project's own environment, so it is the version uv.lock pins (same as CI).
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run --extra dev ruff check --fix
+        language: system
+        types_or: [python, markdown]
+        require_serial: true
+      - id: ruff-format
+        name: ruff format
+        entry: uv run --extra dev ruff format
+        language: system
+        types_or: [python, markdown]
+        require_serial: true
+      - id: uv-lock
+        name: uv lock --check
+        entry: uv lock --check
+        language: system
+        files: ^(pyproject\.toml|uv\.lock)$
+        pass_filenames: false
