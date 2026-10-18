@@ -80,7 +80,8 @@ jobs:
         with:
           enable-cache: true
       - name: Install
-        run: uv sync --locked
+        # The demo's /timeline page uses sp_timeline, which needs the optional extra.
+        run: uv sync --locked --extra timeline
       - name: reflex compile
         working-directory: silverpoint_react_demo
         run: uv run reflex compile
