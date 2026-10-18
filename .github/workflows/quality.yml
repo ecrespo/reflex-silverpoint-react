@@ -34,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v7
@@ -80,7 +80,8 @@ jobs:
         with:
           enable-cache: true
       - name: Install
-        run: uv sync --locked
+        # The demo's /timeline page uses sp_timeline, which needs the optional extra.
+        run: uv sync --locked --extra timeline
       - name: reflex compile
         working-directory: silverpoint_react_demo
         run: uv run reflex compile

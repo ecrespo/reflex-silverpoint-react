@@ -16,6 +16,7 @@ import reflex as rx
 from reflex_base.utils.imports import ImportVar
 
 from .base import GroundName, InkMode, Substrate, _SilverpointBase
+from .palette import PaletteLike, apply_palette
 
 Breakpoint = Literal["sm", "md", "lg"]
 HeadingLevel = Literal[2, 3, 4, 5, 6]
@@ -119,16 +120,20 @@ class Dashboard(_SubpathComponent):
     on_link_change: rx.EventHandler[_link_spec]
 
     @classmethod
-    def create(cls, *children, **props) -> rx.Component:
+    def create(cls, *children, palette: PaletteLike | None = None, **props) -> rx.Component:
         """Create the dashboard.
 
         Args:
             *children: The charts, optionally wrapped in :func:`dashboard_cell`.
+            palette: Colours of the dashboard section (its title, description and background).
+                Charts inside keep their own; wrap the dashboard in :func:`silverpoint_palette`
+                to colour everything.
             **props: The dashboard's props.
 
         Returns:
             The component.
         """
+        props = apply_palette({**props, "palette": palette})
         if "link" in props:
             props["link"] = _as_link(props["link"])
         return super().create(*children, **props)

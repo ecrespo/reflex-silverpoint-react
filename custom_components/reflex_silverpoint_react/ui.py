@@ -21,6 +21,7 @@ from reflex.event import no_args_event_spec
 
 from .base import SILVERPOINT_STYLESHEETS, GroundName, InkMode, Substrate
 from .dashboard import _SubpathComponent
+from .palette import PaletteLike, apply_palette
 
 #: The components' stylesheet, opt-in beside ``styles.css``.
 SILVERPOINT_UI_STYLESHEET = "@silverpoint/grounds/ui.css"
@@ -77,6 +78,21 @@ class SilverpointUi(_SubpathComponent):
             Side-effect imports of the three stylesheets.
         """
         return {"": [*SILVERPOINT_STYLESHEETS, SILVERPOINT_UI_STYLESHEET]}
+
+    @classmethod
+    def create(cls, *children, palette: PaletteLike | None = None, **props) -> rx.Component:
+        """Create the component.
+
+        Args:
+            *children: Its children (text, items or panels, depending on the component).
+            palette: Colours of this component: a :class:`Palette`, a preset name, a dict of
+                fields or a state var holding one.
+            **props: The component's props.
+
+        Returns:
+            The component.
+        """
+        return super().create(*children, **apply_palette({**props, "palette": palette}))
 
 
 # ── Actions ─────────────────────────────────────────────────────────────────────────────

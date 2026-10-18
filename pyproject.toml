@@ -4,15 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reflex-silverpoint-react"
-version = "0.6.0"
-description = "The 60 silverpoint charts, the linked Dashboard and the 17 UI components (Renaissance silverpoint drawing style) for Reflex, wrapping @silverpoint/react"
+version = "0.7.0"
+description = "The 60 silverpoint charts, the Dashboard, 17 UI components, palettes, 20 composed components and a Knight Lab timeline (Renaissance silverpoint drawing style) for Reflex, wrapping @silverpoint/react"
 readme = "README.md"
 license = { text = "MIT" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 authors = [{ name = "Ernesto Crespo", email = "ecrespo@gmail.com" }]
-keywords = ["reflex", "reflex-custom-components", "charts", "silverpoint", "data-visualization", "svg", "ui-components"]
+keywords = ["reflex", "reflex-custom-components", "charts", "silverpoint", "data-visualization", "svg", "ui-components", "palette", "timeline"]
 
-dependencies = ["reflex>=0.9.12"]
+dependencies = ["reflex>=0.10.0"]
 
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -28,10 +28,16 @@ Issues = "https://github.com/ecrespo/reflex-silverpoint-react/issues"
 Upstream = "https://github.com/ecrespo/silverpoint"
 
 [project.optional-dependencies]
-dev = ["build", "twine", "pytest", "ruff"]
+# sp_timeline: Knight Lab TimelineJS drawn in silverpoint.
+timeline = ["reflex-knightlab-timeline>=0.1.2"]
+dev = ["build", "twine", "pytest", "ruff", "reflex-knightlab-timeline>=0.1.2"]
 
 [tool.setuptools.packages.find]
 where = ["custom_components"]
+
+[tool.setuptools.package-data]
+# The JS and CSS of the Reflex-composed components and of sp_timeline.
+reflex_silverpoint_react = ["assets/*.jsx", "assets/*.css"]
 
 [tool.ruff]
 line-length = 120
@@ -43,3 +49,5 @@ testpaths = ["tests"]
 [tool.ruff.lint.per-file-ignores]
 # Reflex state vars are declared with mutable class-level defaults by design.
 "silverpoint_react_demo/**/state.py" = ["RUF012"]
+"silverpoint_react_demo/**/extra_pages.py" = ["RUF012"]
+"tests/**" = ["RUF012"]

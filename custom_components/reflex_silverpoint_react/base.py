@@ -15,6 +15,8 @@ from typing import Any, Literal
 
 import reflex as rx
 
+from .palette import PaletteLike, apply_palette
+
 #: The silverpoint npm release these wrappers are written against.
 SILVERPOINT_VERSION = "0.6.0"
 
@@ -162,6 +164,21 @@ class SilverpointChart(_SilverpointBase):
     # An item was chosen by click, Enter or Space.
     on_select: rx.EventHandler[_selected_item_spec]
 
+    @classmethod
+    def create(cls, *children, palette: PaletteLike | None = None, **props) -> rx.Component:
+        """Create the chart.
+
+        Args:
+            *children: Unused; charts take no children.
+            palette: Colours of this chart: a :class:`Palette`, a preset name (``"sanguine"``),
+                a dict of fields or a state var holding one.
+            **props: The chart's props.
+
+        Returns:
+            The component.
+        """
+        return super().create(*children, **apply_palette({**props, "palette": palette}))
+
 
 class SilverpointProvider(_SilverpointBase):
     """Sets ground, substrate, mode and locale once for every chart below it.
@@ -182,6 +199,25 @@ class SilverpointProvider(_SilverpointBase):
 
     # Locale for every chart below.
     locale: rx.Var[str]
+
+    @classmethod
+    def create(cls, *children, **props) -> rx.Component:
+        """Create the provider.
+
+        Args:
+            *children: The charts below it.
+            **props: ``ground``, ``substrate``, ``mode``, ``locale``.
+
+        Returns:
+            The component.
+
+        Raises:
+            TypeError: On ``palette``: the provider renders no element to colour.
+        """
+        if "palette" in props:
+            msg = "silverpoint_provider takes no palette: wrap the section in silverpoint_palette(..., palette=...)."
+            raise TypeError(msg)
+        return super().create(*children, **props)
 
 
 silverpoint_provider = SilverpointProvider.create
