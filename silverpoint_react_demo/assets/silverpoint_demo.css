@@ -100,7 +100,7 @@ body {
 .sp-control label { font-size: 0.85rem; color: var(--muted); }
 
 .sp-demo select,
-.sp-demo input[type='number'] {
+.sp-demo input[type='number']:not(.sp-ui-control) {
   font: inherit;
   font-size: 1rem;
   padding: 4px 8px;
@@ -202,3 +202,11 @@ body {
 .demo-ui-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
 
 .demo-ui-row > [data-shape='line'] { flex: 1 1 220px; }
+
+.demo-swatches { display: flex; gap: 4px; margin: 2px 0 8px; }
+.demo-swatch { display: inline-block; inline-size: 18px; block-size: 18px; border: 1px solid var(--rule); border-radius: 2px; }
+
+/* The components page: a Prussian-blue stage under the cyanotype ground. */
+.demo-stage { border-radius: 4px; transition: background 160ms ease-out; }
+.demo-stage[data-ground='cyanotype'] { background: #1B3F6B; color: #F4F6F8; padding: 8px 18px 18px; }
+.demo-stage[data-ground='cyanotype'] h2 { color: #F4F6F8; }

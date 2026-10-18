@@ -5,7 +5,7 @@ import random
 from typing import Any
 
 import reflex as rx
-from reflex_silverpoint_react import CHARTS
+from reflex_silverpoint_react import CHARTS, PALETTES
 
 from .data_tools import drill_path, initial_datasets, reroll
 from .datasets import BUDGET, OPS_HOURLY, VOLVELLE_CHART
@@ -29,6 +29,8 @@ class DemoState(rx.State):
     substrate: str = "cream"
     mode: str = "ink"
     hatch_fill: str = "tile"
+    # A palette preset applied to the whole gallery through silverpoint_palette ("none": the ground's).
+    palette: str = "none"
 
     # Where the gallery takes its data from: the charts' own demo datasets, or Python state.
     use_state_data: bool = False
@@ -43,6 +45,16 @@ class DemoState(rx.State):
     @rx.event
     def set_ground(self, value: str):
         self.ground = value
+
+    @rx.event
+    def set_palette(self, value: str):
+        self.palette = value
+
+    @rx.var
+    def palette_fields(self) -> dict[str, str]:
+        """The chosen preset's fields; empty for the ground's own colours."""
+        preset = PALETTES.get(self.palette)
+        return preset.to_dict() if preset else {}
 
     @rx.event
     def set_substrate(self, value: str):
@@ -183,6 +195,17 @@ class PlaygroundState(rx.State):
     data_table: str = "hidden"
     size: str = "md"
     seed: int = 1592
+    palette: str = "none"
+
+    @rx.event
+    def set_palette(self, value: str):
+        self.palette = value
+
+    @rx.var
+    def palette_fields(self) -> dict[str, str]:
+        """The chosen preset's fields; empty for the ground's own colours."""
+        preset = PALETTES.get(self.palette)
+        return preset.to_dict() if preset else {}
 
     @rx.event
     def set_chart(self, value: str):
@@ -250,7 +273,8 @@ class PlaygroundState(rx.State):
             f"    chrome={self.chrome!r},\n"
             f"    data_table={self.data_table!r},\n"
             f"    seed={self.seed},\n"
-            f"    width={width},\n"
+            + (f"    palette={self.palette!r},\n" if self.palette != "none" else "")
+            + f"    width={width},\n"
             f"    height={height},\n"
             f"    # data=...  (omitted: the chart draws its demo dataset)\n"
             f")"

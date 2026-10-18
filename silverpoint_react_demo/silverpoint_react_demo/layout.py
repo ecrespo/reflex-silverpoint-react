@@ -12,6 +12,9 @@ NAV = [
     ("/interaction", "Interaction"),
     ("/dashboard", "Dashboard"),
     ("/ui", "UI components"),
+    ("/components", "More components"),
+    ("/palettes", "Palettes"),
+    ("/timeline", "Timeline"),
     ("/chart/line-chart", "Chart reference"),
 ]
 

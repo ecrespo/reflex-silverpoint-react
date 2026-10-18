@@ -13,6 +13,30 @@ components** (buttons, inputs, tabs, cards, alerts…), the `SilverpointProvider
 (`silverpoint` and `cyanotype`), the interaction events, custom readouts and the imperative handle
 (SVG export and geometry) as Python.
 
+On top of that it adds, in Reflex: **palettes** for every chart and component, **20 composed
+components** built on silverpoint's own frames and tones (tables, overlays, toasts…), and the
+**Knight Lab timeline** drawn in silverpoint.
+
+### New in 0.7
+
+- **Reflex 0.10.0**, and therefore **Python 3.11 or later** (Python 3.10 is no longer supported).
+  Reflex 0.10 removed `reflex component build`: stubs are regenerated with `scripts/make_stubs.py`.
+- **Palettes** — `palette=` on every chart, UI component, dashboard and composed component,
+  `silverpoint_palette(...)` for a whole section, six presets named after drawing media
+  (`silverpoint`, `sanguine`, `sepia`, `iron_gall`, `verdigris`, `indigo`) and `check_palette()`
+  against the contrast thresholds of the data model. See [Palettes](#palettes).
+- **Composed components, level A** (native markup): `sp_table` (+ `sort_rows`), `sp_pagination`,
+  `sp_breadcrumb`, `sp_avatar` (+ `sp_avatar_group`), `sp_statistic`, `sp_descriptions`,
+  `sp_timeline_list`, `sp_collapse` (+ `sp_collapse_item`), `sp_empty`, `sp_result`, `sp_textarea`
+  and `sp_input_number`.
+- **Composed components, level B** (overlays on Radix primitives): `sp_modal`, `sp_drawer`,
+  `sp_popover`, `sp_tooltip`, `sp_select`, `sp_dropdown_menu` and `sp_toast` (+ `sp_toaster`), with
+  `sp_trigger` as their drawn button. See [Composed components](#composed-components).
+- **`sp_timeline`** — Knight Lab TimelineJS drawn in silverpoint: a skin on the ground's colours and
+  type, plus the ground's own hand-inked frames and tone tiles on its markers, eras and buttons.
+  Optional extra: `pip install "reflex-silverpoint-react[timeline]"`. See [Timeline](#timeline).
+- `sp_surface`, `sp_glyph`: the building blocks, for components of your own.
+
 ### New in 0.6
 
 - **27 new charts**, the second catalog of silverpoint 0.6:
@@ -61,7 +85,7 @@ stylesheets it needs (`@silverpoint/grounds/styles.css` and the self-hosted EB G
 `@silverpoint/fonts/fonts.css`); the UI components also import `@silverpoint/grounds/ui.css`. No
 Tailwind, no CDN.
 
-Requires Reflex 0.9.12 or later (React 19).
+Requires Reflex 0.10.0 or later (React 19) and Python 3.11 or later.
 
 ## Quickstart
 
@@ -324,6 +348,132 @@ rx.el.form(
 - Text inputs controlled from state make a round trip per keystroke; for long text, prefer
   `default_value` and read the value on submit.
 
+## Palettes
+
+silverpoint never writes a colour into its drawing: every stroke and fill is painted by CSS through
+the ground's `--sp-` custom properties. A palette sets them, so it re-colours without re-rendering.
+
+```python
+from reflex_silverpoint_react import PALETTES, Palette, bar_chart, check_palette, silverpoint_palette, sp_button
+
+bar_chart(title="Orders", palette="sanguine")  # a preset
+sp_button("Save", variant="primary", palette={"ink": "#2C6355"})  # a dict of fields
+bar_chart(title="Orders", palette=State.palette)  # a state var holding a dict
+
+MINE = Palette(substrate="#F2E8DC", ink="#8A3A24", ink_secondary="#6A4A3A", text="#4A2216")
+assert not check_palette(MINE)  # [] when every field meets its contrast threshold
+
+silverpoint_palette(dashboard(...), sp_card(...), palette="indigo")  # a whole section
+```
+
+Fields: `substrate`, `ink`, `ink_secondary`, `heighten`, `rule`, `grid`, `text`, `text_muted` and
+`focus` (the UI focus ring). Unset fields keep the ground's own. An element's own `palette` always
+wins over its section's. A palette is **monochrome by design**: tone is built from hatch density
+(Art. 6), so a chart has two inks (`ink` for the main series, `ink_secondary` for the second), never
+a colour per series. `precision` mode and the system's high-contrast modes still apply on top.
+`silverpoint_provider` takes no palette (it renders no element): use `silverpoint_palette`.
+
+## Composed components
+
+Components built in Reflex on silverpoint's markup contract: `@silverpoint/grounds/ui.css` draws its
+hand-inked frames, hatched tones and heightening on any element that follows it, so these are drawn
+with exactly the same pieces as the `Sp` components. They are **Reflex-only** (silverpoint's React,
+Vue and Angular adapters do not have them) and, unlike the `Sp` components, they do not read
+`silverpoint_provider`: pass `ground`, `substrate`, `mode` and `palette` explicitly.
+
+```python
+from reflex_silverpoint_react import sort_rows, sp_pagination, sp_table
+
+sp_table(
+    [
+        {"key": "team", "title": "Team", "sortable": True},
+        {"key": "load", "title": "Load", "align": "end", "sortable": True},
+    ],
+    State.rows,
+    caption="On-call teams",
+    sort_key=State.sort_key,
+    sort_order=State.sort_order,
+    on_sort=State.sort,  # receives the key; sort with sort_rows(rows, key, order)
+    striped=True,
+)
+sp_pagination(total=240, current=State.page, on_change=State.set_page, show_total=True)
+```
+
+| Level A (native) | |
+|---|---|
+| `sp_table` | Card-framed table: small-caps header, tabular figures, hatched striping, sortable headers with `aria-sort` |
+| `sp_pagination` | Previous/next, first/last, a window around the current page (heightened); `on_change(page)` |
+| `sp_breadcrumb` | `<nav>` of links; the last item is the current page |
+| `sp_avatar`, `sp_avatar_group` | Portrait or initials in a drawn round (or square) frame |
+| `sp_statistic` | Small-caps title, large tabular figure, prefix/suffix, trend arrow |
+| `sp_descriptions` | Label–value grid (`<dl>`), optionally card-framed |
+| `sp_timeline_list` | Vertical list: `done` (hatched), `current` (heightened), `pending`, `error` |
+| `sp_collapse`, `sp_collapse_item` | Native `<details>`; `accordion=True` keeps one open |
+| `sp_empty`, `sp_result` | Empty state; outcome with a drawn round mark |
+| `sp_textarea`, `sp_input_number` | On the `SpInput` contract; `on_change` receives the value (text or number) |
+
+| Level B (Radix primitives) | |
+|---|---|
+| `sp_modal`, `sp_drawer` | Dialog on a card frame over a hatched backdrop; drawer from any edge |
+| `sp_popover`, `sp_tooltip` | Anchored content; tooltip on hover or keyboard focus |
+| `sp_select` | Single choice with typeahead; the chosen option ticked, the highlighted one heightened |
+| `sp_dropdown_menu` | Commands with shortcuts, separators and labels; `on_select(key)` |
+| `sp_toast`, `sp_toaster` | Notices that stack in a corner; `error`/`warning` are announced assertively |
+
+Behaviour (focus trapping, keyboard, dismissal, positioning, ARIA) is Radix's, at the versions
+Reflex already installs. Overlays render in a portal at the end of `<body>`, outside any
+`silverpoint_palette` section, so give them `palette` directly. A string `trigger` becomes
+`sp_trigger(...)`, the drawn button that can forward Radix's props (`sp_button` cannot).
+
+```python
+sp_modal(
+    rx.el.p("Apply the new ground?"),
+    trigger="Open",
+    title="Apply changes",
+    footer=sp_trigger("Apply", variant="primary", on_click=State.confirm),
+    open=State.modal_open,
+    on_open_change=State.set_modal_open,
+)
+sp_select(["North", "East", "South", "West"], value=State.region, on_change=State.set_region)
+sp_toaster(sp_toast("Saved", State.text, kind="success", open=State.toast_open, on_open_change=State.set_toast_open))
+```
+
+![Composed components](docs/components.png)
+
+## Timeline
+
+```bash
+pip install "reflex-silverpoint-react[timeline]"   # adds reflex-knightlab-timeline
+```
+
+```python
+from reflex_silverpoint_react import sp_timeline
+
+sp_timeline(
+    DATA,  # TimelineJS data: title, events, eras (or a TimelineData)
+    height=560,
+    ground="silverpoint",
+    substrate="cream",
+    mode="ink",
+    palette="sepia",
+    inked_frames=True,  # the ground's hand-drawn frames and tone tiles
+    on_change=State.on_change,  # the unique_id of the slide shown
+)
+```
+
+It works in two layers. The **skin** replaces TimelineJS's colours, type and rules with the
+ground's `--sp-` properties: substrate, inks, EB Garamond, hairline rules, eras hatched by density,
+the current marker heightened. The **hand** reads the ground's own frame and tone masks from hidden
+probes and lays them on the markers, eras and menubar, so they are drawn with the same pieces as
+the `Sp` components; `inked_frames=False` keeps the skin only, and `precision`, `cyanotype` and
+forced colours fall back to exact rules by themselves. Note that TimelineJS requests its icon font
+from a relative path (`/css/icons/tl-icons.*`); the Reflex dev server answers it with HTML, so the
+browser logs font-decoding warnings. They come from TimelineJS, not from this package.
+
+![The Knight Lab timeline in silverpoint](docs/timeline.png)
+
+![The palettes page](docs/palettes.png)
+
 ## Interaction
 
 ```python
@@ -385,7 +535,7 @@ The exported SVG carries its own ground colours, so it renders the same outside 
 ## Demo app
 
 ```bash
-uv venv && uv pip install -e .
+uv venv && uv pip install -e ".[timeline]"
 cd silverpoint_react_demo
 uv run reflex run
 ```
@@ -393,23 +543,44 @@ uv run reflex run
 Pages: **Start** (quickstart, provider, ink vs precision), **Gallery** (the 60 charts, ground
 controls, demo datasets vs data from Python state with a re-roll), **Playground** (one chart, every
 rendering choice and the Python that reproduces it), **Interaction** (events, custom readout, a
-volvelle that turns on click, a treemap and a sunburst that drill down together, live KPI/gauge/meter, SVG and geometry export), **Dashboard** (a
+volvelle that turns on click, a treemap and a sunburst that drill down together, live
+KPI/gauge/meter, SVG and geometry export), **Dashboard** (a
 linked operations dashboard fed from Python state with ground, substrate, mode and column controls, a
 KPI strip, and `dashboard_link` on its own), **UI components** (`/ui`: the components controlled from
 Python state with a native form submit, and the three reference panels of the upstream example apps
 in silverpoint ink, precision and cyanotype), one **reference page per chart** (`/chart/<slug>`) and
-one per UI component (`/ui/<slug>`: every declared state on both grounds, usage and props). The Gallery and Playground also get a ground control, for `cyanotype`.
+one per UI component (`/ui/<slug>`: every declared state on both grounds, usage and props). The
+Gallery and Playground also get a ground control, for `cyanotype`, and a palette control.
+New in 0.7: **More components** (`/components`: the 20 composed components wired to Python, with
+ground, substrate, mode and palette controls and an event log), **Palettes** (`/palettes`: the
+presets, a palette builder with colour pickers and `check_palette`, a coloured section) and
+**Timeline** (`/timeline`: the Knight Lab timeline on every ground, mode and palette).
 
 ![Interaction page](docs/interaction.png)
 
 ## Development
 
 ```bash
-uv venv && uv pip install -e ".[dev]"
+uv sync --extra dev
 uv run pytest
 uv run ruff check .
-uv run reflex component build   # .pyi stubs + sdist and wheel in dist/
+# Reflex 0.10 removed `reflex component build`: regenerate the .pyi stubs with the generator
+# Reflex itself uses (plus this package's fixes), then build the sdist and wheel.
+uv run python scripts/make_stubs.py
+uv build
 ```
+
+Before committing, run the hooks of [`.pre-commit-config.yaml`](.pre-commit-config.yaml) (ruff check
+and format — including the Python blocks of this README — file hygiene and `uv lock --check`):
+
+```bash
+pre-commit install
+pre-commit run --all-files
+```
+
+Changes per version are in [CHANGELOG.md](CHANGELOG.md); the guide for coding agents is
+[AGENTS.md](AGENTS.md). Releases are published to PyPI by pushing a `vX.Y.Z` tag on `main` that
+matches `version` in `pyproject.toml`.
 
 ## License
 
