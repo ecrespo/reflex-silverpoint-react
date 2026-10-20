@@ -9,6 +9,8 @@ The npm side is ``@silverpoint/react`` (client components; since 0.2 the ``Dashb
 since 0.3 the ``Sp`` UI components), ``@silverpoint/grounds`` (the stylesheet that colours the
 strokes, required, plus ``ui.css`` for the UI components) and ``@silverpoint/fonts`` (self-hosted
 EB Garamond). The stylesheets are imported once by any page that renders a chart or a component.
+Since 0.7.0 the composed components, the overlays (``/ui``) and ``SpTimeline`` (``/timeline``) are
+npm components too, so everything this package renders is under silverpoint's parity contract.
 """
 
 from typing import Any, Literal
@@ -18,7 +20,7 @@ import reflex as rx
 from .palette import PaletteLike, apply_palette
 
 #: The silverpoint npm release these wrappers are written against.
-SILVERPOINT_VERSION = "0.6.0"
+SILVERPOINT_VERSION = "0.7.0"
 
 #: The npm package every chart is imported from (the barrel; it is side-effect free, so the
 #: bundler keeps only the charts a page uses).
@@ -109,6 +111,9 @@ class SilverpointChart(_SilverpointBase):
     # Seed of the hand. Same props and seed, same strokes. Derived from ``id`` when omitted.
     seed: rx.Var[int | str]
 
+    # Colours over the ground's (set with ``palette=``: a preset name, a Palette, a dict or a var).
+    palette: rx.Var[dict[str, str]]
+
     # Height of the drawing area in px (160 by default).
     height: rx.Var[int | float]
 
@@ -181,9 +186,10 @@ class SilverpointChart(_SilverpointBase):
 
 
 class SilverpointProvider(_SilverpointBase):
-    """Sets ground, substrate, mode and locale once for every chart below it.
+    """Sets ground, substrate, mode, locale and palette once for everything below it.
 
-    A prop on a chart always wins over the provider.
+    A prop on a chart or component always wins over the provider; palettes merge field by field
+    (element → dashboard → provider), and a nested provider's set fields win over the outer one's.
     """
 
     tag = "SilverpointProvider"
@@ -200,24 +206,23 @@ class SilverpointProvider(_SilverpointBase):
     # Locale for every chart below.
     locale: rx.Var[str]
 
+    # Colours for everything below (set with ``palette=``).
+    palette: rx.Var[dict[str, str]]
+
     @classmethod
-    def create(cls, *children, **props) -> rx.Component:
+    def create(cls, *children, palette: PaletteLike | None = None, **props) -> rx.Component:
         """Create the provider.
 
         Args:
-            *children: The charts below it.
+            *children: The charts and components below it.
+            palette: Colours for everything below: a :class:`Palette`, a preset name, a dict of
+                fields or a state var holding one.
             **props: ``ground``, ``substrate``, ``mode``, ``locale``.
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: On ``palette``: the provider renders no element to colour.
         """
-        if "palette" in props:
-            msg = "silverpoint_provider takes no palette: wrap the section in silverpoint_palette(..., palette=...)."
-            raise TypeError(msg)
-        return super().create(*children, **props)
+        return super().create(*children, **apply_palette({**props, "palette": palette}))
 
 
 silverpoint_provider = SilverpointProvider.create

@@ -1,4 +1,4 @@
-"""Pages for 0.7: palettes, the Reflex-composed components and the Knight Lab timeline.
+"""Pages for 0.7: palettes, the composed components and overlays, and the Knight Lab timeline.
 
 /palettes     Colour for every chart and component: presets, a palette builder, sections.
 /components   Level A (table, pagination, breadcrumb, avatar…) and level B (modal, drawer,
@@ -166,7 +166,7 @@ def palettes_page() -> rx.Component:
         rx.el.p(
             "silverpoint never writes a colour into its drawing: every stroke is painted by CSS through the --sp- "
             "properties of the ground. A palette sets them, so it re-colours any chart, UI component, dashboard, "
-            "Reflex-composed component or timeline without re-rendering. It is monochrome by design: two inks, "
+            "composed component, overlay or timeline without re-rendering. It is monochrome by design: two inks, "
             "tone by hatch density. precision and the system's high-contrast modes still apply on top.",
             class_name="sp-lede",
         ),
@@ -232,7 +232,7 @@ def palettes_page() -> rx.Component:
     )
 
 
-# ── Reflex-composed components ──────────────────────────────────────────────────────────
+# ── Composed components and overlays ────────────────────────────────────────────────────
 
 TEAMS = [
     {"team": "Atlas", "region": "North", "load": 72, "incidents": 3},
@@ -372,7 +372,7 @@ OVERLAY_CODE = """sp_modal(
     title="Apply changes", description="…",
     footer=sp_trigger("Apply", variant="primary", on_click=State.confirm),
     open=State.modal_open, on_open_change=State.set_modal_open,
-    ground="silverpoint", palette="sepia",       # overlays render in a portal: pass them explicitly
+    ground="silverpoint", palette="sepia",       # or let them inherit silverpoint_provider / silverpoint_palette
 )
 sp_select(["North", "East", "South", "West"], value=State.region, on_change=State.set_region)
 sp_dropdown_menu("Actions", [{"key": "edit", "label": "Edit", "shortcut": "E"},
@@ -387,10 +387,10 @@ def components_page() -> rx.Component:
     return page(
         rx.el.h1("More components"),
         rx.el.p(
-            "Built in Reflex on silverpoint's markup contract: the UI stylesheet draws its hand-inked frames, hatched "
-            "tones and heightening on any element that follows it. Level A is native markup (a table, details, a "
-            "textarea); level B are overlays whose behaviour — focus, keyboard, dismissal, positioning — is Radix's. "
-            "They are Reflex-only: silverpoint's React, Vue and Angular adapters do not have them.",
+            "silverpoint 0.7's composed components and overlays, the same npm components React, Vue and Angular "
+            "render. The composed ones are native markup (a table, details, a textarea) drawn with the ground's "
+            "hand-inked frames, hatched tones and heightening; the overlays are a native <dialog> and the Popover "
+            "API, with keyboard and placement from @silverpoint/core.",
             class_name="sp-lede",
         ),
         rx.el.div(
@@ -554,7 +554,7 @@ def components_page() -> rx.Component:
                         show_count=True,
                         label="Notes",
                         message="Saved with the dashboard.",
-                        textarea_id="notes",
+                        id="notes",
                         **s,
                     ),
                     sp_input_number(
@@ -566,7 +566,7 @@ def components_page() -> rx.Component:
                         precision=1,
                         label="Quantity",
                         message="0 to 10, by 0.5",
-                        input_id="quantity",
+                        id="quantity",
                         **s,
                     ),
                     style={"display": "flex", "gap": "24px", "alignItems": "start", "flexWrap": "wrap"},
@@ -587,6 +587,7 @@ def components_page() -> rx.Component:
                         ),
                         open=ComposedState.modal_open,
                         on_open_change=ComposedState.set_modal_open,
+                        id="apply-modal",
                         **s,
                     ),
                     sp_drawer(
@@ -601,7 +602,8 @@ def components_page() -> rx.Component:
                         ),
                         trigger=sp_trigger("Open drawer", **s),
                         title="Settings",
-                        description="A panel from the right edge.",
+                        description="A panel from the end edge (the right in left-to-right text).",
+                        id="settings-drawer",
                         **s,
                     ),
                     sp_popover(
@@ -609,6 +611,7 @@ def components_page() -> rx.Component:
                         trigger=sp_trigger("Popover", **s),
                         title="A note",
                         closable=True,
+                        id="note-popover",
                         **s,
                     ),
                     sp_tooltip(sp_trigger("Hover or focus me", **s), "Tooltips use the control frame", **s),
@@ -620,7 +623,7 @@ def components_page() -> rx.Component:
                         **s,
                     ),
                     sp_dropdown_menu(
-                        sp_trigger("Actions", chevron=True, **s),
+                        "Actions",  # a string: the menu draws its own button
                         [
                             {"key": "edit", "label": "Edit", "shortcut": "E"},
                             {"key": "duplicate", "label": "Duplicate", "shortcut": "D"},
@@ -732,7 +735,7 @@ class TimelineState(rx.State):
         self.moves += 1
 
 
-TIMELINE_CODE = """from reflex_silverpoint_react import sp_timeline   # pip install "reflex-silverpoint-react[timeline]"
+TIMELINE_CODE = """from reflex_silverpoint_react import sp_timeline   # TimelineJS is installed as an npm dependency
 
 sp_timeline(
     SILVERPOINT_HISTORY,                 # TimelineJS data: title, events, eras
@@ -748,7 +751,7 @@ def timeline_page() -> rx.Component:
     return page(
         rx.el.h1("Timeline"),
         rx.el.p(
-            "Knight Lab TimelineJS (through reflex-knightlab-timeline) drawn in silverpoint. The skin replaces its "
+            "Knight Lab TimelineJS drawn in silverpoint (the npm SpTimeline of silverpoint 0.7). The skin replaces its "
             "colours, type and rules with the ground's; the hand lays the ground's own hand-inked frames and tone "
             "tiles on its markers, eras and buttons. The current marker is heightened; eras are hatched by density.",
             class_name="sp-lede",

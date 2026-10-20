@@ -1,327 +1,354 @@
-"""Reflex-composed components, level B: overlays on Radix primitives, drawn on silverpoint surfaces.
+"""The overlays of silverpoint 0.7: modal, drawer, popover, tooltip, select, dropdown menu and toast.
 
-Modal, drawer, popover, tooltip, select, dropdown menu and toast. Behaviour — focus trapping,
-keyboard, dismissal, positioning, ARIA — is Radix's (the unstyled ``@radix-ui/react-*`` primitives,
-at the versions Reflex itself already installs). Drawing is silverpoint's: each overlay's content is
-an :class:`~.surfaces.SpSurface` with the ground's hand-inked frame; the highlighted option of a
-list is heightened, as the current item of an Sp component is.
+Each one is ``@silverpoint/react``'s own component (``/ui`` subpath), on the platform: a native
+``<dialog>`` (``showModal()``) for the modal and the drawer, the Popover API for the rest, keyboard
+and placement computed by ``@silverpoint/core`` (``uiListKey``, ``uiTypeahead``, ``uiPlace``). The
+drawing is the ground's: card frames, the highlighted option heightened. They render in place (the
+top layer, not a portal), so they read ``silverpoint_provider`` and ``silverpoint_palette``.
 
-Overlays render in a portal at the end of ``<body>``, outside any ``silverpoint_palette`` section:
-give them ``ground``, ``substrate``, ``mode`` and ``palette`` directly. Like the level A
-components they are Reflex-only (not in silverpoint's React/Vue/Angular parity contract).
+The open state is controlled with ``open`` + ``on_open_change`` or held from ``default_open``. A
+``trigger`` is the element that opens the overlay: the npm component clones it with its ARIA and a
+click that toggles it, so it must be an element that keeps the props it is given, a native
+``rx.el.button`` or :func:`sp_trigger` (strings become one). Sides are logical, ``start``/``end``,
+and mirror in right-to-left text; 0.7.0's ``left``/``right`` still work, with a deprecation warning.
 """
 
+import warnings
 from collections.abc import Sequence
+from pathlib import Path
 from typing import Any, Literal
 
 import reflex as rx
-from reflex.event import no_args_event_spec, passthrough_event_spec
+from reflex.event import passthrough_event_spec
+from reflex_base.utils.imports import ImportVar
 
-from .surfaces import sp_glyph, sp_surface
+from .base import SILVERPOINT_STYLESHEETS, SILVERPOINT_VERSION, GroundName, InkMode, Substrate
+from .palette import PaletteLike, apply_palette
+from .ui import SILVERPOINT_UI_STYLESHEET, SilverpointUi, UiSize, UiVariant
 
-Side = Literal["top", "right", "bottom", "left"]
+Side = Literal["top", "end", "bottom", "start"]
 Align = Literal["start", "center", "end"]
 ToastKind = Literal["info", "success", "warning", "error"]
-ToastPosition = Literal["bottom-right", "bottom-left", "top-right", "top-left"]
+ToastPosition = Literal["bottom-end", "bottom-start", "top-end", "top-start"]
 
-_SURFACE_KEYS = ("ground", "substrate", "mode", "size", "seed", "palette", "class_name", "style")
+#: 0.7.0's physical names → the logical ones of silverpoint 0.7 (REQ-523).
+_SIDES: dict[str, str] = {"left": "start", "right": "end"}
+_POSITIONS: dict[str, str] = {
+    "bottom-right": "bottom-end",
+    "bottom-left": "bottom-start",
+    "top-right": "top-end",
+    "top-left": "top-start",
+}
 
-#: Radix primitive versions: the ones ``@radix-ui/themes`` (installed by Reflex) already pulls in,
-#: so the frontend keeps one copy of each.
-RADIX_VERSIONS = {
-    "dialog": "1.1.23",
-    "popover": "1.1.23",
-    "tooltip": "1.2.16",
-    "select": "2.3.7",
-    "dropdown-menu": "2.1.24",
-    "toast": "1.2.23",
+_open_spec = passthrough_event_spec(bool)
+_key_spec = passthrough_event_spec(str)
+
+_CORE = f"@silverpoint/core@{SILVERPOINT_VERSION}"
+
+#: The trigger component, as Reflex custom code.
+TRIGGER_CODE = (Path(__file__).parent / "assets" / "trigger.jsx").read_text(encoding="utf-8")
+
+
+def _given(**props: Any) -> dict[str, Any]:
+    return {key: value for key, value in props.items() if value is not None}
+
+
+def _length(value: Any) -> Any:
+    return f"{value}px" if isinstance(value, (int, float)) and not isinstance(value, bool) else value
+
+
+def _logical(value: Any, names: dict[str, str], argument: str) -> Any:
+    if isinstance(value, str) and value in names:
+        warnings.warn(
+            f"{argument}={value!r} is deprecated; use {names[value]!r} (logical sides mirror in RTL).",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+        return names[value]
+    return value
+
+
+# ── The trigger ─────────────────────────────────────────────────────────────────────────
+
+#: Props every Reflex component understands; anything else given to a trigger is a DOM attribute.
+_REFLEX_PROPS = {"style", "key", "id", "class_name", "custom_attrs", "ref", "autofocus", "special_props"}
+
+#: Attribute names React spells differently from their snake_case Python form.
+_REACT_NAMES = {
+    "tab_index": "tabIndex",
+    "html_for": "htmlFor",
+    "read_only": "readOnly",
+    "auto_complete": "autoComplete",
 }
 
 
-def _surface_props(props: dict[str, Any]) -> dict[str, Any]:
-    return {key: props.pop(key) for key in _SURFACE_KEYS if key in props}
+def _dom_attributes(cls: type[rx.Component], props: dict[str, Any]) -> dict[str, Any]:
+    """Move attributes the trigger does not declare (``aria_label``, ``tab_index``…) to the DOM."""
+    declared = set(cls.get_props()) | set(cls.get_event_triggers()) | _REFLEX_PROPS
+    attrs = dict(props.pop("custom_attrs", None) or {})
+    for key in [k for k in props if k not in declared]:
+        value = props.pop(key)
+        if value is None:
+            continue
+        name = key.replace("_", "-") if key.startswith(("aria_", "data_")) else _REACT_NAMES.get(key, key)
+        attrs[name] = value
+    if attrs:
+        props["custom_attrs"] = attrs
+    return props
 
 
-# ── Radix primitives ────────────────────────────────────────────────────────────────────
+class SpTrigger(rx.Component):
+    """A native ``<button>`` drawn as ``SpButton`` that keeps every prop an overlay clones onto it."""
 
+    tag = "SilverpointTrigger"
 
-class _Radix(rx.Component):
-    """A part of a Radix primitive, imported under a unique alias."""
+    lib_dependencies: list[str] = [  # noqa: RUF012 - Reflex reads it as a class attribute
+        f"@silverpoint/core@{SILVERPOINT_VERSION}",
+        f"@silverpoint/grounds@{SILVERPOINT_VERSION}",
+        f"@silverpoint/fonts@{SILVERPOINT_VERSION}",
+    ]
 
-    # Merge props onto the child instead of rendering an element of its own.
-    as_child: rx.Var[bool]
+    ground: rx.Var[GroundName | str]
+    substrate: rx.Var[Substrate]
+    mode: rx.Var[InkMode]
+    size: rx.Var[UiSize]
+    seed: rx.Var[int | str]
+    palette: rx.Var[dict[str, str]]
 
+    # ``default``, ``primary`` (light hatching) or ``danger``.
+    variant: rx.Var[UiVariant]
 
-def _radix(package: str, part: str, doc: str, **fields: Any) -> type[_Radix]:
-    namespace = {
-        "__doc__": doc,
-        "__module__": __name__,
-        "library": f"@radix-ui/react-{package}@{RADIX_VERSIONS[package]}",
-        "tag": part,
-        "alias": "SpRadix" + "".join(w.capitalize() for w in package.split("-")) + part,
-        "__annotations__": fields,
-    }
-    return type(f"Radix{''.join(w.capitalize() for w in package.split('-'))}{part}", (_Radix,), namespace)
+    # Draws a down chevron after the text.
+    chevron: rx.Var[bool]
 
+    # Not focusable; drawn with the disabled tone.
+    disabled: rx.Var[bool]
 
-_open_spec = passthrough_event_spec(bool)
-_value_spec = passthrough_event_spec(str)
+    # Accessible name of a trigger without text.
+    label: rx.Var[str]
 
-# Dialog (modal and drawer)
-DialogRoot = _radix(
-    "dialog",
-    "Root",
-    "Dialog root.",
-    open=rx.Var[bool],
-    default_open=rx.Var[bool],
-    modal=rx.Var[bool],
-    on_open_change=rx.EventHandler[_open_spec],
-)
-DialogTrigger = _radix("dialog", "Trigger", "Opens the dialog.")
-DialogPortal = _radix("dialog", "Portal", "Renders the dialog at the end of body.")
-DialogOverlay = _radix("dialog", "Overlay", "The backdrop.")
-DialogContent = _radix(
-    "dialog",
-    "Content",
-    "The dialog box.",
-    on_escape_key_down=rx.EventHandler[no_args_event_spec],
-    on_pointer_down_outside=rx.EventHandler[no_args_event_spec],
-)
-DialogTitle = _radix("dialog", "Title", "The dialog's accessible name.")
-DialogDescription = _radix("dialog", "Description", "The dialog's accessible description.")
-DialogClose = _radix("dialog", "Close", "Closes the dialog.")
+    def add_imports(self) -> dict[str, Any]:
+        """The stylesheets, React and the ``@silverpoint/core`` functions the trigger draws with.
 
-# Popover
-PopoverRoot = _radix(
-    "popover",
-    "Root",
-    "Popover root.",
-    open=rx.Var[bool],
-    default_open=rx.Var[bool],
-    modal=rx.Var[bool],
-    on_open_change=rx.EventHandler[_open_spec],
-)
-PopoverTrigger = _radix("popover", "Trigger", "Opens the popover.")
-PopoverPortal = _radix("popover", "Portal", "Renders the popover at the end of body.")
-PopoverContent = _radix(
-    "popover",
-    "Content",
-    "The popover box.",
-    side=rx.Var[str],
-    align=rx.Var[str],
-    side_offset=rx.Var[int],
-    collision_padding=rx.Var[int],
-)
-PopoverClose = _radix("popover", "Close", "Closes the popover.")
+        Returns:
+            The imports.
+        """
+        return {
+            "": [*SILVERPOINT_STYLESHEETS, SILVERPOINT_UI_STYLESHEET],
+            "react": [
+                ImportVar(tag="createElement"),
+                ImportVar(tag="forwardRef"),
+                ImportVar(tag="useEffect"),
+                ImportVar(tag="useState"),
+            ],
+            _CORE: [
+                ImportVar(tag="FORCED_PRECISION_QUERY"),
+                ImportVar(tag="resolveUi", package_path="/ui"),
+                ImportVar(tag="uiButtonView", package_path="/ui"),
+                ImportVar(tag="UI_GLYPHS", package_path="/ui"),
+            ],
+        }
 
-# Tooltip
-TooltipProvider = _radix("tooltip", "Provider", "Tooltip timing.", delay_duration=rx.Var[int])
-TooltipRoot = _radix(
-    "tooltip",
-    "Root",
-    "Tooltip root.",
-    open=rx.Var[bool],
-    default_open=rx.Var[bool],
-    delay_duration=rx.Var[int],
-    on_open_change=rx.EventHandler[_open_spec],
-)
-TooltipTrigger = _radix("tooltip", "Trigger", "The element described.")
-TooltipPortal = _radix("tooltip", "Portal", "Renders the tooltip at the end of body.")
-TooltipContent = _radix(
-    "tooltip", "Content", "The tooltip.", side=rx.Var[str], align=rx.Var[str], side_offset=rx.Var[int]
-)
+    def add_custom_code(self) -> list[str]:
+        """The trigger component.
 
-# Select
-SelectRoot = _radix(
-    "select",
-    "Root",
-    "Select root.",
-    value=rx.Var[str],
-    default_value=rx.Var[str],
-    open=rx.Var[bool],
-    disabled=rx.Var[bool],
-    required=rx.Var[bool],
-    name=rx.Var[str],
-    on_value_change=rx.EventHandler[_value_spec],
-    on_open_change=rx.EventHandler[_open_spec],
-)
-SelectTrigger = _radix("select", "Trigger", "The field.")
-SelectValue = _radix("select", "Value", "The chosen option's text.", placeholder=rx.Var[str])
-SelectIcon = _radix("select", "Icon", "The field's chevron.")
-SelectPortal = _radix("select", "Portal", "Renders the list at the end of body.")
-SelectContent = _radix(
-    "select", "Content", "The list.", position=rx.Var[str], side_offset=rx.Var[int], side=rx.Var[str]
-)
-SelectViewport = _radix("select", "Viewport", "The scrolling part of the list.")
-SelectItem = _radix("select", "Item", "An option.", value=rx.Var[str], disabled=rx.Var[bool], text_value=rx.Var[str])
-SelectItemText = _radix("select", "ItemText", "The option's text.")
-SelectItemIndicator = _radix("select", "ItemIndicator", "Shown on the chosen option.")
+        Returns:
+            One code block, identical for every trigger, so Reflex emits it once per page.
+        """
+        return [TRIGGER_CODE]
 
-# Dropdown menu
-MenuRoot = _radix(
-    "dropdown-menu",
-    "Root",
-    "Menu root.",
-    open=rx.Var[bool],
-    default_open=rx.Var[bool],
-    modal=rx.Var[bool],
-    on_open_change=rx.EventHandler[_open_spec],
-)
-MenuTrigger = _radix("dropdown-menu", "Trigger", "Opens the menu.")
-MenuPortal = _radix("dropdown-menu", "Portal", "Renders the menu at the end of body.")
-MenuContent = _radix(
-    "dropdown-menu", "Content", "The menu.", side=rx.Var[str], align=rx.Var[str], side_offset=rx.Var[int]
-)
-MenuItem = _radix(
-    "dropdown-menu",
-    "Item",
-    "A command.",
-    disabled=rx.Var[bool],
-    text_value=rx.Var[str],
-    on_select=rx.EventHandler[no_args_event_spec],
-)
-MenuLabel = _radix("dropdown-menu", "Label", "A group heading.")
-MenuSeparator = _radix("dropdown-menu", "Separator", "A rule between groups.")
+    @classmethod
+    def create(cls, *children, palette: PaletteLike | None = None, **props) -> rx.Component:
+        """Create the trigger.
 
-# Toast
-ToastProvider = _radix(
-    "toast", "Provider", "Toast timing.", duration=rx.Var[int], swipe_direction=rx.Var[str], label=rx.Var[str]
-)
-ToastViewport = _radix("toast", "Viewport", "Where toasts stack.", label=rx.Var[str])
-ToastRoot = _radix(
-    "toast",
-    "Root",
-    "A toast.",
-    open=rx.Var[bool],
-    default_open=rx.Var[bool],
-    duration=rx.Var[int],
-    type=rx.Var[str],
-    on_open_change=rx.EventHandler[_open_spec],
-)
-ToastTitle = _radix("toast", "Title", "The toast's title.")
-ToastDescription = _radix("toast", "Description", "The toast's text.")
-ToastAction = _radix("toast", "Action", "The toast's action.", alt_text=rx.Var[str])
-ToastClose = _radix("toast", "Close", "Dismisses the toast.")
+        Args:
+            *children: Its text.
+            palette: Its colours.
+            **props: Its props; any other attribute (``aria_label``, ``on_click``…) goes to the button.
 
-
-# ── Shared pieces ───────────────────────────────────────────────────────────────────────
+        Returns:
+            The component.
+        """
+        props = apply_palette({**props, "palette": palette})
+        return super().create(*children, **_dom_attributes(cls, props))
 
 
 def sp_trigger(
     label: str | rx.Var | rx.Component,
     *,
-    variant: Literal["default", "primary", "danger"] = "default",
-    chevron: bool = False,
+    variant: Literal["default", "primary", "danger"] | None = None,
+    chevron: bool | None = None,
     **props: Any,
 ) -> rx.Component:
-    """A drawn button for opening an overlay: the ``SpButton`` look on a surface.
+    """A drawn button for opening an overlay: ``SpButton``'s drawing on a button that keeps its props.
 
-    Unlike :func:`sp_button` (which does not forward Radix's props), it can be an overlay's
-    trigger. Strings passed as ``trigger=`` become one of these.
+    Unlike :func:`sp_button` it can be an overlay's ``trigger``: the overlay's ARIA and toggle land
+    on the native button. Strings passed as ``trigger=`` become one of these. It does not read
+    ``silverpoint_provider``; pass ``ground``, ``substrate``, ``mode`` and ``palette`` directly.
 
     Args:
         label: Its text (or a component).
         variant: ``default``, ``primary`` (light hatching) or ``danger``.
         chevron: Draws a down chevron after the text.
-        **props: Surface props and event triggers.
+        **props: ``ground``, ``substrate``, ``mode``, ``size``, ``seed``, ``palette``, ``disabled``,
+            event triggers and DOM attributes.
 
     Returns:
         The button.
     """
-    tone = {"primary": "primary", "danger": "danger"}.get(variant)
-    return sp_surface(
-        rx.el.span(label, class_name="sp-ui-label sp-ui-plate"),
-        *([sp_glyph(glyph="chevronDown")] if chevron else []),
-        element="button",
-        name="button",
-        frame="control",
-        tone=tone,
-        type="button",
-        **props,
-    )
+    return SpTrigger.create(label, **_given(variant=variant, chevron=chevron), **props)
 
 
-def _as_trigger(trigger: Any) -> rx.Component:
-    return sp_trigger(trigger) if isinstance(trigger, (str, rx.Var)) else trigger
+def _as_trigger(trigger: Any, **props: Any) -> Any:
+    if trigger is None:
+        return None
+    return sp_trigger(trigger, **props) if isinstance(trigger, (str, rx.Var)) else trigger
 
 
-def _close_button(close: type[_Radix], label: str) -> rx.Component:
-    return close.create(
-        rx.el.button(sp_glyph(glyph="cross"), type="button", class_name="sp-ui-icon-button", aria_label=label),
-        as_child=True,
-    )
+def _common(props: dict[str, Any]) -> dict[str, Any]:
+    """The common props a string trigger inherits from its overlay."""
+    return {key: props[key] for key in ("ground", "substrate", "mode", "size", "palette") if key in props}
 
 
-def _header(title: Any, closable: bool, close: type[_Radix], title_part: type[_Radix], close_label: str) -> list[Any]:
-    if title is None and not closable:
-        return []
-    return [
-        rx.el.div(
-            title_part.create(rx.el.h2(title, class_name="sp-ui-overlay-title"), as_child=True)
-            if title is not None
-            else rx.el.span(),
-            *([_close_button(close, close_label)] if closable else []),
-            class_name="sp-ui-overlay-header",
-        ),
-        rx.el.span(class_name="sp-ui-overlay-rule", aria_hidden="true"),
-    ]
+# ── Components ──────────────────────────────────────────────────────────────────────────
 
 
-def _open_props(open: Any, default_open: Any, on_open_change: Any) -> dict[str, Any]:
-    props = {"open": open, "default_open": default_open, "on_open_change": on_open_change}
-    return {key: value for key, value in props.items() if value is not None}
+class _Overlay(SilverpointUi):
+    """The open state every overlay binds (REQ-500)."""
+
+    # Open state (controlled), and the initial one (uncontrolled).
+    open: rx.Var[bool]
+    default_open: rx.Var[bool]
+
+    # The overlay opened or closed: the new state.
+    on_open_change: rx.EventHandler[_open_spec]
 
 
-# ── Modal and drawer ────────────────────────────────────────────────────────────────────
+class SpModal(_Overlay):
+    """A modal ``<dialog>`` on a card frame, over a hatched backdrop."""
+
+    tag = "SpModal"
+
+    title: rx.Var[str]
+    description: rx.Var[str]
+    label: rx.Var[str]
+    closable: rx.Var[bool]
+    close_label: rx.Var[str]
+    width: rx.Var[str]
+    dismissible: rx.Var[bool]
+    trigger: rx.Var[rx.Component]
+    footer: rx.Var[rx.Component]
 
 
-def _dialog(
-    name: str,
-    children: tuple[Any, ...],
-    *,
-    trigger: Any,
-    title: Any,
-    description: Any,
-    footer: Any,
-    open: Any,
-    default_open: Any,
-    on_open_change: Any,
-    closable: bool,
-    close_label: str,
-    modal: bool,
-    extra_attrs: dict[str, Any],
-    style: dict[str, Any],
-    surface: dict[str, Any],
-    props: dict[str, Any],
-) -> rx.Component:
-    surface_style = surface.pop("style", None)
-    content = sp_surface(
-        *_header(title, closable, DialogClose, DialogTitle, close_label),
-        *(
-            [DialogDescription.create(rx.el.p(description, class_name="sp-ui-overlay-description"), as_child=True)]
-            if description is not None
-            else []
-        ),
-        rx.el.div(*children, class_name="sp-ui-overlay-body"),
-        *([rx.el.div(footer, class_name="sp-ui-overlay-footer")] if footer is not None else []),
-        name=name,
-        frame="card",
-        custom_attrs=extra_attrs,
-        style=[style, surface_style] if surface_style is not None else style,
-        **surface,
-        **props,
-    )
-    backdrop_surface = {k: v for k, v in surface.items() if k in ("ground", "substrate", "mode", "palette")}
-    parts: list[Any] = []
-    if trigger is not None:
-        parts.append(DialogTrigger.create(_as_trigger(trigger), as_child=True))
-    parts.append(
-        DialogPortal.create(
-            DialogOverlay.create(sp_surface(name="backdrop", tone=1, **backdrop_surface), as_child=True),
-            DialogContent.create(content, as_child=True),
-        )
-    )
-    return DialogRoot.create(*parts, modal=modal, **_open_props(open, default_open, on_open_change))
+class SpDrawer(_Overlay):
+    """A ``<dialog>`` against one side of the window."""
+
+    tag = "SpDrawer"
+
+    title: rx.Var[str]
+    description: rx.Var[str]
+    label: rx.Var[str]
+    closable: rx.Var[bool]
+    close_label: rx.Var[str]
+    dismissible: rx.Var[bool]
+    side: rx.Var[Literal["start", "end", "top", "bottom"]]
+    extent: rx.Var[str]
+    modal: rx.Var[bool]
+    trigger: rx.Var[rx.Component]
+    footer: rx.Var[rx.Component]
+
+
+class SpPopover(_Overlay):
+    """A card anchored to its trigger (Popover API)."""
+
+    tag = "SpPopover"
+
+    title: rx.Var[str]
+    label: rx.Var[str]
+    side: rx.Var[Side]
+    align: rx.Var[Align]
+    offset: rx.Var[int]
+    closable: rx.Var[bool]
+    close_label: rx.Var[str]
+    width: rx.Var[str]
+    trigger: rx.Var[rx.Component]
+
+
+class SpTooltip(_Overlay):
+    """A short description shown on hover and focus of its trigger."""
+
+    tag = "SpTooltip"
+
+    text: rx.Var[str]
+    side: rx.Var[Side]
+    align: rx.Var[Align]
+    offset: rx.Var[int]
+    delay: rx.Var[int]
+    trigger: rx.Var[rx.Component]
+
+
+class SpSelect(_Overlay):
+    """A drawn field opening a list of options (APG combobox + listbox)."""
+
+    tag = "SpSelect"
+
+    items: rx.Var[list[str | dict[str, Any]]]
+    placeholder: rx.Var[str]
+    label: rx.Var[str]
+    disabled: rx.Var[bool]
+    required: rx.Var[bool]
+    name: rx.Var[str]
+    width: rx.Var[str]
+    value: rx.Var[str | None]
+    default_value: rx.Var[str | None]
+
+    # An option was chosen: its key.
+    on_change: rx.EventHandler[_key_spec]
+
+
+class SpDropdownMenu(_Overlay):
+    """A menu of commands (APG menu button)."""
+
+    tag = "SpDropdownMenu"
+
+    items: rx.Var[list[dict[str, Any]]]
+    label: rx.Var[str]
+    side: rx.Var[Side]
+    align: rx.Var[Align]
+    trigger: rx.Var[rx.Component]
+
+    # A command was chosen: its key.
+    on_select: rx.EventHandler[_key_spec]
+
+
+class SpToast(_Overlay):
+    """A notice in the toaster; it closes itself after ``duration``."""
+
+    tag = "SpToast"
+
+    title: rx.Var[str]
+    description: rx.Var[str]
+    kind: rx.Var[ToastKind]
+    duration: rx.Var[int | float]
+    close_label: rx.Var[str]
+    action: rx.Var[rx.Component]
+
+
+class SpToaster(SilverpointUi):
+    """The notification region (F8 focuses it); its children are the toasts."""
+
+    tag = "SpToaster"
+
+    position: rx.Var[ToastPosition]
+    duration: rx.Var[int]
+    label: rx.Var[str]
+
+
+# ── Builders ────────────────────────────────────────────────────────────────────────────
+
+
+def _open(open: Any, default_open: Any, on_open_change: Any) -> dict[str, Any]:
+    return _given(open=open, default_open=default_open, on_open_change=on_open_change)
 
 
 def sp_modal(
@@ -333,52 +360,50 @@ def sp_modal(
     open: bool | rx.Var | None = None,
     default_open: bool | None = None,
     on_open_change: Any = None,
-    closable: bool = True,
-    close_label: str = "Close",
+    closable: bool | None = None,
+    close_label: str | None = None,
     width: int | str | None = None,
+    label: str | None = None,
+    dismissible: bool | None = None,
     **props: Any,
 ) -> rx.Component:
-    """A modal dialog on a card frame, over a hatched backdrop. Focus is trapped while it is open.
-
-    Controlled with ``open`` + ``on_open_change``, or uncontrolled with a ``trigger``.
+    """A modal dialog on a card frame, over a hatched backdrop. Focus stays in it while it is open.
 
     Args:
         *children: The body.
-        trigger: What opens it: a string (becomes :func:`sp_trigger`) or a component that forwards
-            its props (``rx.el.button``, :func:`sp_trigger`).
+        trigger: What opens it: a string (becomes :func:`sp_trigger`) or an element that keeps the
+            props it is given (``rx.el.button``, :func:`sp_trigger`).
         title: The heading and accessible name.
         description: A line under the title (the accessible description).
         footer: Actions, aligned to the end.
         open: Open state (controlled).
         default_open: Initial open state (uncontrolled).
         on_open_change: Handler receiving the new open state.
-        closable: Draws the close cross.
+        closable: Draws the close cross (default).
         close_label: Accessible name of the cross.
         width: Width (px or CSS length); 520 px by default.
-        **props: Surface props (``ground``, ``substrate``, ``mode``, ``palette``…).
+        label: Accessible name when there is no title.
+        dismissible: Escape and a backdrop click close it (default).
+        **props: Common props (``ground``, ``substrate``, ``mode``, ``palette``…).
 
     Returns:
         The dialog.
     """
-    surface = _surface_props(props)
-    style = {"--sp-modal-width": f"{width}px" if isinstance(width, int) else width} if width is not None else {}
-    return _dialog(
-        "modal",
-        children,
-        trigger=trigger,
-        title=title,
-        description=description,
-        footer=footer,
-        open=open,
-        default_open=default_open,
-        on_open_change=on_open_change,
-        closable=closable,
-        close_label=close_label,
-        modal=True,
-        extra_attrs={},
-        style=style,
-        surface=surface,
-        props=props,
+    return SpModal.create(
+        *children,
+        **_given(
+            trigger=_as_trigger(trigger, **_common(props)),
+            title=title,
+            description=description,
+            footer=footer,
+            closable=closable,
+            close_label=close_label,
+            width=_length(width),
+            label=label,
+            dismissible=dismissible,
+        ),
+        **_open(open, default_open, on_open_change),
+        **props,
     )
 
 
@@ -388,17 +413,20 @@ def sp_drawer(
     title: Any = None,
     description: Any = None,
     footer: Any = None,
-    side: Side = "right",
+    side: str | None = None,
     open: bool | rx.Var | None = None,
     default_open: bool | None = None,
     on_open_change: Any = None,
-    closable: bool = True,
-    close_label: str = "Close",
+    closable: bool | None = None,
+    close_label: str | None = None,
     size: int | str | None = None,
-    modal: bool = True,
+    modal: bool | None = None,
+    extent: int | str | None = None,
+    label: str | None = None,
+    dismissible: bool | None = None,
     **props: Any,
 ) -> rx.Component:
-    """A panel that slides from an edge of the window, on a card frame.
+    """A panel against one side of the window, on a card frame.
 
     Args:
         *children: The body.
@@ -406,161 +434,170 @@ def sp_drawer(
         title: The heading and accessible name.
         description: A line under the title.
         footer: Actions.
-        side: ``right`` (default), ``left``, ``top`` or ``bottom``.
+        side: ``end`` (default), ``start``, ``top`` or ``bottom``.
         open: Open state (controlled).
         default_open: Initial open state.
         on_open_change: Handler receiving the new open state.
-        closable: Draws the close cross.
+        closable: Draws the close cross (default).
         close_label: Accessible name of the cross.
-        size: Width (left/right) or height (top/bottom), px or CSS length.
-        modal: Traps focus and blocks the page behind (default).
-        **props: Surface props.
+        size: 0.7.0's name of ``extent``.
+        modal: Blocks the page behind (default); ``False`` opens it with ``show()``.
+        extent: Width (start/end) or height (top/bottom), px or CSS length.
+        label: Accessible name when there is no title.
+        dismissible: Escape and a backdrop click close it (default).
+        **props: Common props.
 
     Returns:
         The drawer.
     """
-    surface = _surface_props(props)
-    style = {"--sp-drawer-size": f"{size}px" if isinstance(size, int) else size} if size is not None else {}
-    return _dialog(
-        "drawer",
-        children,
-        trigger=trigger,
-        title=title,
-        description=description,
-        footer=footer,
-        open=open,
-        default_open=default_open,
-        on_open_change=on_open_change,
-        closable=closable,
-        close_label=close_label,
-        modal=modal,
-        extra_attrs={"data-side": side},
-        style=style,
-        surface=surface,
-        props=props,
+    return SpDrawer.create(
+        *children,
+        **_given(
+            trigger=_as_trigger(trigger, **_common(props)),
+            title=title,
+            description=description,
+            footer=footer,
+            side=_logical(side, _SIDES, "side"),
+            closable=closable,
+            close_label=close_label,
+            extent=_length(extent if extent is not None else size),
+            modal=modal,
+            label=label,
+            dismissible=dismissible,
+        ),
+        **_open(open, default_open, on_open_change),
+        **props,
     )
-
-
-# ── Popover and tooltip ─────────────────────────────────────────────────────────────────
 
 
 def sp_popover(
     *children: Any,
     trigger: Any,
     title: Any = None,
-    side: Side = "bottom",
-    align: Align = "center",
-    side_offset: int = 6,
+    side: str | None = None,
+    align: Align | None = None,
+    side_offset: int | None = None,
     open: bool | rx.Var | None = None,
     default_open: bool | None = None,
     on_open_change: Any = None,
-    closable: bool = False,
-    close_label: str = "Close",
-    width: int | None = None,
+    closable: bool | None = None,
+    close_label: str | None = None,
+    width: int | str | None = None,
+    offset: int | None = None,
+    label: str | None = None,
     **props: Any,
 ) -> rx.Component:
-    """Rich content anchored to a trigger, on a card frame; dismissed by Escape or a click outside.
+    """A card anchored to its trigger; it closes on Escape or a click outside.
 
     Args:
-        *children: The content.
+        *children: The body.
         trigger: What opens it (see :func:`sp_modal`).
-        title: A heading.
-        side: Preferred side of the trigger.
-        align: Alignment along that side.
-        side_offset: Gap to the trigger, px.
+        title: A heading that names it.
+        side: Preferred side of the trigger: ``bottom`` (default), ``top``, ``start`` or ``end``.
+        align: Alignment along that side (``center``).
+        side_offset: 0.7.0's name of ``offset``.
         open: Open state (controlled).
         default_open: Initial open state.
         on_open_change: Handler receiving the new open state.
         closable: Draws a close cross.
         close_label: Accessible name of the cross.
-        width: Maximum width, px (320 by default).
-        **props: Surface props.
+        width: Width, px or CSS length (320 px by default).
+        offset: Gap to the trigger, px (6).
+        label: Accessible name when there is no title.
+        **props: Common props.
 
     Returns:
         The popover.
     """
-    surface = _surface_props(props)
-    style = {"--sp-popover-width": f"{width}px"} if width else {}
-    extra_style = surface.pop("style", None)
-    content = sp_surface(
-        *(_header(title, closable, PopoverClose, _NoPart, close_label) if (title is not None or closable) else []),
+    return SpPopover.create(
         *children,
-        name="popover",
-        frame="card",
-        style=[style, extra_style] if extra_style is not None else style,
-        **surface,
+        trigger=_as_trigger(trigger, **_common(props)),
+        **_given(
+            title=title,
+            side=_logical(side, _SIDES, "side"),
+            align=align,
+            offset=offset if offset is not None else side_offset,
+            closable=closable,
+            close_label=close_label,
+            width=_length(width),
+            label=label,
+        ),
+        **_open(open, default_open, on_open_change),
         **props,
     )
-    return PopoverRoot.create(
-        PopoverTrigger.create(_as_trigger(trigger), as_child=True),
-        PopoverPortal.create(
-            PopoverContent.create(
-                content, as_child=True, side=side, align=align, side_offset=side_offset, collision_padding=8
-            )
-        ),
-        **_open_props(open, default_open, on_open_change),
-    )
-
-
-class _NoPart:
-    """Stands in for a Radix part that a component does not have (a popover has no Title)."""
-
-    @staticmethod
-    def create(child: Any, **_: Any) -> Any:
-        return child
 
 
 def sp_tooltip(
     trigger: Any,
-    content: Any,
+    content: str | rx.Var,
     *,
-    side: Side = "top",
-    align: Align = "center",
-    side_offset: int = 6,
-    delay: int = 300,
+    side: str | None = None,
+    align: Align | None = None,
+    side_offset: int | None = None,
+    delay: int | None = None,
     open: bool | rx.Var | None = None,
     default_open: bool | None = None,
     on_open_change: Any = None,
+    offset: int | None = None,
     **props: Any,
 ) -> rx.Component:
-    """A short label shown on hover or keyboard focus, on a drawn box frame.
+    """A short description of its trigger, shown on hover and on focus; Escape dismisses it.
 
     Args:
         trigger: The element described (a string becomes :func:`sp_trigger`).
-        content: The text.
-        side: Preferred side.
-        align: Alignment along that side.
-        side_offset: Gap, px.
-        delay: Hover delay before showing, ms.
+        content: The text (the npm ``text``): the trigger's accessible description.
+        side: Preferred side (``top``).
+        align: Alignment along that side (``center``).
+        side_offset: 0.7.0's name of ``offset``.
+        delay: Hover delay before showing, ms (300).
         open: Open state (controlled).
         default_open: Initial open state.
         on_open_change: Handler receiving the new open state.
-        **props: Surface props.
+        offset: Gap, px (6).
+        **props: Common props.
 
     Returns:
         The tooltip.
+
+    Raises:
+        TypeError: When ``content`` is a component: a tooltip holds text only.
     """
-    surface = _surface_props(props)
-    box = sp_surface(content, name="tooltip", frame="control", size="sm", **surface, **props)
-    return TooltipProvider.create(
-        TooltipRoot.create(
-            TooltipTrigger.create(_as_trigger(trigger), as_child=True),
-            TooltipPortal.create(
-                TooltipContent.create(box, as_child=True, side=side, align=align, side_offset=side_offset)
-            ),
-            **_open_props(open, default_open, on_open_change),
+    if isinstance(content, rx.Component):
+        msg = "sp_tooltip's content is text (silverpoint 0.7.0 SpTooltip.text); use sp_popover for markup."
+        raise TypeError(msg)
+    return SpTooltip.create(
+        trigger=_as_trigger(trigger, **_common(props)),
+        text=content,
+        **_given(
+            side=_logical(side, _SIDES, "side"),
+            align=align,
+            offset=offset if offset is not None else side_offset,
+            delay=delay,
         ),
-        delay_duration=delay,
+        **_open(open, default_open, on_open_change),
+        **props,
     )
 
 
-# ── Select and dropdown menu ────────────────────────────────────────────────────────────
-
-
-def _option(item: Any) -> dict[str, Any]:
+def _option(item: Any) -> Any:
+    """``{"value", "label", "disabled"}`` (0.7.0) or ``{"key", …}`` → ``UiItem``; a string is its own key."""
     if isinstance(item, str):
-        return {"value": item, "label": item}
-    return {"label": item.get("value"), **item}
+        return item
+    out = {key: value for key, value in item.items() if key != "value"}
+    out.setdefault("key", item.get("value"))
+    out.setdefault("label", str(out["key"]))
+    return out
+
+
+def _options(items: Sequence[Any] | rx.Var) -> Any:
+    if not isinstance(items, rx.Var):
+        return [_option(item) for item in items]
+    # A state var of dicts may still name the key ``value``: map it in the browser.
+    expression = (
+        f"({items}).map((item) => (typeof item === 'string' ? item : "
+        "({ ...item, key: item.key ?? item.value, label: item.label ?? String(item.key ?? item.value) })))"
+    )
+    return rx.Var(_js_expr=expression, _var_type=list, _var_data=items._get_all_var_data())
 
 
 def sp_select(
@@ -569,89 +606,53 @@ def sp_select(
     value: str | rx.Var | None = None,
     default_value: str | None = None,
     on_change: Any = None,
-    placeholder: str = "Select…",
+    placeholder: str | None = None,
     label: str | rx.Var | None = None,
-    disabled: bool | rx.Var = False,
+    disabled: bool | rx.Var | None = None,
     name: str | None = None,
-    required: bool = False,
-    width: int | None = None,
+    required: bool | None = None,
+    width: int | str | None = None,
+    open: bool | rx.Var | None = None,
+    default_open: bool | None = None,
+    on_open_change: Any = None,
     **props: Any,
 ) -> rx.Component:
-    """A single-choice list with full keyboard support, drawn as a control frame and a card list.
-
-    ``on_change`` receives the chosen value (a string). The chosen option carries a drawn tick; the
-    highlighted one is heightened.
+    """A drawn field that opens a list of options; the chosen one is ticked.
 
     Args:
-        items: ``["a", "b"]`` or ``[{"value", "label", "disabled"}]``, static or a state var of dicts.
-        value: The chosen value (controlled).
-        default_value: The initial value (uncontrolled).
-        on_change: Handler receiving the new value.
-        placeholder: Shown, in italics, while nothing is chosen.
-        label: Accessible name of the field.
+        items: ``["a", "b"]`` or ``[{"key", "label", "disabled"}]`` (0.7.0's ``value`` still names
+            the key), static or a state var.
+        value: The chosen key (controlled).
+        default_value: The initial key (uncontrolled).
+        on_change: Handler receiving the chosen key.
+        placeholder: Shown, in italics, while nothing is chosen (``"Select…"``).
+        label: Accessible name of the field; the placeholder when omitted.
         disabled: Disables the field.
-        name: Form field name (a hidden native select is submitted).
+        name: Form field name (a hidden input submits the key).
         required: Required in a form.
-        width: Minimum width of the field, px (180 by default).
-        **props: Surface props, applied to the field and the list.
+        width: Width of the field, px or CSS length (180 px by default).
+        open: Open state of the list (controlled).
+        default_open: Initial open state.
+        on_open_change: Handler receiving the new open state.
+        **props: Common props.
 
     Returns:
         The select.
     """
-    surface = _surface_props(props)
-    list_surface = {k: v for k, v in surface.items() if k in ("ground", "substrate", "mode", "palette", "seed")}
-
-    def option(item: Any) -> rx.Component:
-        entry = item if isinstance(item, rx.Var) else _option(item)
-        return SelectItem.create(
-            SelectItemIndicator.create(sp_glyph(glyph="tick"), class_name="sp-ui-option-indicator"),
-            SelectItemText.create(entry["label"]),
-            value=entry["value"],
-            disabled=entry["disabled"].to(bool) if isinstance(entry, rx.Var) else entry.get("disabled", False),
-            class_name="sp-ui-option",
-        )
-
-    options = rx.foreach(items, option) if isinstance(items, rx.Var) else [option(item) for item in items]
-    style = {"--sp-select-width": f"{width}px"} if width else None
-    field = sp_trigger(
-        SelectValue.create(placeholder=placeholder, class_name="sp-ui-select-value"),
-        chevron=True,
-        class_name="sp-ui-select-trigger",
-        aria_label=label,
-        disabled=disabled,
-        **({"style": style} if style else {}),
-        **{k: v for k, v in surface.items() if k not in ("class_name", "style")},
-    )
-    root_props: dict[str, Any] = {"disabled": disabled, "required": required}
-    if value is not None:
-        root_props["value"] = value
-    if default_value is not None:
-        root_props["default_value"] = default_value
-    if on_change is not None:
-        root_props["on_value_change"] = on_change
-    if name is not None:
-        root_props["name"] = name
-    return rx.el.span(
-        SelectRoot.create(
-            SelectTrigger.create(field, as_child=True),
-            SelectPortal.create(
-                SelectContent.create(
-                    sp_surface(
-                        SelectViewport.create(*options)
-                        if isinstance(options, list)
-                        else SelectViewport.create(options),
-                        name="select-content",
-                        frame="card",
-                        **list_surface,
-                    ),
-                    as_child=True,
-                    position="popper",
-                    side_offset=4,
-                )
-            ),
-            **root_props,
+    return SpSelect.create(
+        items=_options(items),
+        label=label if label is not None else (placeholder or "Select…"),
+        **_given(
+            value=value,
+            default_value=default_value,
+            on_change=on_change,
+            placeholder=placeholder,
+            disabled=disabled,
+            name=name,
+            required=required,
+            width=_length(width),
         ),
-        class_name=" ".join(filter(None, ["sp-select", surface.get("class_name")])),
+        **_open(open, default_open, on_open_change),
         **props,
     )
 
@@ -661,175 +662,123 @@ def sp_dropdown_menu(
     items: Sequence[dict[str, Any]] | rx.Var,
     *,
     on_select: Any = None,
-    side: Side = "bottom",
-    align: Align = "start",
+    side: str | None = None,
+    align: Align | None = None,
     open: bool | rx.Var | None = None,
     default_open: bool | None = None,
     on_open_change: Any = None,
+    label: str | rx.Var | None = None,
     **props: Any,
 ) -> rx.Component:
-    """A menu of commands opened from a trigger; full keyboard support, typeahead, heightened focus.
+    """A menu of commands under a drawn button.
 
-    Items are ``{"key", "label", "shortcut", "disabled", "danger"}``; in a static list,
-    ``{"type": "separator"}`` draws a rule and ``{"type": "label", "label": …}`` a group heading.
+    Items are ``{"key", "label", "shortcut", "disabled", "danger"}``, ``{"type": "separator", "key"}``
+    or ``{"type": "label", "key", "label"}``; a static separator or label without a key gets one.
 
     Args:
-        trigger: What opens it (a string becomes :func:`sp_trigger` with a chevron).
+        trigger: Its button: a string is the menu's own drawn button with that text (and the menu's
+            accessible name); a component is cloned as the trigger.
         items: The commands, static or a state var of dicts.
         on_select: Handler called with the chosen item's ``key``.
-        side: Preferred side.
-        align: Alignment along that side.
+        side: Preferred side (``bottom``).
+        align: Alignment along that side (``start``).
         open: Open state (controlled).
         default_open: Initial open state.
         on_open_change: Handler receiving the new open state.
-        **props: Surface props.
+        label: The menu's accessible name; the trigger's text when it is a string.
+        **props: Common props.
 
     Returns:
         The menu.
     """
-    surface = _surface_props(props)
-
-    def entry(item: Any) -> rx.Component:
-        if isinstance(item, dict) and item.get("type") == "separator":
-            return MenuSeparator.create(class_name="sp-ui-menu-separator")
-        if isinstance(item, dict) and item.get("type") == "label":
-            return MenuLabel.create(item["label"], class_name="sp-ui-menu-label")
-        key = item["key"]
-        item_props: dict[str, Any] = {"class_name": "sp-ui-menu-item"}
-        if isinstance(item, rx.Var):
-            item_props["disabled"] = item["disabled"].to(bool)
-            item_props["custom_attrs"] = {"data-danger": rx.cond(item["danger"].to(bool), "true", "false")}
-            shortcut = rx.cond(
-                item["shortcut"], rx.el.span(item["shortcut"], class_name="sp-ui-shortcut"), rx.fragment()
-            )
-        else:
-            item_props["disabled"] = item.get("disabled", False)
-            item_props["custom_attrs"] = {"data-danger": "true" if item.get("danger") else "false"}
-            shortcut = (
-                rx.el.span(item["shortcut"], class_name="sp-ui-shortcut") if item.get("shortcut") else rx.fragment()
-            )
-        if on_select is not None:
-            item_props["on_select"] = on_select(key)
-        return MenuItem.create(item["label"], shortcut, **item_props)
-
-    entries = rx.foreach(items, entry) if isinstance(items, rx.Var) else [entry(item) for item in items]
-    content = sp_surface(
-        *(entries if isinstance(entries, list) else [entries]),
-        name="menu",
-        frame="card",
-        **surface,
+    text_trigger = isinstance(trigger, (str, rx.Var))
+    if not isinstance(items, rx.Var):
+        # Keys are unique (REQ-325); 0.7.0 let separators and labels go without one.
+        items = [
+            item if "key" in item else {**item, "key": f"{item.get('type', 'item')}-{index}"}
+            for index, item in enumerate(items)
+        ]
+    if label is None:
+        label = trigger if text_trigger else "Menu"
+    return SpDropdownMenu.create(
+        items=items,
+        label=label,
+        **_given(
+            trigger=None if text_trigger else trigger,
+            on_select=on_select,
+            side=_logical(side, _SIDES, "side"),
+            align=align,
+        ),
+        **_open(open, default_open, on_open_change),
         **props,
     )
-    return MenuRoot.create(
-        MenuTrigger.create(
-            sp_trigger(trigger, chevron=True) if isinstance(trigger, (str, rx.Var)) else trigger, as_child=True
-        ),
-        MenuPortal.create(MenuContent.create(content, as_child=True, side=side, align=align, side_offset=6)),
-        **_open_props(open, default_open, on_open_change),
-    )
-
-
-# ── Toast ───────────────────────────────────────────────────────────────────────────────
-
-_TOAST_GLYPHS = {"info": "info", "success": "tick", "warning": "warning", "error": "cross"}
 
 
 def sp_toast(
     title: Any,
     description: Any = None,
     *,
-    kind: ToastKind = "info",
+    kind: ToastKind | None = None,
     action: rx.Component | None = None,
-    action_alt: str = "",
+    action_alt: str | None = None,
     open: bool | rx.Var | None = None,
     default_open: bool | None = None,
     on_open_change: Any = None,
     duration: int | None = None,
-    close_label: str = "Dismiss",
+    close_label: str | None = None,
     **props: Any,
 ) -> rx.Component:
-    """A brief notice that stacks in the corner and dismisses itself; place it inside :func:`sp_toaster`.
-
-    Show it by setting ``open`` from state; it calls ``on_open_change(False)`` when it closes
-    (timeout, swipe, the cross or Escape).
+    """A notice; put it in :func:`sp_toaster`. ``error`` and ``warning`` are announced assertively.
 
     Args:
         title: The notice.
         description: Detail.
-        kind: ``info``, ``success``, ``warning`` or ``error`` (its drawn mark; ``error`` and
-            ``warning`` are announced assertively).
+        kind: ``info`` (default), ``success``, ``warning`` or ``error`` (its drawn mark).
         action: A button for the notice's action.
-        action_alt: How to perform the action without the toast (required by Radix for ``action``).
+        action_alt: 0.7.0 (Radix) only; ignored, with a deprecation warning.
         open: Open state (controlled).
         default_open: Initial open state.
         on_open_change: Handler receiving the new open state.
-        duration: Time on screen, ms (the toaster's by default).
+        duration: Time on screen, ms, at least 1000 (the toaster's by default).
         close_label: Accessible name of the cross.
-        **props: Surface props.
+        **props: Common props.
 
     Returns:
         The toast.
     """
-    surface = _surface_props(props)
-    body = sp_surface(
-        sp_glyph(glyph=_TOAST_GLYPHS[kind]),
-        ToastTitle.create(rx.el.p(title, class_name="sp-ui-toast-title"), as_child=True),
-        ToastClose.create(
-            rx.el.button(
-                sp_glyph(glyph="cross"), type="button", class_name="sp-ui-icon-button", aria_label=close_label
-            ),
-            as_child=True,
-        ),
-        *(
-            [ToastDescription.create(rx.el.p(description, class_name="sp-ui-toast-description"), as_child=True)]
-            if description is not None
-            else []
-        ),
-        *(
-            [
-                ToastAction.create(
-                    rx.el.div(action, class_name="sp-ui-toast-action"), as_child=True, alt_text=action_alt or "Action"
-                )
-            ]
-            if action is not None
-            else []
-        ),
-        element="li",
-        name="toast",
-        frame="card",
-        custom_attrs={"data-kind": kind},
-        **surface,
+    if action_alt is not None:
+        warnings.warn(
+            "sp_toast(action_alt=) is ignored since 0.7.1 (it was Radix's).", DeprecationWarning, stacklevel=2
+        )
+    return SpToast.create(
+        title=title,
+        **_given(description=description, kind=kind, action=action, duration=duration, close_label=close_label),
+        **_open(open, default_open, on_open_change),
         **props,
     )
-    root_props = _open_props(open, default_open, on_open_change)
-    if duration is not None:
-        root_props["duration"] = duration
-    root_props["type"] = "foreground" if kind in ("error", "warning") else "background"
-    return ToastRoot.create(body, as_child=True, **root_props)
 
 
 def sp_toaster(
     *toasts: rx.Component,
-    position: ToastPosition = "bottom-right",
-    duration: int = 5000,
-    label: str = "Notifications",
+    position: str | None = None,
+    duration: int | None = None,
+    label: str | None = None,
+    **props: Any,
 ) -> rx.Component:
-    """The place toasts stack: wrap every :func:`sp_toast` of the page in one toaster.
+    """The notification region: where toasts stack. Toasts pause while hovered or focused.
 
     Args:
-        *toasts: The toasts.
-        position: Corner of the window.
-        duration: Default time on screen, ms.
-        label: Accessible name of the notification region (F8 focuses it).
+        *toasts: The :func:`sp_toast` notices.
+        position: ``bottom-end`` (default), ``bottom-start``, ``top-end`` or ``top-start``.
+        duration: Default time on screen, ms (5000).
+        label: Accessible name of the region (F8 focuses it).
+        **props: Common props.
 
     Returns:
         The toaster.
     """
-    swipe = "right" if position.endswith("right") else "left"
-    return ToastProvider.create(
+    return SpToaster.create(
         *toasts,
-        ToastViewport.create(class_name="sp-toast-viewport", custom_attrs={"data-position": position}, label=label),
-        duration=duration,
-        swipe_direction=swipe,
-        label=label,
+        **_given(position=_logical(position, _POSITIONS, "position"), duration=duration, label=label),
+        **props,
     )

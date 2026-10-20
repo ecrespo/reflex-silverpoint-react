@@ -1,62 +1,251 @@
-"""Reflex-composed components, level A: native markup drawn on silverpoint surfaces.
+"""The composed components of silverpoint 0.7: table, pagination, breadcrumb, avatar, statistic,
+descriptions, a vertical timeline, collapse, empty and result states, textarea and number input.
 
-Table, pagination, breadcrumb, avatar, statistic, descriptions, a vertical timeline, collapse,
-empty and result states, textarea and number input. Their behaviour is native HTML (a ``<table>``,
-``<details>``, ``<textarea>``…) or a few lines of JS; their drawing is the ground's own frames,
-tones and heightening (see :mod:`.surfaces`).
+Each one is ``@silverpoint/react``'s own component (``/ui`` subpath, beside the ``Sp`` components):
+native markup (a ``<table>``, ``<details>``, ``<textarea>``…) drawn by the core with the ground's
+frames, tones and heightening, under silverpoint's parity contract. They read
+``silverpoint_provider`` (ground, substrate, mode, locale, palette) as every ``Sp`` component does.
 
-These components are Reflex-only: silverpoint's React, Vue and Angular adapters do not have them.
-Unlike the ``Sp`` components they do not read ``silverpoint_provider``; pass ``ground``,
-``substrate`` and ``mode`` explicitly, or wrap them in ``silverpoint_palette`` for colour.
-
-Every builder takes the surface props: ``ground``, ``substrate``, ``mode``, ``size``, ``seed``,
-``palette``, ``id``, ``class_name`` and ``style``.
+The builders keep the 0.7.0 signatures: positional ``columns``/``data``, ``items`` and ``title``,
+static lists or state vars, and every common prop (``ground``, ``substrate``, ``mode``, ``size``,
+``seed``, ``palette``, ``id``, ``class_name``, ``style``) as a keyword.
 """
 
-from collections.abc import Callable, Sequence
+from collections.abc import Sequence
 from typing import Any, Literal
 
 import reflex as rx
+from reflex.event import passthrough_event_spec
 
-from .surfaces import SpInputNumber, SpPagination, sp_glyph, sp_surface
+from .surfaces import SpInputNumber, SpPagination, _renamed
+from .ui import SilverpointUi
 
 Status = Literal["done", "current", "pending", "error"]
 ResultStatus = Literal["success", "info", "warning", "error"]
+Align = Literal["start", "center", "end"]
+HeadingLevel = Literal[2, 3, 4, 5, 6]
 
-#: The props every surface accepts, forwarded untouched by the builders.
-_SURFACE_KEYS = ("ground", "substrate", "mode", "size", "seed", "palette", "id", "class_name", "style", "key")
-
-
-def _surface_props(props: dict[str, Any]) -> dict[str, Any]:
-    return {key: props.pop(key) for key in _SURFACE_KEYS if key in props}
-
-
-def _with_style(style: Any, extra: dict[str, Any]) -> Any:
-    if style is None:
-        return extra
-    if isinstance(style, dict):
-        return {**extra, **style}
-    return [extra, style]
+_key_spec = passthrough_event_spec(str)
+_open_spec = passthrough_event_spec(bool)
+_text_spec = passthrough_event_spec(str)
 
 
-def _items(items: Sequence[Any] | rx.Var, render: Callable[..., rx.Component]) -> list[Any]:
-    """Render a static list in Python or a state var with ``rx.foreach``; splat the result."""
-    if isinstance(items, rx.Var):
-        return [rx.foreach(items, render)]
-    return [render(item) for item in items]
+def _given(**props: Any) -> dict[str, Any]:
+    """The arguments that were given: ``None`` leaves the npm default."""
+    return {key: value for key, value in props.items() if value is not None}
 
 
-# ── Table ───────────────────────────────────────────────────────────────────────────────
+def _length(value: Any) -> Any:
+    """``120`` → ``"120px"``; strings and vars unchanged."""
+    return f"{value}px" if isinstance(value, (int, float)) and not isinstance(value, bool) else value
+
+
+def _slot(children: tuple[Any, ...]) -> Any:
+    """Several children as one component prop."""
+    if not children:
+        return None
+    return children[0] if len(children) == 1 else rx.fragment(*children)
+
+
+# ── Components ──────────────────────────────────────────────────────────────────────────
+
+
+class SpTable(SilverpointUi):
+    """A data table on a card frame: small-caps header, tabular figures, hatched striping."""
+
+    tag = "SpTable"
+
+    # ``[{"key", "title", "align", "sortable", "width"}]``.
+    columns: rx.Var[list[dict[str, Any]]]
+
+    # The rows, drawn as given: sort them yourself (see :func:`sort_rows`).
+    data: rx.Var[list[dict[str, Any]]]
+
+    # The table's caption, its accessible name.
+    caption: rx.Var[str]
+
+    # The column currently sorted, and its order (``asc`` by default).
+    sort_key: rx.Var[str]
+    sort_order: rx.Var[Literal["asc", "desc"]]
+
+    # Hatches every other row (``False``), the row under the pointer (``True``); draws the card frame (``True``).
+    striped: rx.Var[bool]
+    hoverable: rx.Var[bool]
+    bordered: rx.Var[bool]
+
+    # Shown when there are no rows (``"No data"``).
+    empty_text: rx.Var[str]
+
+    # The column whose value keys each row.
+    row_key: rx.Var[str]
+
+    # A sortable header was used: the column's key.
+    on_sort: rx.EventHandler[_key_spec]
+
+
+class SpBreadcrumb(SilverpointUi):
+    """Where the page sits: links separated by hairline slashes; the last item is the current page."""
+
+    tag = "SpBreadcrumb"
+
+    # ``[{"key", "label", "href"}]``.
+    items: rx.Var[list[dict[str, Any]]]
+
+    # Accessible name of the landmark (``"Breadcrumb"``).
+    label: rx.Var[str]
+
+
+class SpAvatar(SilverpointUi):
+    """A portrait in a drawn round (or square) frame, or the person's initials."""
+
+    tag = "SpAvatar"
+
+    src: rx.Var[str]
+    name: rx.Var[str]
+    initials: rx.Var[str]
+    alt: rx.Var[str]
+    shape: rx.Var[Literal["circle", "square"]]
+    pixel_size: rx.Var[int]
+
+
+class SpAvatarGroup(SilverpointUi):
+    """Overlapping avatars."""
+
+    tag = "SpAvatarGroup"
+
+    label: rx.Var[str]
+
+
+class SpStatistic(SilverpointUi):
+    """A figure with its title: small-caps label, large tabular number, optional trend."""
+
+    tag = "SpStatistic"
+
+    title: rx.Var[str]
+    value: rx.Var[str | int | float]
+    prefix: rx.Var[str]
+    suffix: rx.Var[str]
+    trend: rx.Var[Literal["up", "down"]]
+    delta: rx.Var[str]
+
+
+class SpDescriptions(SilverpointUi):
+    """Label–value pairs in a grid (a ``<dl>``), optionally on a card frame."""
+
+    tag = "SpDescriptions"
+
+    items: rx.Var[list[dict[str, Any]]]
+    title: rx.Var[str]
+    columns: rx.Var[int]
+    bordered: rx.Var[bool]
+    heading_level: rx.Var[HeadingLevel]
+
+
+class SpTimelineList(SilverpointUi):
+    """A vertical timeline: a drawn mark per event on a hairline, time, title and description."""
+
+    tag = "SpTimelineList"
+
+    items: rx.Var[list[dict[str, Any]]]
+    label: rx.Var[str]
+
+
+class SpCollapse(SilverpointUi):
+    """Panels that open and close, on a card frame; native ``<details>``."""
+
+    tag = "SpCollapse"
+
+    accordion: rx.Var[bool]
+    bordered: rx.Var[bool]
+
+
+class SpCollapseItem(SilverpointUi):
+    """One panel of :class:`SpCollapse`: a native ``<details>``."""
+
+    tag = "SpCollapseItem"
+
+    title: rx.Var[str]
+    disabled: rx.Var[bool]
+    open: rx.Var[bool]
+    default_open: rx.Var[bool]
+
+    # The panel opened or closed: the new state.
+    on_toggle: rx.EventHandler[_open_spec]
+
+
+class SpEmpty(SilverpointUi):
+    """The empty state: a lightly hatched, drawn tray and a line of italic text."""
+
+    tag = "SpEmpty"
+
+    description: rx.Var[str]
+
+    # Actions under the text.
+    extra: rx.Var[rx.Component]
+
+
+class SpResult(SilverpointUi):
+    """The outcome of an operation: a drawn round mark, title and subtitle."""
+
+    tag = "SpResult"
+
+    status: rx.Var[ResultStatus]
+    title: rx.Var[str]
+    subtitle: rx.Var[str]
+    heading_level: rx.Var[HeadingLevel]
+
+    # Actions under the text.
+    extra: rx.Var[rx.Component]
+
+
+class SpTextarea(SilverpointUi):
+    """A multi-line text field on the ``SpInput`` contract: drawn frame, italic placeholder, message."""
+
+    tag = "SpTextarea"
+
+    value: rx.Var[str]
+    default_value: rx.Var[str]
+    rows: rx.Var[int]
+    placeholder: rx.Var[str]
+    label: rx.Var[str]
+    message: rx.Var[str]
+    invalid: rx.Var[bool]
+    disabled: rx.Var[bool]
+    read_only: rx.Var[bool]
+    max_length: rx.Var[int]
+    show_count: rx.Var[bool]
+    name: rx.Var[str]
+
+    # The text changed: the new text, not a DOM event.
+    on_change: rx.EventHandler[_text_spec]
+
+
+# ── Builders ────────────────────────────────────────────────────────────────────────────
 
 
 def _column(column: dict[str, Any] | str) -> dict[str, Any]:
-    return {"key": column, "title": column} if isinstance(column, str) else {"title": column["key"], **column}
+    if isinstance(column, str):
+        return {"key": column}
+    out = dict(column)
+    if "width" in out:
+        out["width"] = _length(out["width"])
+    return out
+
+
+def _sort_key(value: Any) -> tuple[int, Any]:
+    # ``uiSortRows``: numbers first, by value; anything else by its lower-cased text, by code point.
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return (0, value)
+    text = ("true" if value else "false") if isinstance(value, bool) else str(value)
+    return (1, text.lower())
 
 
 def sort_rows(rows: list[dict[str, Any]], key: str | None, order: str | None = "asc") -> list[dict[str, Any]]:
     """Sort table rows on the backend, the usual companion of ``on_sort``.
 
-    ``None`` values sort last; mixed types sort by their string form.
+    The same order as ``uiSortRows`` of ``@silverpoint/core/ui`` (REQ-474): stable, numbers before
+    anything else, which compares by code point after lower-casing; ``None`` and missing values last,
+    in input order; ``desc`` reverses the present rows only.
 
     Args:
         rows: The rows.
@@ -68,20 +257,9 @@ def sort_rows(rows: list[dict[str, Any]], key: str | None, order: str | None = "
     """
     if not key:
         return list(rows)
-
-    def sort_key(row: dict[str, Any]) -> tuple[int, Any]:
-        value = row.get(key)
-        if value is None:
-            return (1, "")
-        return (0, value if isinstance(value, (int, float)) else str(value).lower())
-
     present = [row for row in rows if row.get(key) is not None]
     missing = [row for row in rows if row.get(key) is None]
-    try:
-        ordered = sorted(present, key=sort_key, reverse=order == "desc")
-    except TypeError:
-        ordered = sorted(present, key=lambda row: str(row.get(key)).lower(), reverse=order == "desc")
-    return ordered + missing
+    return sorted(present, key=lambda row: _sort_key(row[key]), reverse=order == "desc") + missing
 
 
 def sp_table(
@@ -92,74 +270,48 @@ def sp_table(
     sort_key: str | rx.Var | None = None,
     sort_order: Literal["asc", "desc"] | rx.Var | None = None,
     on_sort: Any = None,
-    striped: bool = False,
-    hoverable: bool = True,
-    bordered: bool = True,
-    empty_text: str = "No data",
+    striped: bool | None = None,
+    hoverable: bool | None = None,
+    bordered: bool | None = None,
+    empty_text: str | None = None,
+    row_key: str | None = None,
     **props: Any,
 ) -> rx.Component:
     """A data table on a card frame: small-caps header, tabular figures, hatched striping.
 
     Args:
         columns: ``[{"key", "title", "align": "start"|"center"|"end", "sortable", "width"}]`` or
-            plain keys.
+            plain keys; an int ``width`` is in px.
         data: Rows (dicts), static or a state var.
         caption: The table's caption (its accessible name).
         sort_key: The column currently sorted (draws its arrow and sets ``aria-sort``).
         sort_order: ``asc`` or ``desc``.
-        on_sort: Handler called with the column key when a sortable header is clicked; pair it
-            with :func:`sort_rows`.
+        on_sort: Handler called with the column key when a sortable header is used; pair it with
+            :func:`sort_rows`.
         striped: Hatches every other row.
         hoverable: Hatches the row under the pointer.
         bordered: Draws the card frame around the table.
         empty_text: Shown when there are no rows.
-        **props: Surface props.
+        row_key: The column whose value keys each row.
+        **props: Common props.
 
     Returns:
         The table.
     """
-    surface = _surface_props(props)
-    cols = [_column(column) for column in columns]
-
-    def header(column: dict[str, Any]) -> rx.Component:
-        key = column["key"]
-        attrs: dict[str, Any] = {"scope": "col", "data-align": column.get("align", "start")}
-        if column.get("width"):
-            attrs["style"] = {"width": column["width"]}
-        if not column.get("sortable"):
-            return rx.el.th(column["title"], custom_attrs=attrs)
-        active = sort_key == key if isinstance(sort_key, rx.Var) else rx.Var.create(sort_key == key)
-        descending = sort_order == "desc" if isinstance(sort_order, rx.Var) else rx.Var.create(sort_order == "desc")
-        attrs["aria-sort"] = rx.cond(active, rx.cond(descending, "descending", "ascending"), "none")
-        glyph = rx.cond(active, rx.cond(descending, "sortDown", "sortUp"), "sort")
-        button_props: dict[str, Any] = {"type": "button", "class_name": "sp-ui-sort"}
-        if on_sort is not None:
-            button_props["on_click"] = on_sort(key)
-        return rx.el.th(rx.el.button(column["title"], sp_glyph(glyph=glyph), **button_props), custom_attrs=attrs)
-
-    def row(item: Any) -> rx.Component:
-        def cell(column: dict[str, Any]) -> Any:
-            return item[column["key"]] if isinstance(item, rx.Var) else item.get(column["key"], "")
-
-        return rx.el.tr(*[rx.el.td(cell(c), custom_attrs={"data-align": c.get("align", "start")}) for c in cols])
-
-    empty = rx.el.tr(rx.el.td(empty_text, col_span=len(cols), class_name="sp-ui-table-empty"))
-    if isinstance(data, rx.Var):
-        body = rx.el.tbody(rx.cond(data.to(list).length() > 0, rx.foreach(data, row), empty))
-    else:
-        body = rx.el.tbody(*([row(item) for item in data] or [empty]))
-    table = rx.el.table(
-        *([rx.el.caption(caption)] if caption is not None else []),
-        rx.el.thead(rx.el.tr(*[header(c) for c in cols])),
-        body,
-        class_name="sp-ui-table",
-    )
-    return sp_surface(
-        rx.el.div(table, class_name="sp-ui-table-scroll"),
-        name="datatable",
-        frame="card" if bordered else None,
-        custom_attrs={"data-striped": str(striped).lower(), "data-hoverable": str(hoverable).lower()},
-        **surface,
+    return SpTable.create(
+        columns=[_column(column) for column in columns],
+        data=data,
+        **_given(
+            caption=caption,
+            sort_key=sort_key,
+            sort_order=sort_order,
+            on_sort=on_sort,
+            striped=striped,
+            hoverable=hoverable,
+            bordered=bordered,
+            empty_text=empty_text,
+            row_key=row_key,
+        ),
         **props,
     )
 
@@ -176,59 +328,20 @@ def sp_pagination(**props: Any) -> rx.Component:
     return SpPagination.create(**props)
 
 
-# ── Navigation and identity ─────────────────────────────────────────────────────────────
-
-
-def sp_breadcrumb(items: Sequence[dict[str, Any]] | rx.Var, *, label: str = "Breadcrumb", **props: Any) -> rx.Component:
+def sp_breadcrumb(items: Sequence[dict[str, Any]] | rx.Var, *, label: str | None = None, **props: Any) -> rx.Component:
     """Where the page sits: links separated by hairline slashes; the last item is the current page.
 
     Args:
         items: ``[{"label", "href"}]``, static or a state var.
         label: Accessible name of the landmark.
-        **props: Surface props.
+        **props: Common props.
 
     Returns:
         The breadcrumb.
     """
-    surface = _surface_props(props)
-    if isinstance(items, rx.Var):
-        count = items.to(list).length()
-
-        def crumb(item: Any, index: Any) -> rx.Component:
-            return rx.el.li(
-                rx.cond(
-                    index == count - 1,
-                    rx.el.span(item["label"], aria_current="page"),
-                    rx.el.a(item["label"], href=item["href"]),
-                ),
-                class_name="sp-ui-crumb",
-            )
-
-        crumbs = [rx.foreach(items, crumb)]
-    else:
-        last = len(items) - 1
-        crumbs = [
-            rx.el.li(
-                rx.el.span(item["label"], aria_current="page")
-                if index == last or not item.get("href")
-                else rx.el.a(item["label"], href=item["href"]),
-                class_name="sp-ui-crumb",
-            )
-            for index, item in enumerate(items)
-        ]
-    return sp_surface(
-        rx.el.ol(*crumbs, class_name="sp-ui-crumbs"),
-        element="nav",
-        name="breadcrumb",
-        aria_label=label,
-        **surface,
-        **props,
+    return SpBreadcrumb.create(
+        items=items if isinstance(items, rx.Var) else list(items), **_given(label=label), **props
     )
-
-
-def _initials(name: str) -> str:
-    parts = [part for part in name.replace("-", " ").split() if part]
-    return "".join(part[0] for part in parts[:2]).upper() or "?"
 
 
 def sp_avatar(
@@ -237,7 +350,7 @@ def sp_avatar(
     name: str | rx.Var | None = None,
     initials: str | rx.Var | None = None,
     alt: str | rx.Var | None = None,
-    shape: Literal["circle", "square"] = "circle",
+    shape: Literal["circle", "square"] | None = None,
     pixel_size: int | None = None,
     **props: Any,
 ) -> rx.Component:
@@ -248,59 +361,30 @@ def sp_avatar(
         name: The person's name: the accessible name, and the initials when there is no image.
         initials: Explicit initials (overrides those taken from ``name``).
         alt: Image description (``name`` by default).
-        shape: ``circle`` or ``square``.
+        shape: ``circle`` (default) or ``square``.
         pixel_size: Exact size in px (``size`` gives sm 28 / md 40 / lg 56).
-        **props: Surface props.
+        **props: Common props.
 
     Returns:
         The avatar.
     """
-    surface = _surface_props(props)
-    if initials is None and isinstance(name, str):
-        initials = _initials(name)
-    content: list[Any] = []
-    if src is not None:
-        content.append(
-            rx.el.img(src=src, alt=alt if alt is not None else (name or ""), class_name="sp-ui-avatar-image")
-        )
-    else:
-        content.append(
-            rx.el.span(
-                initials if initials is not None else "?", class_name="sp-ui-avatar-initials", aria_hidden="true"
-            )
-        )
-    if pixel_size:
-        surface["style"] = _with_style(surface.get("style"), {"--sp-avatar-size": f"{pixel_size}px"})
-    attrs: dict[str, Any] = {"data-shape": shape}
-    if src is None:
-        attrs["role"] = "img"
-        if name is not None:
-            attrs["aria-label"] = name
-    return sp_surface(
-        *content,
-        element="span",
-        name="avatar",
-        frame="round" if shape == "circle" else "box",
-        custom_attrs=attrs,
-        **surface,
-        **props,
+    return SpAvatar.create(
+        **_given(src=src, name=name, initials=initials, alt=alt, shape=shape, pixel_size=pixel_size), **props
     )
 
 
-def sp_avatar_group(*avatars: rx.Component, label: str | None = None) -> rx.Component:
+def sp_avatar_group(*avatars: rx.Component, label: str | None = None, **props: Any) -> rx.Component:
     """Overlapping avatars.
 
     Args:
         *avatars: The avatars.
         label: Accessible name of the group.
+        **props: Common props.
 
     Returns:
         The group.
     """
-    return rx.el.div(*avatars, class_name="sp-ui-avatar-group", role="group", aria_label=label)
-
-
-# ── Data display ────────────────────────────────────────────────────────────────────────
+    return SpAvatarGroup.create(*avatars, **_given(label=label), **props)
 
 
 def sp_statistic(
@@ -322,37 +406,23 @@ def sp_statistic(
         suffix: Printed after the value, small (``"%"``, ``"kg"``).
         trend: ``up`` or ``down`` draws an arrow before ``delta``.
         delta: The change, as text (``"+8.2 %"``).
-        **props: Surface props.
+        **props: Common props.
 
     Returns:
         The statistic.
     """
-    surface = _surface_props(props)
-    value_row = [
-        *([rx.el.span(prefix, class_name="sp-ui-statistic-affix")] if prefix is not None else []),
-        rx.el.span(value),
-        *([rx.el.span(suffix, class_name="sp-ui-statistic-affix")] if suffix is not None else []),
-    ]
-    children: list[Any] = [
-        rx.el.span(title, class_name="sp-ui-statistic-title"),
-        rx.el.span(*value_row, class_name="sp-ui-statistic-value"),
-    ]
-    if trend is not None or delta is not None:
-        mark = []
-        if isinstance(trend, rx.Var):
-            mark = [sp_glyph(glyph=rx.cond(trend == "down", "arrowDown", "arrowUp"))]
-        elif trend is not None:
-            mark = [sp_glyph(glyph="arrowDown" if trend == "down" else "arrowUp")]
-        children.append(rx.el.span(*mark, *([delta] if delta is not None else []), class_name="sp-ui-statistic-trend"))
-    return sp_surface(*children, name="statistic", **surface, **props)
+    return SpStatistic.create(
+        title=title, value=value, **_given(prefix=prefix, suffix=suffix, trend=trend, delta=delta), **props
+    )
 
 
 def sp_descriptions(
     items: Sequence[dict[str, Any]] | rx.Var,
     *,
     title: str | rx.Var | None = None,
-    columns: int = 3,
-    bordered: bool = True,
+    columns: int | None = None,
+    bordered: bool | None = None,
+    heading_level: int | None = None,
     **props: Any,
 ) -> rx.Component:
     """Label–value pairs in a grid (a ``<dl>``), optionally on a card frame.
@@ -360,54 +430,19 @@ def sp_descriptions(
     Args:
         items: ``[{"label", "value"}]``, static or a state var.
         title: Heading above the list.
-        columns: Columns of the grid (one column on narrow containers).
-        bordered: Draws the card frame.
-        **props: Surface props.
+        columns: Columns of the grid, 1 to 6 (3 by default; one column on narrow containers).
+        bordered: Draws the card frame (default).
+        heading_level: Level of the title heading, 2 to 6 (3 by default).
+        **props: Common props.
 
     Returns:
         The descriptions.
     """
-    surface = _surface_props(props)
-
-    def item(entry: Any) -> rx.Component:
-        return rx.el.div(rx.el.dt(entry["label"]), rx.el.dd(entry["value"]), class_name="sp-ui-descriptions-item")
-
-    style = {"--sp-descriptions-columns": str(columns)}
-    return sp_surface(
-        *([rx.el.h3(title, class_name="sp-ui-descriptions-title")] if title is not None else []),
-        rx.el.dl(*_items(items, item), class_name="sp-ui-descriptions-list", style=style),
-        element="section",
-        name="descriptions",
-        frame="card" if bordered else None,
-        custom_attrs={"data-bordered": str(bordered).lower()},
-        **surface,
+    return SpDescriptions.create(
+        items=items if isinstance(items, rx.Var) else list(items),
+        **_given(title=title, columns=columns, bordered=bordered, heading_level=heading_level),
         **props,
     )
-
-
-def _timeline_mark(status: Any) -> rx.Component:
-    done = rx.el.span(
-        rx.el.span(custom_attrs={"part": "sp-tone", "data-tone": "selected", "data-kind": "round"}, aria_hidden="true"),
-        rx.el.span(custom_attrs={"part": "sp-frame", "data-kind": "round"}, aria_hidden="true"),
-        class_name="sp-ui-tl-mark",
-    )
-    current = rx.el.span(
-        rx.el.span(custom_attrs={"part": "sp-frame", "data-kind": "round"}, aria_hidden="true"),
-        rx.el.span(custom_attrs={"part": "sp-heighten"}, aria_hidden="true"),
-        class_name="sp-ui-tl-mark",
-    )
-    error = rx.el.span(
-        rx.el.span(custom_attrs={"part": "sp-frame", "data-kind": "round"}, aria_hidden="true"),
-        sp_glyph(glyph="cross"),
-        class_name="sp-ui-tl-mark",
-    )
-    pending = rx.el.span(
-        rx.el.span(custom_attrs={"part": "sp-frame", "data-kind": "round"}, aria_hidden="true"),
-        class_name="sp-ui-tl-mark",
-    )
-    if isinstance(status, rx.Var):
-        return rx.match(status, ("done", done), ("current", current), ("error", error), pending)
-    return {"done": done, "current": current, "error": error}.get(status, pending)
 
 
 def sp_timeline_list(
@@ -415,52 +450,28 @@ def sp_timeline_list(
 ) -> rx.Component:
     """A vertical timeline: a drawn mark per event on a hairline, time, title and description.
 
-    Statuses: ``done`` (hatched mark), ``current`` (heightened, at most one), ``pending`` (empty
-    mark, dashed line) and ``error`` (a cross). This is a light list; for a full narrative
-    timeline with media and zoom see :func:`sp_timeline` (Knight Lab).
+    Statuses: ``done`` (hatched mark, the default), ``current`` (heightened, at most one),
+    ``pending`` (empty mark, dashed line) and ``error`` (a cross). For a full narrative timeline
+    with media and zoom see :func:`sp_timeline` (Knight Lab).
 
     Args:
         items: ``[{"title", "time", "description", "status"}]``, static or a state var.
         label: Accessible name of the list.
-        **props: Surface props.
+        **props: Common props.
 
     Returns:
         The timeline.
     """
-    surface = _surface_props(props)
-
-    def entry(item: Any) -> rx.Component:
-        if isinstance(items, rx.Var):
-            status = item["status"].to(str)
-            time, title, description = item["time"], item["title"], item["description"]
-            aria_current = rx.cond(status == "current", "step", None)
-        else:
-            status = item.get("status", "done")
-            time, title, description = item.get("time"), item.get("title"), item.get("description")
-            aria_current = "step" if status == "current" else None
-        body = [
-            *([rx.el.span(time, class_name="sp-ui-tl-time")] if time is not None else []),
-            rx.el.span(title, class_name="sp-ui-tl-title"),
-            *([rx.el.span(description, class_name="sp-ui-tl-description")] if description is not None else []),
-        ]
-        return rx.el.li(
-            _timeline_mark(status),
-            rx.el.div(*body, class_name="sp-ui-tl-body"),
-            class_name="sp-ui-tl-item",
-            custom_attrs={"data-status": status, "aria-current": aria_current},
-        )
-
-    return sp_surface(*_items(items, entry), element="ol", name="timeline-list", aria_label=label, **surface, **props)
-
-
-# ── Disclosure ──────────────────────────────────────────────────────────────────────────
+    return SpTimelineList.create(
+        items=items if isinstance(items, rx.Var) else list(items), **_given(label=label), **props
+    )
 
 
 def sp_collapse_item(
-    title: str | rx.Component | rx.Var,
+    title: str | rx.Var,
     *children: rx.Component | str,
-    open: bool | rx.Var = False,
-    disabled: bool = False,
+    open: bool | rx.Var | None = None,
+    disabled: bool | None = None,
     on_toggle: Any = None,
     **props: Any,
 ) -> rx.Component:
@@ -469,126 +480,77 @@ def sp_collapse_item(
     Args:
         title: The summary line.
         *children: The panel's content.
-        open: Open at first render (or controlled by a var).
+        open: A bool opens it at first render (``default_open``); a state var controls it.
         disabled: The panel cannot be toggled.
-        on_toggle: Handler of the native ``toggle`` event.
-        **props: Extra props for the ``<details>``.
+        on_toggle: Handler receiving the new open state (a bool).
+        **props: Common props.
 
     Returns:
         The panel.
     """
-    summary_props: dict[str, Any] = {"class_name": "sp-ui-collapse-summary"}
-    attrs: dict[str, Any] = {}
-    if disabled:
-        summary_props["tab_index"] = -1
-        summary_props["aria_disabled"] = "true"
-        summary_props["on_click"] = rx.prevent_default
-        attrs["data-disabled"] = "true"
-    if on_toggle is not None:
-        props["on_toggle"] = on_toggle
-    return rx.el.details(
-        rx.el.summary(sp_glyph(glyph="chevronRight"), title, **summary_props),
-        rx.el.div(*children, class_name="sp-ui-collapse-body"),
-        open=open,
-        class_name="sp-ui-collapse-item",
-        custom_attrs=attrs,
-        **props,
+    state = {"open": open} if isinstance(open, rx.Var) else {"default_open": open}
+    return SpCollapseItem.create(
+        *children, title=title, **_given(**state, disabled=disabled, on_toggle=on_toggle), **props
     )
 
 
-def sp_collapse(*items: rx.Component, accordion: bool = False, bordered: bool = True, **props: Any) -> rx.Component:
-    """Panels that open and close, on a card frame; native ``<details>``, no script.
+def sp_collapse(
+    *items: rx.Component, accordion: bool | None = None, bordered: bool | None = None, **props: Any
+) -> rx.Component:
+    """Panels that open and close, on a card frame; native ``<details>``.
 
     Args:
         *items: :func:`sp_collapse_item` panels.
         accordion: Only one panel open at a time (native exclusive ``<details name>``).
-        bordered: Draws the card frame.
-        **props: Surface props.
+        bordered: Draws the card frame (default).
+        **props: Common props.
 
     Returns:
         The collapse.
     """
-    surface = _surface_props(props)
-    if accordion:
-        group = f"sp-accordion-{id(items)}"
-        for item in items:
-            item.custom_attrs["name"] = group
-    return sp_surface(*items, name="collapse", frame="card" if bordered else None, **surface, **props)
+    return SpCollapse.create(*items, **_given(accordion=accordion, bordered=bordered), **props)
 
 
-# ── Feedback ────────────────────────────────────────────────────────────────────────────
-
-
-def sp_empty(*children: rx.Component, description: str | rx.Var = "No data", **props: Any) -> rx.Component:
+def sp_empty(*children: rx.Component, description: str | rx.Var | None = None, **props: Any) -> rx.Component:
     """The empty state: a lightly hatched, drawn tray and a line of italic text.
 
     Args:
         *children: Actions under the text (e.g. a button).
-        description: The text.
-        **props: Surface props.
+        description: The text (``"No data"``).
+        **props: Common props.
 
     Returns:
         The empty state.
     """
-    surface = _surface_props(props)
-    figure = rx.el.span(
-        rx.el.span(custom_attrs={"part": "sp-tone", "data-tone": "1", "data-kind": "control"}, aria_hidden="true"),
-        rx.el.span(custom_attrs={"part": "sp-frame", "data-kind": "control"}, aria_hidden="true"),
-        class_name="sp-ui-empty-figure",
-        aria_hidden="true",
-    )
-    return sp_surface(
-        figure,
-        rx.el.p(description, class_name="sp-ui-empty-description"),
-        *([rx.el.div(*children, class_name="sp-ui-empty-extra")] if children else []),
-        name="empty",
-        **surface,
-        **props,
-    )
-
-
-_RESULT_GLYPHS = {"success": "tick", "info": "info", "warning": "warning", "error": "cross"}
+    return SpEmpty.create(**_given(description=description, extra=_slot(children)), **props)
 
 
 def sp_result(
     *children: rx.Component,
-    status: ResultStatus = "info",
+    status: ResultStatus | None = None,
     title: str | rx.Var = "",
     subtitle: str | rx.Var | None = None,
+    heading_level: int | None = None,
     **props: Any,
 ) -> rx.Component:
     """The outcome of an operation: a drawn round mark (tick, info, warning, cross), title, subtitle.
 
     Args:
         *children: Actions under the text.
-        status: ``success``, ``info``, ``warning`` or ``error``.
+        status: ``success``, ``info`` (default), ``warning`` or ``error``.
         title: The outcome.
         subtitle: Detail.
-        **props: Surface props.
+        heading_level: Level of the title heading, 2 to 6 (3 by default).
+        **props: Common props.
 
     Returns:
         The result.
     """
-    surface = _surface_props(props)
-    mark = rx.el.span(
-        rx.el.span(custom_attrs={"part": "sp-frame", "data-kind": "round"}, aria_hidden="true"),
-        sp_glyph(glyph=_RESULT_GLYPHS[status]),
-        class_name="sp-ui-result-mark",
-    )
-    return sp_surface(
-        mark,
-        rx.el.h3(title, class_name="sp-ui-result-title"),
-        *([rx.el.p(subtitle, class_name="sp-ui-result-subtitle")] if subtitle is not None else []),
-        *([rx.el.div(*children, class_name="sp-ui-result-extra")] if children else []),
-        name="result",
-        role="status" if status in ("success", "info") else "alert",
-        custom_attrs={"data-status": status},
-        **surface,
+    return SpResult.create(
+        title=title,
+        **_given(status=status, subtitle=subtitle, heading_level=heading_level, extra=_slot(children)),
         **props,
     )
-
-
-# ── Data entry ──────────────────────────────────────────────────────────────────────────
 
 
 def sp_textarea(
@@ -596,18 +558,16 @@ def sp_textarea(
     value: str | rx.Var | None = None,
     default_value: str | None = None,
     placeholder: str | rx.Var | None = None,
-    rows: int = 3,
+    rows: int | None = None,
     label: str | rx.Var | None = None,
     message: str | rx.Var | None = None,
-    invalid: bool | rx.Var = False,
-    disabled: bool | rx.Var = False,
-    read_only: bool | rx.Var = False,
+    invalid: bool | rx.Var | None = None,
+    disabled: bool | rx.Var | None = None,
+    read_only: bool | rx.Var | None = None,
     max_length: int | None = None,
-    show_count: bool = False,
+    show_count: bool | None = None,
     name: str | None = None,
-    textarea_id: str | None = None,
     on_change: Any = None,
-    on_blur: Any = None,
     **props: Any,
 ) -> rx.Component:
     """A multi-line text field on the ``SpInput`` contract: drawn frame, italic placeholder, message.
@@ -618,74 +578,45 @@ def sp_textarea(
         value: The text (controlled).
         default_value: The initial text (uncontrolled).
         placeholder: Placeholder text.
-        rows: Visible lines.
+        rows: Visible lines (3 by default).
         label: Accessible name.
         message: Help or error text under the field.
         invalid: Marks the text as invalid.
         disabled: Disabled.
         read_only: Read-only.
         max_length: Character limit.
-        show_count: Prints ``length / max_length`` (needs a controlled ``value``).
+        show_count: Prints ``length / max_length``.
         name: Form field name.
-        textarea_id: ``id`` of the native ``<textarea>``.
         on_change: Handler receiving the new text.
-        on_blur: Handler of the native blur event.
-        **props: Surface props.
+        **props: Common props. ``textarea_id`` (0.7.0) is now ``id``: the core derives the native
+            textarea's id from it.
 
     Returns:
         The field.
+
+    Raises:
+        TypeError: On ``on_blur``, which ``SpTextarea`` does not expose.
     """
-    surface = _surface_props(props)
-    message_id = f"{textarea_id}--message" if message is not None and textarea_id else None
-    area_props: dict[str, Any] = {
-        "class_name": "sp-ui-control",
-        "rows": rows,
-        "placeholder": placeholder,
-        "disabled": disabled,
-        "read_only": read_only,
-        "name": name,
-        "id": textarea_id,
-        "max_length": max_length,
-        "aria_label": label,
-        "aria_invalid": rx.cond(invalid, "true", "false")
-        if isinstance(invalid, rx.Var)
-        else ("true" if invalid else None),
-        "aria_describedby": message_id,
-    }
-    if value is not None:
-        area_props["value"] = value
-    elif default_value is not None:
-        area_props["default_value"] = default_value
-    if on_change is not None:
-        # Reflex's own textarea ``on_change`` already hands the handler the text.
-        area_props["on_change"] = on_change
-    if on_blur is not None:
-        area_props["on_blur"] = on_blur
-    area_props = {k: v for k, v in area_props.items() if v is not None}
-    box = [
-        rx.el.span(custom_attrs={"part": "sp-frame", "data-kind": "control"}, aria_hidden="true"),
-        rx.el.textarea(**area_props),
-    ]
-    below: list[Any] = []
-    if show_count and value is not None:
-        count = value.to(str).length() if isinstance(value, rx.Var) else len(value)
-        below.append(rx.el.span(count, f" / {max_length}" if max_length else "", class_name="sp-ui-counter"))
-    if message is not None:
-        below.append(rx.el.span(message, class_name="sp-ui-message", id=message_id))
-    attrs = {
-        "data-invalid": rx.cond(invalid, "true", "false")
-        if isinstance(invalid, rx.Var)
-        else ("true" if invalid else "false")
-    }
-    surface["style"] = _with_style(surface.get("style"), {"--sp-textarea-rows": str(rows)})
-    surface["class_name"] = " ".join(filter(None, ["sp-textarea", surface.get("class_name")]))
-    return sp_surface(
-        rx.el.span(*box, class_name="sp-ui-box"),
-        *below,
-        element="span",
-        name="input",
-        custom_attrs=attrs,
-        **surface,
+    if "on_blur" in props:
+        msg = "sp_textarea has no on_blur in silverpoint 0.7.0: use on_change, which reports every edit."
+        raise TypeError(msg)
+    props = _renamed(props, "textarea_id", "id")
+    return SpTextarea.create(
+        **_given(
+            value=value,
+            default_value=default_value,
+            placeholder=placeholder,
+            rows=rows,
+            label=label,
+            message=message,
+            invalid=invalid,
+            disabled=disabled,
+            read_only=read_only,
+            max_length=max_length,
+            show_count=show_count,
+            name=name,
+            on_change=on_change,
+        ),
         **props,
     )
 

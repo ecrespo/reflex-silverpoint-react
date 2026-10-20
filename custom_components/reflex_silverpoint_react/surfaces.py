@@ -1,43 +1,22 @@
-"""The surface: the root every Reflex-composed silverpoint component is built on.
+"""The surface and the glyph of silverpoint 0.7, and the two composed controls with a value.
 
-silverpoint's UI stylesheet (``@silverpoint/grounds/ui.css``) does not style components by name
-alone. It draws a hand-inked frame and a hatched tone on any element that follows its markup
-contract::
+``SpSurface`` is the root contract of ``@silverpoint/grounds/ui.css`` on any element: the ground's
+classes and data attributes, an optional hand-inked frame (``<span part="sp-frame">``) and a hatched
+tone (``<span part="sp-tone">``). ``SpGlyph`` draws one of the exact 16×16 marks (``UI_GLYPHS``).
+Both are ``@silverpoint/react``'s own components (``/ui`` subpath), drawn by the core as every
+``Sp`` component is; build your own silverpoint-drawn pieces from them.
 
-    <div class="sp-ui sp-ground-silverpoint" data-substrate="cream" data-mode="ink" data-frame="3">
-      <span part="sp-tone" data-tone="1" aria-hidden="true"></span>
-      <span part="sp-frame" data-kind="card" aria-hidden="true"></span>
-      …content…
-    </div>
-
-:class:`SpSurface` renders that contract, resolving ground, substrate, mode and frame variant with
-``@silverpoint/core``'s own ``resolveUi`` (so a surface draws exactly as an ``Sp`` component does)
-and switching to ``precision`` under ``prefers-contrast: more`` / ``forced-colors: active``.
-
-The tables, overlays and other components of :mod:`.composed` and :mod:`.overlays` are built from
-surfaces. They are Reflex-only: not part of silverpoint's React/Vue/Angular parity contract.
+``SpPagination`` and ``SpInputNumber`` live here too, beside the other composed components of
+:mod:`.composed`, because their value binding (``current`` / ``value`` with ``on_change``) is the
+``Sp`` components' own.
 """
 
-import json
-from pathlib import Path
+import warnings
 from typing import Any, Literal
 
 import reflex as rx
-from reflex_base.utils.imports import ImportVar
 
-from .base import SILVERPOINT_STYLESHEETS, SILVERPOINT_VERSION, GroundName, InkMode, Substrate
-from .palette import PaletteLike, apply_palette
-from .ui import SILVERPOINT_UI_STYLESHEET
-
-_ASSETS = Path(__file__).parent / "assets"
-
-#: Layout of the composed components, injected once into ``<head>`` by the first surface.
-SURFACES_CSS = (_ASSETS / "surfaces.css").read_text(encoding="utf-8")
-
-#: The JS components (surface, glyph, pagination, input number), as Reflex custom code.
-SURFACES_CODE = f"const SP_REFLEX_CSS = {json.dumps(SURFACES_CSS)};\n" + (_ASSETS / "surface.jsx").read_text(
-    encoding="utf-8"
-)
+from .ui import SilverpointUi
 
 #: The five frame kinds a ground draws (``UI_FRAME_KINDS``).
 FrameKind = Literal["control", "pill", "box", "card", "round"]
@@ -45,10 +24,7 @@ FrameKind = Literal["control", "pill", "box", "card", "round"]
 #: A tone by level (1 lightest … 4 darkest) or by state.
 ToneLevel = Literal[1, 2, 3, 4, "1", "2", "3", "4", "selected", "primary", "danger", "disabled"]
 
-#: Control size.
-SurfaceSize = Literal["sm", "md", "lg"]
-
-#: The glyphs a :class:`SpGlyph` can draw: the Sp components' own, plus a few of ours.
+#: The glyphs ``UI_GLYPHS`` of ``@silverpoint/core/ui`` draws.
 Glyph = Literal[
     "tick",
     "dash",
@@ -69,119 +45,20 @@ Glyph = Literal[
     "ellipsis",
 ]
 
-_CORE = f"@silverpoint/core@{SILVERPOINT_VERSION}"
 
-
-class _SurfaceCode(rx.Component):
-    """Imports and custom code shared by every JS component of this module."""
-
-    lib_dependencies: list[str] = [  # noqa: RUF012 - Reflex reads it as a class attribute
-        f"@silverpoint/core@{SILVERPOINT_VERSION}",
-        f"@silverpoint/grounds@{SILVERPOINT_VERSION}",
-        f"@silverpoint/fonts@{SILVERPOINT_VERSION}",
-    ]
-
-    def add_imports(self) -> dict[str, Any]:
-        """The stylesheets, React hooks and the two ``@silverpoint/core`` helpers the code uses.
-
-        Returns:
-            The imports.
-        """
-        return {
-            "": [*SILVERPOINT_STYLESHEETS, SILVERPOINT_UI_STYLESHEET],
-            "react": [ImportVar(tag="useEffect"), ImportVar(tag="useState")],
-            _CORE: [
-                ImportVar(tag="FORCED_PRECISION_QUERY"),
-                ImportVar(tag="resolveUi", package_path="/ui"),
-                ImportVar(tag="UI_GLYPHS", package_path="/ui"),
-            ],
-        }
-
-    def add_custom_code(self) -> list[str]:
-        """The surface, glyph, pagination and input-number components.
-
-        Returns:
-            One code block, identical for every component, so Reflex emits it once per page.
-        """
-        return [SURFACES_CODE]
-
-
-class SurfaceProps(_SurfaceCode):
-    """Props every surface-based component shares."""
-
-    # Style ground: ``"silverpoint"`` (default) or ``"cyanotype"``. Surfaces do not read
-    # ``silverpoint_provider``: pass the ground explicitly.
-    ground: rx.Var[GroundName | str]
-
-    # Substrate within the ground.
-    substrate: rx.Var[Substrate]
-
-    # ``ink`` (default) or ``precision``.
-    mode: rx.Var[InkMode]
-
-    # ``sm``, ``md`` (default) or ``lg``.
-    size: rx.Var[SurfaceSize]
-
-    # Seed of the frame's hand (the frame variant); ``id`` is used when omitted.
-    seed: rx.Var[int | str]
-
-    @classmethod
-    def create(cls, *children, palette: PaletteLike | None = None, **props) -> rx.Component:
-        """Create the component.
-
-        Args:
-            *children: Its children.
-            palette: Colours of this component: a :class:`Palette`, a preset name, a dict or a var.
-            **props: Its props.
-
-        Returns:
-            The component.
-        """
-        props = apply_palette({**props, "palette": palette})
-        return super().create(*children, **_dom_attributes(cls, props))
-
-
-#: Props every Reflex component understands; anything else given to a surface is a DOM attribute.
-_REFLEX_PROPS = {"style", "key", "id", "class_name", "custom_attrs", "ref", "autofocus", "special_props"}
-
-#: Attribute names React spells differently from their snake_case Python form.
-_REACT_NAMES = {
-    "tab_index": "tabIndex",
-    "html_for": "htmlFor",
-    "read_only": "readOnly",
-    "auto_complete": "autoComplete",
-}
-
-
-def _dom_attributes(cls: type[rx.Component], props: dict[str, Any]) -> dict[str, Any]:
-    """Move attributes a surface does not declare (``role``, ``aria_label``, ``type``…) to the DOM.
-
-    Reflex turns unknown props of a component into CSS; on a surface they are meant for the
-    rendered element, so they go to ``custom_attrs`` (``aria_label`` → ``aria-label``).
-    """
-    declared = set(cls.get_props()) | set(cls.get_event_triggers()) | _REFLEX_PROPS
-    attrs = dict(props.pop("custom_attrs", None) or {})
-    for key in [k for k in props if k not in declared]:
-        value = props.pop(key)
-        if value is None:
-            continue
-        if key.startswith(("aria_", "data_")):
-            name = key.replace("_", "-")
-        else:
-            name = _REACT_NAMES.get(key, key)
-        attrs[name] = value
-    if attrs:
-        props["custom_attrs"] = attrs
+def _renamed(props: dict[str, Any], old: str, new: str) -> dict[str, Any]:
+    """Move a 0.7.0 argument to its new name, with a deprecation warning."""
+    if old in props:
+        warnings.warn(f"{old}= is deprecated; use {new}= (0.7.1).", DeprecationWarning, stacklevel=3)
+        value = props.pop(old)
+        props.setdefault(new, value)
     return props
 
 
-class SpSurface(SurfaceProps):
+class SpSurface(SilverpointUi):
     """A silverpoint surface: any element, drawn with a frame and a tone of the ground."""
 
-    tag = "SilverpointSurface"
-
-    # The HTML element to render (``div`` by default).
-    element: rx.Var[str]
+    tag = "SpSurface"
 
     # Adds the class ``sp-<name>`` (e.g. ``"card"`` reuses the Sp card's layout).
     name: rx.Var[str]
@@ -192,13 +69,30 @@ class SpSurface(SurfaceProps):
     # Hatched tone laid under the content: 1-4 or ``selected``, ``primary``, ``danger``, ``disabled``.
     tone: rx.Var[ToneLevel]
 
+    @classmethod
+    def create(cls, *children, element: str | None = None, **props) -> rx.Component:
+        """Create the surface.
 
-class SpGlyph(_SurfaceCode):
+        Args:
+            *children: Its content.
+            element: The HTML element to render, a lowercase tag name (``div`` by default); the npm
+                ``as`` prop.
+            **props: Its props (``name``, ``frame``, ``tone``, ``ground``, ``palette``…).
+
+        Returns:
+            The component.
+        """
+        if element is not None:
+            props["custom_attrs"] = {**(props.get("custom_attrs") or {}), "as": element}
+        return super().create(*children, **props)
+
+
+class SpGlyph(SilverpointUi):
     """A drawn 16×16 mark (``tick``, ``cross``, ``chevronDown``…), stroked with the text colour."""
 
-    tag = "SilverpointGlyph"
+    tag = "SpGlyph"
 
-    # The glyph's name.
+    # The glyph's name, a key of ``UI_GLYPHS``.
     glyph: rx.Var[Glyph]
 
 
@@ -226,14 +120,14 @@ def _number_spec(value):
     return (value,)
 
 
-class SpPagination(SurfaceProps):
+class SpPagination(SilverpointUi):
     """Page navigation: previous/next, the first and last page, a window around the current one.
 
     Controlled with ``current`` + ``on_change``, or uncontrolled with ``default_current``. The
     current page is heightened, the others are drawn buttons.
     """
 
-    tag = "SilverpointPagination"
+    tag = "SpPagination"
 
     # Number of items in all pages.
     total: rx.Var[int]
@@ -271,13 +165,14 @@ class SpPagination(SurfaceProps):
     on_change: rx.EventHandler[_page_spec]
 
 
-class SpInputNumber(SurfaceProps):
+class SpInputNumber(SilverpointUi):
     """A number field with exact − and + steppers; the value is clamped to ``min``/``max``.
 
-    ``on_change`` receives the number (or ``None`` when the field is emptied), never a DOM event.
+    ``on_change`` receives the number (or ``None`` when the field is emptied), never a DOM event:
+    on commit (blur or Enter) for what is typed, at once for the steppers.
     """
 
-    tag = "SilverpointInputNumber"
+    tag = "SpInputNumber"
 
     # The value (controlled).
     value: rx.Var[int | float | None]
@@ -312,15 +207,26 @@ class SpInputNumber(SurfaceProps):
     # Form field name.
     name: rx.Var[str]
 
-    # ``id`` of the native input (the surface's own ``id`` stays on the root).
-    input_id: rx.Var[str]
-
     # Accessible names of the steppers.
     decrement_label: rx.Var[str]
     increment_label: rx.Var[str]
 
     # The value changed.
     on_change: rx.EventHandler[_number_spec]
+
+    @classmethod
+    def create(cls, *children, **props) -> rx.Component:
+        """Create the field.
+
+        Args:
+            *children: Unused.
+            **props: Its props. ``input_id`` (0.7.0) is now ``id``: the core derives the native
+                input's id from it.
+
+        Returns:
+            The component.
+        """
+        return super().create(*children, **_renamed(props, "input_id", "id"))
 
 
 sp_surface = SpSurface.create

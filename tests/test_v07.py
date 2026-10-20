@@ -1,19 +1,32 @@
-"""0.7: palettes, the Reflex-composed components (levels A and B) and the Knight Lab timeline."""
+"""0.7: palettes, the composed components, the overlays and the timeline, on @silverpoint/react 0.7.0.
+
+Since 0.7.1 every one of them is the npm component itself (silverpoint's parity contract), not a
+Reflex-composed copy: these tests assert what each builder hands the npm component.
+"""
+
+import warnings
 
 import pytest
 import reflex as rx
 import reflex_silverpoint_react as sp
-from reflex_silverpoint_react.palette import apply_palette, resolve_palette
+from reflex_silverpoint_react.palette import apply_palette, palette_prop, resolve_palette
+
+REACT = f"@silverpoint/react@{sp.SILVERPOINT_VERSION}"
 
 
 def _props(component: rx.Component) -> dict[str, str]:
     return dict(prop.split(":", 1) for prop in component.render()["props"])
 
 
+def _paths(component: rx.Component) -> set[tuple[str, str]]:
+    return {(var.tag, var.package_path) for var in component._get_all_imports().get(REACT, [])}
+
+
 class _S(rx.State):
-    palette: dict[str, str] = {"ink": "#8A3A24"}
+    palette: dict[str, str] = {"ink": "#8A3A24", "ink_secondary": "#6A4A3A"}
     rows: list[dict] = [{"a": 1, "b": "x"}]
     items: list[dict] = [{"label": "Home", "href": "/"}, {"label": "Here", "href": "#"}]
+    options: list[dict] = [{"value": "a", "label": "A"}, {"value": "b", "label": "B"}]
     flag: bool = False
     value: str = "a"
 
@@ -30,17 +43,44 @@ class _S(rx.State):
         self.value = value
 
 
+# ── Version ─────────────────────────────────────────────────────────────────────────────
+
+
+def test_wraps_silverpoint_0_7_0() -> None:
+    assert sp.SILVERPOINT_VERSION == "0.7.0"
+    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.7.0"
+
+
 # ── Palettes ────────────────────────────────────────────────────────────────────────────
 
 
 @pytest.mark.parametrize("name", list(sp.PALETTES))
-def test_every_preset_passes_the_contrast_thresholds(name: str) -> None:
+def test_every_preset_passes_the_contrast_pairs(name: str) -> None:
     assert sp.check_palette(name) == []
 
 
-def test_check_palette_reports_low_contrast() -> None:
+def test_presets_match_the_core_presets() -> None:
+    # @silverpoint/core/palettes 0.7.0, field for field.
+    assert sp.PALETTES["sanguine"].to_js() == {
+        "substrate": "#F2E8DC",
+        "ink": "#8A3A24",
+        "inkSecondary": "#6A4A3A",
+        "heighten": "#FFFFFF",
+        "rule": "#9A6450",
+        "grid": "#9A6450",
+        "text": "#4A2216",
+        "textMuted": "#7A3E2C",
+    }
+    assert resolve_palette("ironGall") is sp.PALETTES["iron_gall"]
+
+
+def test_check_palette_measures_the_core_pairs() -> None:
     problems = sp.check_palette({"ink": "#cccccc"})
-    assert len(problems) == 1 and problems[0].startswith("ink #cccccc")
+    # ``focus`` defaults to ``ink`` (PALETTE_PAIRS of @silverpoint/core/palettes).
+    assert [p.split(" ", 1)[0] for p in problems] == ["ink", "focus"]
+    assert problems[0].startswith("ink #cccccc on #EDE7DA")
+    outline = sp.check_palette({"ink": "#5A5E65", "heighten": "#6A6E75"})
+    assert any(p.startswith("heighten-outline") for p in outline)
 
 
 def test_contrast_ratio_extremes() -> None:
@@ -64,171 +104,209 @@ def test_palette_css_maps_fields_to_custom_properties() -> None:
     assert css == {"--sp-ink": "#111111", "--sp-ui-focus-color": "#222222"}
 
 
-def test_apply_palette_nests_under_doubled_class() -> None:
+def test_apply_palette_hands_the_native_prop() -> None:
     props = apply_palette({"palette": "indigo", "style": {"width": "10px"}})
-    assert "palette" not in props
-    assert props["style"]["width"] == "10px"
-    assert props["style"]["&&"]["--sp-ink"] == sp.PALETTES["indigo"].ink
+    assert props["style"] == {"width": "10px"}
+    assert props["palette"]["inkSecondary"] == sp.PALETTES["indigo"].ink_secondary
+    assert apply_palette({"palette": None}) == {}
 
 
 @pytest.mark.parametrize(
     "factory",
-    [sp.bar_chart, sp.line_chart, sp.sp_button, sp.sp_card, sp.dashboard, sp.sp_surface],
-    ids=["chart", "chart2", "ui", "ui-card", "dashboard", "surface"],
+    [sp.bar_chart, sp.line_chart, sp.sp_button, sp.sp_card, sp.dashboard, sp.sp_surface, sp.silverpoint_provider],
+    ids=["chart", "chart2", "ui", "ui-card", "dashboard", "surface", "provider"],
 )
 def test_palette_prop_on_every_kind_of_element(factory) -> None:
-    rendered = str(factory(palette="sanguine").render())
-    assert '["&&"]' in rendered and sp.PALETTES["sanguine"].ink in rendered
+    props = _props(factory(palette="sanguine"))
+    assert "palette" in props and '"textMuted"' in props["palette"]
+    assert sp.PALETTES["sanguine"].ink in props["palette"]
 
 
-def test_palette_from_a_state_var() -> None:
-    rendered = str(sp.donut_chart(palette=_S.palette).render())
-    assert '?.["ink"]' in rendered and "--sp-text-muted" in rendered
+def test_palette_from_a_state_var_maps_snake_case_fields() -> None:
+    rendered = _props(sp.donut_chart(palette=_S.palette))["palette"]
+    assert '["inkSecondary"]' in rendered and '?.["ink_secondary"]' in rendered
 
 
-def test_section_palette_targets_the_declaring_elements() -> None:
-    rendered = str(sp.silverpoint_palette(sp.bar_chart(), palette="verdigris").render())
-    assert "display" in rendered and ":where(.sp-root, .sp-ui, .sp-dashboard, .sp-surface)" in rendered
+def test_section_palette_is_a_provider() -> None:
+    section = sp.silverpoint_palette(sp.bar_chart(), palette="verdigris")
+    assert section.render()["name"] == "SilverpointProvider"
+    assert sp.PALETTES["verdigris"].ink in _props(section)["palette"]
+    wrapped = sp.silverpoint_palette(sp.bar_chart(), palette="sepia", id="section")
+    assert wrapped.render()["name"] == '"div"'
 
 
-def test_provider_has_no_palette() -> None:
-    with pytest.raises(TypeError, match="silverpoint_palette"):
-        sp.silverpoint_provider(palette="sepia")
+def test_palette_prop_helper() -> None:
+    assert palette_prop(None) is None
+    assert palette_prop(sp.Palette(text_muted="#111111")) == {"textMuted": "#111111"}
 
 
-# ── Surfaces and level A ────────────────────────────────────────────────────────────────
+# ── Surfaces and composed components ────────────────────────────────────────────────────
 
 
-def test_surface_imports_core_ui_helpers_and_stylesheets() -> None:
-    imports = sp.sp_surface(frame="card")._get_all_imports()
-    core = imports[f"@silverpoint/core@{sp.SILVERPOINT_VERSION}"]
-    tags = {(var.tag, var.package_path) for var in core}
-    assert ("resolveUi", "/ui") in tags and ("FORCED_PRECISION_QUERY", "/") in tags
-    side_effects = {var.tag for var in imports[""]}
+def test_surface_and_glyph_are_the_npm_components() -> None:
+    surface = sp.sp_surface(sp.sp_glyph(glyph="tick"), element="section", name="panel", frame="card", tone=2)
+    assert surface.render()["name"] == "SpSurface"
+    assert _props(surface)["as"] == '"section"'
+    assert {("SpSurface", "/ui"), ("SpGlyph", "/ui")} <= _paths(surface)
+    side_effects = {var.tag for var in surface._get_all_imports()[""]}
     assert {"@silverpoint/grounds/styles.css", "@silverpoint/grounds/ui.css"} <= side_effects
 
 
-def test_surface_code_is_emitted_once() -> None:
-    tree = rx.el.div(sp.sp_surface(), sp.sp_glyph(glyph="tick"), sp.sp_pagination(total=10))
-    assert len(tree._get_all_custom_code()) == 1
-
-
-def test_sort_rows() -> None:
-    rows = [{"n": 2}, {"n": None}, {"n": 1}, {"n": 3}]
-    assert [r["n"] for r in sp.sort_rows(rows, "n")] == [1, 2, 3, None]
-    assert [r["n"] for r in sp.sort_rows(rows, "n", "desc")] == [3, 2, 1, None]
+def test_sort_rows_follows_ui_sort_rows() -> None:
+    rows = [{"n": 2}, {"n": None}, {"n": 1}, {"n": "b"}, {"n": 3}, {"n": "A"}, {}]
+    assert [r.get("n") for r in sp.sort_rows(rows, "n")] == [1, 2, 3, "A", "b", None, None]
+    assert [r.get("n") for r in sp.sort_rows(rows, "n", "desc")] == ["b", "A", 3, 2, 1, None, None]
     assert sp.sort_rows(rows, None) == rows
 
 
 @pytest.mark.parametrize(
-    "build",
+    ("build", "tag"),
     [
-        lambda: sp.sp_table(["a", "b"], [{"a": 1, "b": 2}], caption="T"),
-        lambda: sp.sp_table(
-            [{"key": "a", "sortable": True}], _S.rows, sort_key="a", sort_order="desc", on_sort=_S.pick
+        (lambda: sp.sp_table(["a", "b"], [{"a": 1, "b": 2}], caption="T"), "SpTable"),
+        (
+            lambda: sp.sp_table(
+                [{"key": "a", "sortable": True}], _S.rows, sort_key="a", sort_order="desc", on_sort=_S.pick
+            ),
+            "SpTable",
         ),
-        lambda: sp.sp_pagination(total=95, current=3),
-        lambda: sp.sp_breadcrumb([{"label": "Home", "href": "/"}, {"label": "Here"}]),
-        lambda: sp.sp_breadcrumb(_S.items),
-        lambda: sp.sp_avatar(name="Ada Lovelace"),
-        lambda: sp.sp_avatar(src="a.png", name="Ada", pixel_size=64, shape="square"),
-        lambda: sp.sp_statistic("Revenue", "1,204", prefix="$", trend="up", delta="+8 %"),
-        lambda: sp.sp_descriptions([{"label": "a", "value": "b"}], title="T", columns=2),
-        lambda: sp.sp_timeline_list([{"title": "x", "status": "current"}, {"title": "y", "status": "pending"}]),
-        lambda: sp.sp_collapse(sp.sp_collapse_item("One", "body", open=True), accordion=True),
-        lambda: sp.sp_empty(description="Nothing"),
-        lambda: sp.sp_result(status="error", title="Failed"),
-        lambda: sp.sp_textarea(value=_S.value, on_change=_S.set_value, max_length=10, show_count=True),
-        lambda: sp.sp_input_number(value=3, min=0, max=10, step=0.5),
+        (lambda: sp.sp_pagination(total=95, current=3), "SpPagination"),
+        (lambda: sp.sp_breadcrumb([{"label": "Home", "href": "/"}, {"label": "Here"}]), "SpBreadcrumb"),
+        (lambda: sp.sp_breadcrumb(_S.items), "SpBreadcrumb"),
+        (lambda: sp.sp_avatar(name="Ada Lovelace"), "SpAvatar"),
+        (lambda: sp.sp_avatar(src="a.png", name="Ada", pixel_size=64, shape="square"), "SpAvatar"),
+        (lambda: sp.sp_avatar_group(sp.sp_avatar(name="A"), label="Team"), "SpAvatarGroup"),
+        (lambda: sp.sp_statistic("Revenue", "1,204", prefix="$", trend="up", delta="+8 %"), "SpStatistic"),
+        (lambda: sp.sp_descriptions([{"label": "a", "value": "b"}], title="T", columns=2), "SpDescriptions"),
+        (
+            lambda: sp.sp_timeline_list([{"title": "x", "status": "current"}, {"title": "y", "status": "pending"}]),
+            "SpTimelineList",
+        ),
+        (lambda: sp.sp_collapse(sp.sp_collapse_item("One", "body", open=True), accordion=True), "SpCollapse"),
+        (lambda: sp.sp_empty(description="Nothing"), "SpEmpty"),
+        (lambda: sp.sp_result(status="error", title="Failed"), "SpResult"),
+        (lambda: sp.sp_textarea(value=_S.value, on_change=_S.set_value, max_length=10, show_count=True), "SpTextarea"),
+        (lambda: sp.sp_input_number(value=3, min=0, max=10, step=0.5), "SpInputNumber"),
     ],
 )
-def test_level_a_builders_render(build) -> None:
-    rendered = build().render()
-    assert rendered["name"] in ("SilverpointSurface", "SilverpointPagination", "SilverpointInputNumber")
+def test_composed_builders_render_the_npm_component(build, tag: str) -> None:
+    component = build()
+    assert component.render()["name"] == tag
+    assert (tag, "/ui") in _paths(component)
 
 
-def test_initials_and_frames() -> None:
-    avatar = str(sp.sp_avatar(name="Cennino Cennini").render())
-    assert '"CC"' in avatar and 'frame:"round"' in avatar
-    assert 'frame:"box"' in str(sp.sp_avatar(name="x", shape="square").render())
+def test_table_columns_and_sort_event() -> None:
+    props = _props(sp.sp_table(["a", {"key": "b", "sortable": True, "width": 120}], _S.rows, on_sort=_S.pick))
+    assert '"key"' in props["columns"] and '"120px"' in props["columns"]
+    assert "pick" in props["onSort"]
 
 
-def test_table_sort_header_has_aria_sort_and_handler() -> None:
-    rendered = str(sp.sp_table([{"key": "a", "sortable": True}], _S.rows, sort_key="a", on_sort=_S.pick).render())
-    assert "aria-sort" in rendered and "pick" in rendered
+def test_collapse_item_open_is_uncontrolled_unless_a_var() -> None:
+    assert "defaultOpen" in _props(sp.sp_collapse_item("One", "body", open=True))
+    controlled = _props(sp.sp_collapse_item("One", "body", open=_S.flag, on_toggle=_S.set_flag))
+    assert "open" in controlled and "onToggle" in controlled
 
 
-def test_frame_markup_uses_the_part_attribute() -> None:
-    rendered = str(sp.sp_result(status="success", title="ok").render())
-    assert 'part:"sp-frame"' in rendered and 'role:"status"' in rendered
+def test_empty_and_result_take_their_actions_as_extra() -> None:
+    props = _props(sp.sp_result(sp.sp_button("Retry"), status="error", title="Failed", heading_level=2))
+    assert "extra" in props and "SpButton" in props["extra"] and props["headingLevel"] == "2"
+    assert "extra" in _props(sp.sp_empty(sp.sp_button("New"), sp.sp_button("Import")))
 
 
-def test_unknown_surface_props_become_dom_attributes() -> None:
-    props = _props(sp.sp_trigger("Go", aria_label="Go now", disabled=True, tab_index=-1))
-    assert props['"aria-label"'] == '"Go now"' and props["disabled"] == "true" and props["tabIndex"] == "-1"
-    assert "css" not in props
+def test_field_ids_are_the_component_id() -> None:
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        props = _props(sp.sp_textarea(textarea_id="notes"))
+    assert props["id"] == '"notes"' and caught and issubclass(caught[0].category, DeprecationWarning)
 
 
-# ── Level B ─────────────────────────────────────────────────────────────────────────────
+def test_textarea_rejects_on_blur() -> None:
+    with pytest.raises(TypeError, match="on_blur"):
+        sp.sp_textarea(on_blur=_S.set_flag)
 
 
-def test_overlays_render_on_radix_primitives() -> None:
+# ── Overlays ────────────────────────────────────────────────────────────────────────────
+
+
+def test_overlays_render_the_npm_components() -> None:
     cases = {
-        "SpRadixDialogRoot": sp.sp_modal("b", trigger="Open", title="T", open=_S.flag, on_open_change=_S.set_flag),
-        "SpRadixPopoverRoot": sp.sp_popover("c", trigger="P"),
-        "SpRadixTooltipProvider": sp.sp_tooltip("Hover", "tip"),
-        "SpRadixDropdownMenuRoot": sp.sp_dropdown_menu("M", [{"key": "a", "label": "A"}], on_select=_S.pick),
-        "SpRadixToastProvider": sp.sp_toaster(sp.sp_toast("Saved", open=_S.flag, on_open_change=_S.set_flag)),
+        "SpModal": sp.sp_modal("b", trigger="Open", title="T", open=_S.flag, on_open_change=_S.set_flag),
+        "SpDrawer": sp.sp_drawer("b", trigger="D", side="start", size=420),
+        "SpPopover": sp.sp_popover("c", trigger="P"),
+        "SpTooltip": sp.sp_tooltip("Hover", "tip"),
+        "SpSelect": sp.sp_select(["a", "b"], label="Letter"),
+        "SpDropdownMenu": sp.sp_dropdown_menu("M", [{"key": "a", "label": "A"}], on_select=_S.pick),
+        "SpToaster": sp.sp_toaster(sp.sp_toast("Saved", open=_S.flag, on_open_change=_S.set_flag)),
     }
     for name, component in cases.items():
         assert component.render()["name"] == name
-    drawer = str(sp.sp_drawer("b", trigger="D", side="left", size=420).render())
-    assert '"data-side"' in drawer or "data-side" in drawer
+        assert (name, "/ui") in _paths(component)
+        assert not any(lib.startswith("@radix-ui/react-") for lib in component._get_all_imports())
 
 
-def test_radix_versions_match_the_ones_reflex_installs() -> None:
-    imports = sp.sp_modal("b", trigger="x")._get_all_imports()
-    assert "@radix-ui/react-dialog@1.1.23" in imports
+def test_overlay_props_follow_the_api_spec() -> None:
+    modal = _props(sp.sp_modal("b", trigger="Open", width=600, dismissible=False))
+    assert modal["width"] == '"600px"' and modal["dismissible"] == "false"
+    assert "SilverpointTrigger" in modal["trigger"]
+    drawer = _props(sp.sp_drawer("b", side="start", size=420))
+    assert drawer["side"] == '"start"' and drawer["extent"] == '"420px"'
+    popover = _props(sp.sp_popover("c", trigger="P", side_offset=10, width=280))
+    assert popover["offset"] == "10" and popover["width"] == '"280px"'
+    assert _props(sp.sp_tooltip("Hover", "tip"))["text"] == '"tip"'
 
 
-def test_select_static_and_var_items() -> None:
-    assert sp.sp_select(["a", {"value": "b", "label": "B", "disabled": True}], value=_S.value, on_change=_S.set_value)
-    assert sp.sp_select(_S.rows, default_value="a")
+def test_physical_sides_map_to_logical_ones() -> None:
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        drawer = _props(sp.sp_drawer("b", side="left"))
+        toaster = _props(sp.sp_toaster(position="top-right"))
+    assert drawer["side"] == '"start"' and toaster["position"] == '"top-end"'
+    assert all(issubclass(w.category, DeprecationWarning) for w in caught) and len(caught) == 2
 
 
-def test_trigger_is_a_drawn_button() -> None:
-    rendered = str(sp.sp_trigger("Go", variant="primary").render())
-    assert 'element:"button"' in rendered and 'frame:"control"' in rendered and 'tone:"primary"' in rendered
+def test_select_items_take_value_as_key() -> None:
+    items = ["a", {"value": "b", "label": "B", "disabled": True}]
+    props = _props(sp.sp_select(items, value=_S.value, on_change=_S.set_value))
+    # Without a label, the placeholder names the combobox (JSON-escaped in the render).
+    assert '["key"] : "b"' in props["items"] and props["label"] == '"Select\\u2026"'
+    var_items = _props(sp.sp_select(_S.options, default_value="a", label="Letter"))["items"]
+    assert "key" in var_items and "value" in var_items
+
+
+def test_menu_with_a_text_trigger_draws_its_own_button() -> None:
+    props = _props(sp.sp_dropdown_menu("Actions", [{"key": "a", "label": "A"}]))
+    assert props["label"] == '"Actions"' and "trigger" not in props
+
+
+def test_menu_separators_and_labels_get_keys() -> None:
+    items = [{"key": "a", "label": "A"}, {"type": "separator"}, {"type": "label", "label": "Zone"}]
+    rendered = _props(sp.sp_dropdown_menu("M", items))["items"]
+    assert '"separator-1"' in rendered and '"label-2"' in rendered
+
+
+def test_trigger_forwards_what_an_overlay_clones_onto_it() -> None:
+    trigger = sp.sp_trigger("Go", variant="primary", chevron=True, aria_label="Go now", tab_index=-1)
+    props = _props(trigger)
+    assert trigger.render()["name"] == "SilverpointTrigger"
+    assert props['"aria-label"'] == '"Go now"' and props["tabIndex"] == "-1" and props["variant"] == '"primary"'
+    assert len(rx.el.div(trigger, sp.sp_trigger("x"))._get_all_custom_code()) == 1
 
 
 # ── Timeline ────────────────────────────────────────────────────────────────────────────
 
 
-def test_timeline_available_in_dev() -> None:
-    assert sp.timeline_available()
-
-
-def test_timeline_wraps_knightlab_in_a_surface() -> None:
+def test_timeline_is_the_npm_sp_timeline() -> None:
     data = {"events": [{"start_date": {"year": 1500}, "text": {"headline": "x"}}]}
-    component = sp.sp_timeline(
-        data, {"font": "x", "start_at_end": True}, height=500, palette="sepia", ground="cyanotype"
-    )
-    rendered = str(component.render())
-    assert component.render()["name"] == "SilverpointSurface"
-    assert "SilverpointTimelineInk" in rendered and "KnightLabTimeline" in rendered
-    assert '"font"' not in rendered and "start_at_end" in rendered
-    assert 'name:"kl-timeline"' in rendered and "500px" in rendered
+    component = sp.sp_timeline(data, {"font": "x", "start_at_end": True}, height=500, palette="sepia", label="Years")
+    props = _props(component)
+    assert component.render()["name"] == "SpTimeline"
+    assert ("SpTimeline", "/timeline") in _paths(component)
+    assert '"font"' not in props["options"] and "start_at_end" in props["options"]
+    assert props["height"] == '"500px"' and props["label"] == '"Years"'
+    imports = component._get_all_imports()
+    assert "@knight-lab/timelinejs@3.9.13" in imports
+    css = [var.tag for var in imports[""]]
+    assert css.index("@knight-lab/timelinejs/dist/css/timeline.css") < css.index("@silverpoint/grounds/timeline.css")
 
 
-def test_timeline_code_carries_the_skin() -> None:
-    from reflex_silverpoint_react.timeline import TIMELINE_CODE
-
-    assert "SP_TIMELINE_CSS" in TIMELINE_CODE and ".tl-timemarker" in TIMELINE_CODE
-
-
-def test_assets_ship_in_the_package() -> None:
-    from importlib.resources import files
-
-    assets = files("reflex_silverpoint_react") / "assets"
-    for name in ("surface.jsx", "surfaces.css", "timeline.jsx", "timeline.css"):
-        assert (assets / name).is_file()
+def test_timeline_needs_no_python_extra() -> None:
+    assert sp.timeline_available()

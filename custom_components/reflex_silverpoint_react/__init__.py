@@ -1,7 +1,8 @@
 """reflex-silverpoint-react: silverpoint charts and UI components for Reflex.
 
 Charts and interface components drawn in the manner of a Renaissance silverpoint drawing,
-wrapping ``@silverpoint/react``.
+wrapping ``@silverpoint/react`` 0.7.0: the 60 charts, the dashboard, the 38 UI, composed and overlay
+components, the palettes and the Knight Lab timeline.
 """
 
 from .base import (
@@ -138,6 +139,18 @@ from .charts import (
     wind_rose,
 )
 from .composed import (
+    SpAvatar,
+    SpAvatarGroup,
+    SpBreadcrumb,
+    SpCollapse,
+    SpCollapseItem,
+    SpDescriptions,
+    SpEmpty,
+    SpResult,
+    SpStatistic,
+    SpTable,
+    SpTextarea,
+    SpTimelineList,
     sort_rows,
     sp_avatar,
     sp_avatar_group,
@@ -165,6 +178,15 @@ from .dashboard import (
 )
 from .helpers import chart_ref, download_svg, get_geometry, get_svg, tooltip_template
 from .overlays import (
+    SpDrawer,
+    SpDropdownMenu,
+    SpModal,
+    SpPopover,
+    SpSelect,
+    SpToast,
+    SpToaster,
+    SpTooltip,
+    SpTrigger,
     sp_drawer,
     sp_dropdown_menu,
     sp_modal,
@@ -176,12 +198,15 @@ from .overlays import (
     sp_trigger,
 )
 from .palette import (
+    PALETTE_JS_FIELDS,
+    PALETTE_PAIRS,
     PALETTE_PROPERTIES,
     PALETTES,
     Palette,
     check_palette,
     contrast_ratio,
     palette_css,
+    palette_prop,
     silverpoint_palette,
 )
 from .surfaces import (
@@ -194,7 +219,7 @@ from .surfaces import (
     sp_pagination,
     sp_surface,
 )
-from .timeline import sp_timeline, timeline_available
+from .timeline import TIMELINEJS_VERSION, SpTimeline, sp_timeline, timeline_available
 from .ui import (
     SILVERPOINT_UI_STYLESHEET,
     SilverpointUi,
@@ -254,11 +279,14 @@ __all__ = [
     "DASHBOARD_DEFAULTS",
     "FAMILIES",
     "PALETTES",
+    "PALETTE_JS_FIELDS",
+    "PALETTE_PAIRS",
     "PALETTE_PROPERTIES",
     "SILVERPOINT_LIBRARY",
     "SILVERPOINT_STYLESHEETS",
     "SILVERPOINT_UI_STYLESHEET",
     "SILVERPOINT_VERSION",
+    "TIMELINEJS_VERSION",
     "UI_COMMON_PROPS",
     "UI_COMPONENTS",
     "UI_DEMOS",
@@ -321,27 +349,49 @@ __all__ = [
     "SilverpointUi",
     "SlopeChart",
     "SpAlert",
+    "SpAvatar",
+    "SpAvatarGroup",
     "SpBadge",
+    "SpBreadcrumb",
     "SpButton",
     "SpCard",
     "SpCheckbox",
+    "SpCollapse",
+    "SpCollapseItem",
+    "SpDescriptions",
     "SpDivider",
+    "SpDrawer",
+    "SpDropdownMenu",
+    "SpEmpty",
     "SpGlyph",
     "SpInput",
     "SpInputNumber",
+    "SpModal",
     "SpPagination",
+    "SpPopover",
     "SpProgress",
     "SpRadioGroup",
     "SpRate",
+    "SpResult",
     "SpSegmented",
+    "SpSelect",
     "SpSkeleton",
     "SpSlider",
+    "SpStatistic",
     "SpSteps",
     "SpSurface",
     "SpSwitch",
     "SpTabPanel",
+    "SpTable",
     "SpTabs",
     "SpTag",
+    "SpTextarea",
+    "SpTimeline",
+    "SpTimelineList",
+    "SpToast",
+    "SpToaster",
+    "SpTooltip",
+    "SpTrigger",
     "SparklineRows",
     "SquarifiedTreemap",
     "StackedBarChart",
@@ -405,6 +455,7 @@ __all__ = [
     "network_node",
     "orbit_chart",
     "palette_css",
+    "palette_prop",
     "parallel_coordinates_chart",
     "polar_bar_chart",
     "polar_line_chart",
