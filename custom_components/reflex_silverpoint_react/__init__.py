@@ -12,6 +12,7 @@ from .base import (
     GroundName,
     SilverpointChart,
     SilverpointProvider,
+    silverpoint_palette,
     silverpoint_provider,
 )
 from .catalog import CHARTS, COMMON_PROPS, FAMILIES, ChartInfo, PropDoc, chart_by_name, chart_by_slug
@@ -207,7 +208,6 @@ from .palette import (
     contrast_ratio,
     palette_css,
     palette_prop,
-    silverpoint_palette,
 )
 from .surfaces import (
     SpGlyph,

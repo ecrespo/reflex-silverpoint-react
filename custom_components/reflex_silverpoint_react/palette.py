@@ -375,26 +375,3 @@ def apply_palette(props: dict[str, Any]) -> dict[str, Any]:
     if value is not None:
         props["palette"] = value
     return props
-
-
-def silverpoint_palette(*children: rx.Component, palette: PaletteLike, **props: Any) -> rx.Component:
-    """Colour every chart, UI component and dashboard inside a section.
-
-    A :class:`SilverpointProvider` with a palette: everything below it reads it, its own and a
-    dashboard's palette merging over it field by field. With extra props (``id``, ``class_name``…)
-    the provider is wrapped in a ``display: contents`` ``div`` that carries them.
-
-    Args:
-        *children: The section.
-        palette: A :class:`Palette`, a preset name, a dict of fields or a state var.
-        **props: Extra props for the wrapper ``div``.
-
-    Returns:
-        The provider, or the wrapper holding it.
-    """
-    provider = rx.el.SilverpointProvider(*children, palette=palette)
-    if not props:
-        return provider
-    style = props.pop("style", None)
-    contents = {"display": "contents"}
-    return rx.el.div(provider, style={**contents, **style} if isinstance(style, dict) else contents, **props)

@@ -310,3 +310,15 @@ def test_timeline_is_the_npm_sp_timeline() -> None:
 
 def test_timeline_needs_no_python_extra() -> None:
     assert sp.timeline_available()
+
+
+def test_palette_module_does_not_import_base():
+    """``palette`` is a leaf module: ``base`` imports it, so it must not import ``base`` back."""
+    import ast
+    import inspect
+
+    import reflex_silverpoint_react.palette as palette_module
+
+    tree = ast.parse(inspect.getsource(palette_module))
+    modules = {node.module for node in ast.walk(tree) if isinstance(node, ast.ImportFrom)}
+    assert "base" not in modules
