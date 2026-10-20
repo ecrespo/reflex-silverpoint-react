@@ -4,6 +4,59 @@ All notable changes to `reflex-silverpoint-react`. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.7.1] — 2026-10-20
+
+Wraps **`@silverpoint/react` 0.7.0** (0.7.0 wrapped 0.6.0). silverpoint 0.7 took this package's
+palettes, composed components, overlays and timeline into the library (its feature-004), so they are
+now the npm components instead of Reflex-composed copies. The Python builders keep their 0.7.0
+signatures.
+
+### Changed
+
+- `SILVERPOINT_VERSION` is `0.7.0`; every npm dependency is pinned to it.
+- **Palettes** are the npm `palette` prop (camelCase fields), merged element → dashboard → provider
+  field by field. `silverpoint_provider(palette=...)` is accepted; `silverpoint_palette(...)` is a
+  provider with a palette. A dashboard's palette now reaches its charts.
+- `check_palette()` measures the core's `PALETTE_PAIRS` (adds the focus ring, defaulting to `ink`,
+  and the heightening's outline and text pairs). `"ironGall"` resolves to the `iron_gall` preset.
+- `sp_surface`, `sp_glyph`, `sp_pagination`, `sp_input_number` and the composed components (`sp_table`,
+  `sp_breadcrumb`, `sp_avatar`, `sp_avatar_group`, `sp_statistic`, `sp_descriptions`,
+  `sp_timeline_list`, `sp_collapse`, `sp_collapse_item`, `sp_empty`, `sp_result`, `sp_textarea`) are the
+  npm components; they read `silverpoint_provider`. `sp_surface` no longer forwards unknown DOM
+  attributes (the npm `SpSurface` has none).
+- Overlays (`sp_modal`, `sp_drawer`, `sp_popover`, `sp_tooltip`, `sp_select`, `sp_dropdown_menu`,
+  `sp_toast`, `sp_toaster`) are the npm components on `<dialog>` and the Popover API, in place of
+  Radix primitives; they render in place and read the provider.
+- `sp_trigger` is `SpTrigger`, a native button drawn by the core's `uiButtonView` that keeps the ARIA
+  and handlers an overlay clones onto it (the npm `SpButton` 0.7.0 drops them).
+- `sp_timeline` is the npm `SpTimeline`; `@knight-lab/timelinejs` 3.9.13 is its npm dependency. The
+  `[timeline]` extra is empty (kept for compatibility); `timeline_available()` is always `True`.
+- `sort_rows()` follows `uiSortRows`: numbers first, then text by code point after lower-casing.
+- `sp_collapse_item(on_toggle=)` receives the new open state (a bool), not the DOM event.
+
+### Added
+
+- `sp_modal(label=, dismissible=)`, `sp_drawer(extent=, label=, dismissible=)`, `sp_popover(offset=,
+  label=)`, `sp_tooltip(offset=)`, `sp_select(open=, default_open=, on_open_change=)`,
+  `sp_dropdown_menu(label=)`, `sp_descriptions(heading_level=)`, `sp_result(heading_level=)`,
+  `sp_table(row_key=)`, `sp_timeline(label=, fallback=)`.
+- The component classes (`SpTable`, `SpModal`, `SpTimeline`, `SpTrigger`…), `palette_prop`,
+  `PALETTE_JS_FIELDS`, `PALETTE_PAIRS`, `TIMELINEJS_VERSION`.
+
+### Deprecated
+
+- `side="left"`/`"right"` (use `"start"`/`"end"`), `position="bottom-right"`… (use `"bottom-end"`…),
+  `sp_drawer(size=)` (`extent=`), `sp_popover(side_offset=)`/`sp_tooltip(side_offset=)` (`offset=`),
+  `sp_textarea(textarea_id=)` and `sp_input_number(input_id=)` (`id=`), `sp_toast(action_alt=)`
+  (ignored).
+
+### Removed
+
+- The Radix primitives, `RADIX_VERSIONS`, and the assets `surface.jsx`, `surfaces.css`,
+  `timeline.jsx`, `timeline.css`; the `reflex-knightlab-timeline` dependency.
+- `sp_textarea(on_blur=)` raises `TypeError` (the npm `SpTextarea` has no blur event).
+- `sp_tooltip` content must be text (`SpTooltip.text`).
+
 ## [0.7.0] — 2026-10-18
 
 ### Added
@@ -54,6 +107,7 @@ All notable changes to `reflex-silverpoint-react`. The format follows
 - First release: the silverpoint charts, `SilverpointProvider`, events, readouts and the
   imperative handle (SVG export, geometry).
 
+[0.7.1]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.3.0...v0.6.0
 [0.3.0]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.2.0...v0.3.0

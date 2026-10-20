@@ -9,7 +9,7 @@ Pages:
     /chart/<slug>   One page per chart, with the reference of its props.
     /ui             The UI components of silverpoint 0.3: wired to Python, and the reference panels.
     /ui/<slug>      One page per UI component, every declared state and its props.
-    /components     Reflex-composed components: table, pagination, overlays, toasts… (0.7).
+    /components     composed components and overlays: table, pagination, modal, toasts… (0.7).
     /palettes       Colour for every chart and component: presets and a palette builder (0.7).
     /timeline       Knight Lab TimelineJS drawn in silverpoint (0.7).
 """

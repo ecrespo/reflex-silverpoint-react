@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reflex-silverpoint-react"
-version = "0.7.0"
-description = "The 60 silverpoint charts, the Dashboard, 17 UI components, palettes, 20 composed components and a Knight Lab timeline (Renaissance silverpoint drawing style) for Reflex, wrapping @silverpoint/react"
+version = "0.7.1"
+description = "The 60 silverpoint charts, the Dashboard, 38 UI, composed and overlay components, palettes and a Knight Lab timeline (Renaissance silverpoint drawing style) for Reflex, wrapping @silverpoint/react 0.7"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.11"
@@ -28,16 +28,17 @@ Issues = "https://github.com/ecrespo/reflex-silverpoint-react/issues"
 Upstream = "https://github.com/ecrespo/silverpoint"
 
 [project.optional-dependencies]
-# sp_timeline: Knight Lab TimelineJS drawn in silverpoint.
-timeline = ["reflex-knightlab-timeline>=0.1.2"]
-dev = ["build", "twine", "pytest", "ruff", "reflex-knightlab-timeline>=0.1.2"]
+# Kept so `reflex-silverpoint-react[timeline]` still installs: since 0.7.1 sp_timeline is the npm
+# SpTimeline and TimelineJS an npm dependency of that component, so the extra pulls in nothing.
+timeline = []
+dev = ["build", "twine", "pytest", "ruff"]
 
 [tool.setuptools.packages.find]
 where = ["custom_components"]
 
 [tool.setuptools.package-data]
-# The JS and CSS of the Reflex-composed components and of sp_timeline.
-reflex_silverpoint_react = ["assets/*.jsx", "assets/*.css"]
+# The JS of sp_trigger.
+reflex_silverpoint_react = ["assets/*.jsx"]
 
 [tool.ruff]
 line-length = 120

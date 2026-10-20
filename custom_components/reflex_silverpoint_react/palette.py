@@ -5,10 +5,12 @@ silverpoint never writes a colour into its SVG: every stroke and fill is painted
 done the same way everywhere: setting those properties on the element that declares them, which
 re-themes without re-rendering.
 
-* ``palette=`` on any chart, UI component or dashboard colours that one element.
-* :func:`silverpoint_palette` colours a whole section (every silverpoint element inside it).
-* :data:`PALETTES` holds presets named after historical drawing media; :func:`check_palette`
-  verifies a palette against the contrast thresholds of the silverpoint data model (§3.2).
+* ``palette=`` on any chart, UI component, dashboard or provider colours that element. It is
+  ``@silverpoint/react``'s own ``palette`` prop (since silverpoint 0.7.0): the npm component writes
+  the declarations on its root, merging element → dashboard → provider field by field (REQ-462).
+* :func:`silverpoint_palette` colours a whole section: a :class:`SilverpointProvider` with a palette.
+* :data:`PALETTES` holds the presets of ``@silverpoint/core/palettes``; :func:`check_palette`
+  measures a palette against the contrast pairs of the silverpoint data model (§3.9).
 
 A palette is monochrome by design. Tone is built from hatch density (Art. 6), so a chart has two
 inks, ``ink`` for the main series and ``ink_secondary`` for the second, never a colour per series.
@@ -33,18 +35,33 @@ PALETTE_PROPERTIES: dict[str, str] = {
     "focus": "--sp-ui-focus-color",
 }
 
-#: Minimum contrast of each field against the substrate (Data Model §3.2): 4.5 for anything read
-#: as text or as a series, 3.0 for rules, grid and the focus ring. ``heighten`` is exempt: it is
-#: always outlined (§3.3).
-CONTRAST_THRESHOLDS: dict[str, float] = {
-    "ink": 4.5,
-    "ink_secondary": 4.5,
-    "text": 4.5,
-    "text_muted": 4.5,
-    "rule": 3.0,
-    "grid": 3.0,
-    "focus": 3.0,
+#: Palette field → its key in ``@silverpoint/core``'s ``Palette`` (camelCase).
+PALETTE_JS_FIELDS: dict[str, str] = {
+    "substrate": "substrate",
+    "ink": "ink",
+    "ink_secondary": "inkSecondary",
+    "heighten": "heighten",
+    "rule": "rule",
+    "grid": "grid",
+    "text": "text",
+    "text_muted": "textMuted",
+    "focus": "focus",
 }
+
+#: The pairs :func:`check_palette` measures, as ``PALETTE_PAIRS`` of ``@silverpoint/core/palettes``
+#: (Data Model §3.9), in that order: ``(pair, threshold, foreground field, background field)``.
+#: ``None`` as background is the substrate; ``focus`` falls back to ``ink``.
+PALETTE_PAIRS: tuple[tuple[str, float, str, str | None], ...] = (
+    ("ink", 4.5, "ink", None),
+    ("ink-secondary", 4.5, "ink_secondary", None),
+    ("text", 4.5, "text", None),
+    ("text-muted", 4.5, "text_muted", None),
+    ("rule", 3.0, "rule", None),
+    ("grid", 3.0, "grid", None),
+    ("focus", 3.0, "focus", None),
+    ("heighten-outline", 3.0, "ink", "heighten"),
+    ("heighten-text", 4.5, "text", "heighten"),
+)
 
 #: The cream substrate of the silverpoint ground: what a palette without ``substrate`` sits on.
 DEFAULT_SUBSTRATE = "#EDE7DA"
@@ -84,6 +101,14 @@ class Palette:
             ``{field: colour}``.
         """
         return {key: value for key, value in asdict(self).items() if value is not None}
+
+    def to_js(self) -> dict[str, str]:
+        """The set fields, under ``@silverpoint/core``'s names (``inkSecondary``, ``textMuted``).
+
+        Returns:
+            What the npm ``palette`` prop takes.
+        """
+        return {PALETTE_JS_FIELDS[key]: value for key, value in self.to_dict().items()}
 
     def to_css(self) -> dict[str, str]:
         """The ``--sp-`` custom properties this palette sets.
@@ -125,7 +150,9 @@ class Palette:
         return cls(**{key: value for key, value in values.items() if value is not None})
 
 
-#: Presets named after historical drawing media, each verified by :func:`check_palette`.
+#: Presets named after historical drawing media, each verified by :func:`check_palette`. They are
+#: the presets of ``@silverpoint/core/palettes`` 0.7.0, field for field (its ``ironGall`` is
+#: ``iron_gall`` here; both names resolve).
 PALETTES: dict[str, Palette] = {
     # The silverpoint ground's own inks on cream: what a chart draws with no palette.
     "silverpoint": Palette(
@@ -195,6 +222,9 @@ PALETTES: dict[str, Palette] = {
     ),
 }
 
+#: The core's preset names that differ from the Python ones.
+_PRESET_ALIASES = {"ironGall": "iron_gall"}
+
 #: What ``palette=`` accepts: a :class:`Palette`, a preset name, a dict of fields, or a state var
 #: holding a dict of fields.
 PaletteLike = Palette | str | dict[str, Any] | rx.Var
@@ -224,37 +254,42 @@ def contrast_ratio(foreground: str, background: str) -> float:
 
 
 def _is_hex(value: str) -> bool:
-    value = value.lstrip("#")
+    if not value.startswith("#"):
+        return False
+    value = value[1:]
     return len(value) in (3, 6) and all(c in "0123456789abcdefABCDEF" for c in value)
 
 
 def check_palette(palette: PaletteLike) -> list[str]:
-    """Check a palette against the contrast thresholds of the silverpoint data model.
+    """Check a palette against the contrast pairs of the silverpoint data model (§3.9).
 
-    Only hex colours can be measured; other values are skipped. A palette without ``substrate``
-    is measured against the cream substrate.
+    The same pairs, thresholds and fallbacks as ``checkPalette`` of ``@silverpoint/core/palettes``:
+    every field read as text or as a series against the substrate (4.5:1), rules, grid and the focus
+    ring (3:1, ``focus`` defaulting to ``ink``), and the white heightening against its ink outline
+    (3:1) and the text on it (4.5:1). Only hex colours can be measured; other pairs are skipped. A
+    palette without ``substrate`` is measured against the cream substrate.
 
     Args:
         palette: The palette, a preset name or a dict.
 
     Returns:
-        One message per field below its threshold; empty when the palette passes.
+        One message per pair below its threshold, ``"<pair> <fg> on <bg>: <ratio>:1, below <t>:1"``;
+        empty when the palette passes.
     """
     resolved = resolve_palette(palette)
     if not isinstance(resolved, Palette):
         return []
     values = resolved.to_dict()
     substrate = values.get("substrate", DEFAULT_SUBSTRATE)
-    if not _is_hex(substrate):
-        return []
     problems = []
-    for key, threshold in CONTRAST_THRESHOLDS.items():
-        colour = values.get(key)
-        if colour is None or not _is_hex(colour):
+    for pair, threshold, fg_field, bg_field in PALETTE_PAIRS:
+        foreground = values.get(fg_field) or (values.get("ink") if fg_field == "focus" else None)
+        background = substrate if bg_field is None else values.get(bg_field)
+        if not foreground or not background or not _is_hex(foreground) or not _is_hex(background):
             continue
-        ratio = contrast_ratio(colour, substrate)
+        ratio = contrast_ratio(foreground, background)
         if ratio < threshold:
-            problems.append(f"{key} {colour} on {substrate}: {ratio:.2f}:1, below {threshold}:1")
+            problems.append(f"{pair} {foreground} on {background}: {ratio:.2f}:1, below {threshold}:1")
     return problems
 
 
@@ -274,6 +309,7 @@ def resolve_palette(palette: PaletteLike | None) -> Palette | rx.Var | None:
     if palette is None or isinstance(palette, (Palette, rx.Var)):
         return palette
     if isinstance(palette, str):
+        palette = _PRESET_ALIASES.get(palette, palette)
         if palette not in PALETTES:
             msg = f"Unknown palette preset {palette!r}; use one of {sorted(PALETTES)}."
             raise ValueError(msg)
@@ -305,48 +341,48 @@ def palette_css(palette: PaletteLike | None) -> dict[str, Any]:
     return resolved.to_css()
 
 
-def _merge_style(style: Any, extra: dict[str, Any]) -> Any:
-    if not extra:
-        return style
-    if style is None:
-        return extra
-    if isinstance(style, dict):
-        return {**style, **extra}
-    if isinstance(style, (list, tuple)):
-        return [*style, extra]
-    return [style, extra]
+def palette_prop(palette: PaletteLike | None) -> dict[str, str] | rx.Var | None:
+    """What a palette becomes on the npm ``palette`` prop.
+
+    For a state var holding a dict, each field is read from the var at runtime under its Python
+    name (``ink_secondary``); fields the dict does not have stay unset (the ground's own colour).
+
+    Args:
+        palette: What ``palette=`` accepts.
+
+    Returns:
+        ``{"ink": …, "inkSecondary": …}``, an object var, or ``None``.
+    """
+    resolved = resolve_palette(palette)
+    if resolved is None:
+        return None
+    if isinstance(resolved, rx.Var):
+        mapping = resolved.to(dict)
+        return rx.Var.create({js: mapping[key] for key, js in PALETTE_JS_FIELDS.items()})
+    return resolved.to_js() or None
 
 
 def apply_palette(props: dict[str, Any]) -> dict[str, Any]:
-    """Turn a ``palette`` prop into style on the element itself.
-
-    The declarations go under ``&&`` (the element's emotion class, doubled): that outweighs both
-    the ground's zero-specificity defaults and a surrounding :func:`silverpoint_palette`, so an
-    element's own palette always wins over its section's.
+    """Turn the ``palette`` argument into the npm ``palette`` prop.
 
     Args:
-        props: The props passed to ``create``; ``palette`` is popped.
+        props: The props passed to ``create``; ``palette`` is replaced by its npm form, or dropped.
 
     Returns:
-        The props, with the palette merged into ``style``.
+        The props.
     """
-    palette = props.pop("palette", None)
-    declarations = palette_css(palette)
-    if declarations:
-        props["style"] = _merge_style(props.get("style"), {"&&": declarations})
+    value = palette_prop(props.pop("palette", None))
+    if value is not None:
+        props["palette"] = value
     return props
-
-
-#: The elements that declare the ``--sp-`` properties: a chart root, a UI component root and a
-#: dashboard section (a chart's inner ``<svg>`` inherits from its root and declares nothing).
-_GROUND_ELEMENTS = ":where(.sp-root, .sp-ui, .sp-dashboard, .sp-surface)"
 
 
 def silverpoint_palette(*children: rx.Component, palette: PaletteLike, **props: Any) -> rx.Component:
     """Colour every chart, UI component and dashboard inside a section.
 
-    The wrapper is ``display: contents``, so it takes no layout space. An element's own
-    ``palette=`` still wins over the section's.
+    A :class:`SilverpointProvider` with a palette: everything below it reads it, its own and a
+    dashboard's palette merging over it field by field. With extra props (``id``, ``class_name``…)
+    the provider is wrapped in a ``display: contents`` ``div`` that carries them.
 
     Args:
         *children: The section.
@@ -354,9 +390,13 @@ def silverpoint_palette(*children: rx.Component, palette: PaletteLike, **props: 
         **props: Extra props for the wrapper ``div``.
 
     Returns:
-        The wrapper.
+        The provider, or the wrapper holding it.
     """
-    declarations = palette_css(palette)
-    style = {"display": "contents", f"& {_GROUND_ELEMENTS}": declarations}
-    props["style"] = _merge_style(props.get("style"), style) if props.get("style") else style
-    return rx.el.div(*children, **props)
+    from .base import SilverpointProvider
+
+    provider = SilverpointProvider.create(*children, palette=palette)
+    if not props:
+        return provider
+    style = props.pop("style", None)
+    contents = {"display": "contents"}
+    return rx.el.div(provider, style={**contents, **style} if isinstance(style, dict) else contents, **props)
