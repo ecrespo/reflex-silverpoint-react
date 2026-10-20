@@ -392,9 +392,7 @@ def silverpoint_palette(*children: rx.Component, palette: PaletteLike, **props: 
     Returns:
         The provider, or the wrapper holding it.
     """
-    from .base import SilverpointProvider
-
-    provider = SilverpointProvider.create(*children, palette=palette)
+    provider = rx.el.SilverpointProvider(*children, palette=palette)
     if not props:
         return provider
     style = props.pop("style", None)
