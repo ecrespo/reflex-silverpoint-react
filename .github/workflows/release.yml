@@ -45,6 +45,14 @@ jobs:
           name: dist
           path: dist/
           if-no-files-found: error
+      # The Reflex catalog (T-230) goes to the GitHub release only, not to PyPI.
+      - name: Check the Reflex catalog matches the tagged code
+        run: uv run python scripts/export_catalog.py --check
+      - uses: actions/upload-artifact@v7
+        with:
+          name: catalog
+          path: reflex-catalog.json
+          if-no-files-found: error
 
   pypi:
     name: Publish to PyPI
@@ -73,11 +81,15 @@ jobs:
         with:
           name: dist
           path: dist/
-      - name: Create release with the distribution files
+      - uses: actions/download-artifact@v8
+        with:
+          name: catalog
+          path: catalog/
+      - name: Create release with the distribution files and the Reflex catalog
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" dist/* \
+          gh release create "$GITHUB_REF_NAME" dist/* catalog/reflex-catalog.json \
             --repo "$GITHUB_REPOSITORY" \
             --title "$GITHUB_REF_NAME" \
             --generate-notes \

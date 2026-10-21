@@ -46,6 +46,21 @@ jobs:
       - name: Pytest
         run: uv run pytest -v
 
+  agent:
+    name: Agent catalog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - name: Install
+        run: uv sync --locked --extra dev
+      - name: reflex-catalog.json is current (T-230)
+        run: |
+          uv run python scripts/export_catalog.py
+          git diff --exit-code -- reflex-catalog.json
+
   build:
     name: Build and check distribution
     runs-on: ubuntu-latest
