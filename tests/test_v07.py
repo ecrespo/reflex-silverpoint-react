@@ -317,8 +317,6 @@ def test_palette_module_does_not_import_base():
     import ast
     import inspect
 
-    import reflex_silverpoint_react.palette as palette_module
-
-    tree = ast.parse(inspect.getsource(palette_module))
+    tree = ast.parse(inspect.getsource(inspect.getmodule(apply_palette)))
     modules = {node.module for node in ast.walk(tree) if isinstance(node, ast.ImportFrom)}
     assert "base" not in modules
