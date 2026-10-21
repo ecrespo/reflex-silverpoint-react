@@ -116,6 +116,9 @@ class Dashboard(_SubpathComponent):
     # Locale for every chart inside.
     locale: rx.Var[str]
 
+    # Colours of the dashboard and of every chart inside, over the provider's (set with ``palette=``).
+    palette: rx.Var[dict[str, str]]
+
     # The linked value changed (``{key, value}``) or cleared (``None``). Only with ``link``.
     on_link_change: rx.EventHandler[_link_spec]
 
@@ -125,9 +128,8 @@ class Dashboard(_SubpathComponent):
 
         Args:
             *children: The charts, optionally wrapped in :func:`dashboard_cell`.
-            palette: Colours of the dashboard section (its title, description and background).
-                Charts inside keep their own; wrap the dashboard in :func:`silverpoint_palette`
-                to colour everything.
+            palette: Colours of the dashboard and of every chart inside it; a chart's own palette
+                merges over it field by field, and it merges over the provider's (REQ-462).
             **props: The dashboard's props.
 
         Returns:

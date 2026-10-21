@@ -1,8 +1,8 @@
 """Regenerate the package's .pyi stubs (Reflex 0.10 removed `reflex component build`).
 
 Runs Reflex's own stub generator over the package, then fixes what it leaves for this package:
-the `Palette` name the `palette=` keyword refers to, and the dynamically built Radix part
-classes of `overlays.py` (whose stub is dropped: type checkers read the module itself).
+the `Palette` name the `palette=` keyword refers to, and the `Component` name of the props that
+take a component (an overlay's `trigger`, a result's `extra`).
 
     uv run python scripts/make_stubs.py
 """
@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 PACKAGE = Path(__file__).resolve().parent.parent / "custom_components" / "reflex_silverpoint_react"
-DROP = ("overlays.pyi",)
+DROP: tuple[str, ...] = ()
 EXTRA_IMPORTS = {
     "Palette": "from .palette import Palette",
     "Component": "from reflex_base.components.component import Component",
@@ -26,7 +26,11 @@ def main() -> int:
         (PACKAGE / name).unlink(missing_ok=True)
     for stub in sorted(PACKAGE.glob("*.pyi")):
         text = stub.read_text(encoding="utf-8")
-        needed = [line for name, line in EXTRA_IMPORTS.items() if re.search(rf"\b{name}\b", text) and line not in text]
+        needed = [
+            line
+            for name, line in EXTRA_IMPORTS.items()
+            if re.search(rf"\b{name}\b", text) and line not in text.splitlines()
+        ]
         if stub.name == "palette.pyi":
             needed = [line for line in needed if "Palette" not in line]
         if needed:

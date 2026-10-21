@@ -80,8 +80,8 @@ jobs:
         with:
           enable-cache: true
       - name: Install
-        # The demo's /timeline page uses sp_timeline, which needs the optional extra.
-        run: uv sync --locked --extra timeline
+        # sp_timeline needs no Python extra since 0.7.1 (TimelineJS is an npm dependency).
+        run: uv sync --locked
       - name: reflex compile
         working-directory: silverpoint_react_demo
         run: uv run reflex compile

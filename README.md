@@ -7,17 +7,40 @@ prepared ground, tone built from hatching, and white heightening on the live val
 The hand-drawn irregularity lives only in the ornament. The data geometry is exact, and every chart
 has a `precision` mode that turns the inking off.
 
-It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) 0.6.0 and exposes
+It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.7.0** and exposes
 **all 60 charts**, the **`Dashboard`** (a laid-out, linkable grid of charts), the **17 UI
-components** (buttons, inputs, tabs, cards, alerts…), the `SilverpointProvider`, both grounds
-(`silverpoint` and `cyanotype`), the interaction events, custom readouts and the imperative handle
-(SVG export and geometry) as Python.
+components** (buttons, inputs, tabs, cards, alerts…), the **12 composed components** (table,
+pagination, breadcrumb, avatar…), the **7 overlays** and the toaster (modal, drawer, popover,
+tooltip, select, dropdown menu, toast), the **palettes**, the **Knight Lab timeline**, the
+`SilverpointProvider`, both grounds (`silverpoint` and `cyanotype`), the interaction events, custom
+readouts and the imperative handle (SVG export and geometry) as Python.
 
-On top of that it adds, in Reflex: **palettes** for every chart and component, **20 composed
-components** built on silverpoint's own frames and tones (tables, overlays, toasts…), and the
-**Knight Lab timeline** drawn in silverpoint.
+Everything it renders is an npm component of silverpoint, under its parity contract: the same
+markup React, Vue and Angular render.
 
-### New in 0.7
+### New in 0.7.1
+
+- Wraps **`@silverpoint/react` 0.7.0** (0.7.0 wrapped 0.6.0). silverpoint 0.7 took this package's
+  palettes, composed components, overlays and timeline into the library itself, so they are now the
+  npm components, not Reflex-composed copies: same Python builders, the library's markup.
+- **Palettes** are the npm `palette` prop: they merge element → dashboard → provider field by field,
+  `silverpoint_provider(palette=...)` works, and `silverpoint_palette(...)` is a provider with a
+  palette. `check_palette()` measures the core's nine contrast pairs (the focus ring and the white
+  heightening included); `"ironGall"` names the `iron_gall` preset too.
+- **Composed components and overlays read `silverpoint_provider`**, as the `Sp` components do.
+  Overlays are a native `<dialog>` and the Popover API (no Radix); they render in place, so a
+  section's palette reaches them.
+- **Logical sides**: `side="start"`/`"end"` and `position="bottom-end"`…; `left`/`right` still work
+  with a `DeprecationWarning`. `sp_drawer(size=)` is `extent=`, `sp_popover(side_offset=)` is
+  `offset=`; `sp_modal` gains `label` and `dismissible`, `sp_result`/`sp_descriptions`
+  `heading_level`.
+- `sp_textarea(textarea_id=)` and `sp_input_number(input_id=)` are `id=` (deprecated aliases kept);
+  `sp_textarea` has no `on_blur`. `sp_collapse_item(on_toggle=)` receives the new open state (a bool).
+- **`sp_timeline`** is the npm `SpTimeline`: TimelineJS is an npm dependency of that component, so the
+  `[timeline]` extra pulls in nothing any more (it is kept so existing installs keep working).
+- `sort_rows()` follows the core's `uiSortRows` order (numbers first, then text by code point).
+
+### New in 0.7.0
 
 - **Reflex 0.10.0**, and therefore **Python 3.11 or later** (Python 3.10 is no longer supported).
   Reflex 0.10 removed `reflex component build`: stubs are regenerated with `scripts/make_stubs.py`.
@@ -34,7 +57,7 @@ components** built on silverpoint's own frames and tones (tables, overlays, toas
   `sp_trigger` as their drawn button. See [Composed components](#composed-components).
 - **`sp_timeline`** — Knight Lab TimelineJS drawn in silverpoint: a skin on the ground's colours and
   type, plus the ground's own hand-inked frames and tone tiles on its markers, eras and buttons.
-  Optional extra: `pip install "reflex-silverpoint-react[timeline]"`. See [Timeline](#timeline).
+  Optional extra (until 0.7.1): `pip install "reflex-silverpoint-react[timeline]"`. See [Timeline](#timeline).
 - `sp_surface`, `sp_glyph`: the building blocks, for components of your own.
 
 ### New in 0.6
@@ -367,19 +390,19 @@ silverpoint_palette(dashboard(...), sp_card(...), palette="indigo")  # a whole s
 ```
 
 Fields: `substrate`, `ink`, `ink_secondary`, `heighten`, `rule`, `grid`, `text`, `text_muted` and
-`focus` (the UI focus ring). Unset fields keep the ground's own. An element's own `palette` always
-wins over its section's. A palette is **monochrome by design**: tone is built from hatch density
-(Art. 6), so a chart has two inks (`ink` for the main series, `ink_secondary` for the second), never
-a colour per series. `precision` mode and the system's high-contrast modes still apply on top.
-`silverpoint_provider` takes no palette (it renders no element): use `silverpoint_palette`.
+`focus` (the UI focus ring). Unset fields keep the ground's own. Palettes merge field by field,
+element → dashboard → provider, so an element's own `palette` wins over its section's. A palette is
+**monochrome by design**: tone is built from hatch density (Art. 6), so a chart has two inks (`ink`
+for the main series, `ink_secondary` for the second), never a colour per series. `precision` mode and
+the system's high-contrast modes still apply on top. `silverpoint_palette(...)` is
+`silverpoint_provider(palette=...)` around the section.
 
 ## Composed components
 
-Components built in Reflex on silverpoint's markup contract: `@silverpoint/grounds/ui.css` draws its
-hand-inked frames, hatched tones and heightening on any element that follows it, so these are drawn
-with exactly the same pieces as the `Sp` components. They are **Reflex-only** (silverpoint's React,
-Vue and Angular adapters do not have them) and, unlike the `Sp` components, they do not read
-`silverpoint_provider`: pass `ground`, `substrate`, `mode` and `palette` explicitly.
+silverpoint 0.7's composed components and overlays, the npm components of `@silverpoint/react/ui`:
+native markup drawn by the core with the ground's hand-inked frames, hatched tones and
+heightening, exactly as the `Sp` components are. Like them they read `silverpoint_provider` (and
+the dashboard they sit in); a prop on the component always wins.
 
 ```python
 from reflex_silverpoint_react import sort_rows, sp_pagination, sp_table
@@ -399,7 +422,7 @@ sp_table(
 sp_pagination(total=240, current=State.page, on_change=State.set_page, show_total=True)
 ```
 
-| Level A (native) | |
+| Composed (native markup) | |
 |---|---|
 | `sp_table` | Card-framed table: small-caps header, tabular figures, hatched striping, sortable headers with `aria-sort` |
 | `sp_pagination` | Previous/next, first/last, a window around the current page (heightened); `on_change(page)` |
@@ -412,7 +435,7 @@ sp_pagination(total=240, current=State.page, on_change=State.set_page, show_tota
 | `sp_empty`, `sp_result` | Empty state; outcome with a drawn round mark |
 | `sp_textarea`, `sp_input_number` | On the `SpInput` contract; `on_change` receives the value (text or number) |
 
-| Level B (Radix primitives) | |
+| Overlays (`<dialog>`, Popover API) | |
 |---|---|
 | `sp_modal`, `sp_drawer` | Dialog on a card frame over a hatched backdrop; drawer from any edge |
 | `sp_popover`, `sp_tooltip` | Anchored content; tooltip on hover or keyboard focus |
@@ -420,10 +443,15 @@ sp_pagination(total=240, current=State.page, on_change=State.set_page, show_tota
 | `sp_dropdown_menu` | Commands with shortcuts, separators and labels; `on_select(key)` |
 | `sp_toast`, `sp_toaster` | Notices that stack in a corner; `error`/`warning` are announced assertively |
 
-Behaviour (focus trapping, keyboard, dismissal, positioning, ARIA) is Radix's, at the versions
-Reflex already installs. Overlays render in a portal at the end of `<body>`, outside any
-`silverpoint_palette` section, so give them `palette` directly. A string `trigger` becomes
-`sp_trigger(...)`, the drawn button that can forward Radix's props (`sp_button` cannot).
+Behaviour is the platform's: `showModal()` for the modal and the drawer (focus stays inside, Escape
+and the backdrop close it unless `dismissible=False`), the Popover API for the rest (light
+dismiss), keyboard and placement from `@silverpoint/core` (APG listbox and menu, typeahead, flip and
+shift). Overlays render in place (the top layer, no portal), so a section's palette reaches them.
+Sides are logical (`start`/`end`) and mirror in right-to-left text. An overlay clones its `trigger`
+with its ARIA and a toggling click, so the trigger must keep the props it is given: a native
+`rx.el.button`, or `sp_trigger(...)`, the drawn button strings become (`sp_button` drops them in
+silverpoint 0.7.0). `sp_trigger` does not read the provider: give it `ground`, `substrate`, `mode`
+and `palette`.
 
 ```python
 sp_modal(
@@ -442,15 +470,15 @@ sp_toaster(sp_toast("Saved", State.text, kind="success", open=State.toast_open, 
 
 ## Timeline
 
-```bash
-pip install "reflex-silverpoint-react[timeline]"   # adds reflex-knightlab-timeline
-```
+The npm `SpTimeline` of `@silverpoint/react/timeline`. TimelineJS (`@knight-lab/timelinejs` 3.9.13)
+is an npm dependency of this component: Reflex installs it when a page uses `sp_timeline`, and no
+Python extra is needed. If it cannot be loaded, the component warns `SP025` and renders `fallback`.
 
 ```python
 from reflex_silverpoint_react import sp_timeline
 
 sp_timeline(
-    DATA,  # TimelineJS data: title, events, eras (or a TimelineData)
+    DATA,  # TimelineJS data: title, events, eras (or any object with to_dict())
     height=560,
     ground="silverpoint",
     substrate="cream",
@@ -535,7 +563,7 @@ The exported SVG carries its own ground colours, so it renders the same outside 
 ## Demo app
 
 ```bash
-uv venv && uv pip install -e ".[timeline]"
+uv venv && uv pip install -e .
 cd silverpoint_react_demo
 uv run reflex run
 ```

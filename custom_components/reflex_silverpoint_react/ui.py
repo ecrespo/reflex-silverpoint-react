@@ -71,6 +71,9 @@ class SilverpointUi(_SubpathComponent):
     # Control size: ``sm``, ``md`` (default) or ``lg``.
     size: rx.Var[UiSize]
 
+    # Colours over the ground's (set with ``palette=``), merged over the dashboard's and the provider's.
+    palette: rx.Var[dict[str, str]]
+
     def add_imports(self) -> dict[str, list[str]]:
         """Import the typeface, the grounds and the UI stylesheet next to the component.
 
