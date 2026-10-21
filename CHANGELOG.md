@@ -33,6 +33,9 @@ signatures.
   `[timeline]` extra is empty (kept for compatibility); `timeline_available()` is always `True`.
 - `sort_rows()` follows `uiSortRows`: numbers first, then text by code point after lower-casing.
 - `sp_collapse_item(on_toggle=)` receives the new open state (a bool), not the DOM event.
+- `silverpoint_palette()` lives in `base` next to `SilverpointProvider`, which ends the
+  `base` ↔ `palette` import cycle; import it from `reflex_silverpoint_react`, not from
+  `reflex_silverpoint_react.palette`.
 
 ### Added
 

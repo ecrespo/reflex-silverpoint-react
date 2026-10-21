@@ -13,7 +13,7 @@ from reflex_base.event import (
 from reflex_base.vars.base import Var
 from reflex_components_core.core.breakpoints import Breakpoints
 
-from .palette import Palette
+from .palette import Palette, PaletteLike
 
 SILVERPOINT_VERSION = "0.7.0"
 SILVERPOINT_LIBRARY = ...
@@ -158,3 +158,5 @@ class SilverpointProvider(_SilverpointBase):
     ) -> SilverpointProvider: ...
 
 silverpoint_provider = SilverpointProvider.create
+
+def silverpoint_palette(*children: rx.Component, palette: PaletteLike, **props: Any) -> rx.Component: ...

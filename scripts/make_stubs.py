@@ -26,7 +26,11 @@ def main() -> int:
         (PACKAGE / name).unlink(missing_ok=True)
     for stub in sorted(PACKAGE.glob("*.pyi")):
         text = stub.read_text(encoding="utf-8")
-        needed = [line for name, line in EXTRA_IMPORTS.items() if re.search(rf"\b{name}\b", text) and line not in text]
+        needed = [
+            line
+            for name, line in EXTRA_IMPORTS.items()
+            if re.search(rf"\b{name}\b", text) and line not in text.splitlines()
+        ]
         if stub.name == "palette.pyi":
             needed = [line for line in needed if "Palette" not in line]
         if needed:
