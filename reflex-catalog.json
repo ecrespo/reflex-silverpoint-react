@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "package": "reflex-silverpoint-react",
-  "version": "0.7.1",
-  "wraps": "0.7.0",
+  "version": "0.8.0",
+  "wraps": "0.8.0",
   "common": {
     "chart": [
       {

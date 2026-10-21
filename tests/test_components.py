@@ -10,7 +10,7 @@ def _props(component: rx.Component) -> dict[str, str]:
     return dict(prop.split(":", 1) for prop in rendered["props"])
 
 
-#: Every chart @silverpoint/react 0.7.0 exports, as its README lists them ("The 60 charts").
+#: Every chart @silverpoint/react 0.8.0 exports, as its README lists them ("The 60 charts").
 UPSTREAM_CHARTS_0_6 = {
     "LineChart", "StepChart", "SparklineRows", "KpiCard", "BarChart", "StackedBarChart",
     "ComposedChart", "WaterfallChart", "FunnelChart", "BulletChart", "PyramidChart",
@@ -105,9 +105,9 @@ def test_provider() -> None:
     assert _props(component)["locale"] == '"es-VE"'
 
 
-def test_version_pins_silverpoint_0_6() -> None:
-    assert sp.SILVERPOINT_VERSION == "0.7.0"
-    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.7.0"
+def test_version_pins_silverpoint() -> None:
+    assert sp.SILVERPOINT_VERSION == "0.8.0"
+    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.8.0"
 
 
 def test_cyanotype_ground() -> None:

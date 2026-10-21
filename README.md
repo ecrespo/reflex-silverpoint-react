@@ -7,7 +7,7 @@ prepared ground, tone built from hatching, and white heightening on the live val
 The hand-drawn irregularity lives only in the ornament. The data geometry is exact, and every chart
 has a `precision` mode that turns the inking off.
 
-It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.7.0** and exposes
+It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.8.0** and exposes
 **all 60 charts**, the **`Dashboard`** (a laid-out, linkable grid of charts), the **17 UI
 components** (buttons, inputs, tabs, cards, alerts…), the **12 composed components** (table,
 pagination, breadcrumb, avatar…), the **7 overlays** and the toaster (modal, drawer, popover,

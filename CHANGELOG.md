@@ -4,6 +4,23 @@ All notable changes to `reflex-silverpoint-react`. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.8.0] — unreleased
+
+Wraps **`@silverpoint/react` 0.8.0** (0.7.1 wrapped 0.7.0). silverpoint 0.8 adds agent access (its
+feature-005: the agent catalog, `@silverpoint/mcp` and the skills) and changes no API of
+`@silverpoint/react`, `core`, `grounds` or `fonts`; the Python builders are unchanged.
+
+### Changed
+
+- `SILVERPOINT_VERSION` is `0.8.0`; every npm dependency is pinned to it.
+
+### Added
+
+- `reflex-catalog.json` and `scripts/export_catalog.py` (silverpoint T-230, Data Model §2.30): the
+  Reflex catalog silverpoint's agent catalog joins, with each builder's snake_case props, their JS
+  names and the deprecated arguments it still accepts. CI fails when it is stale, and each GitHub
+  release carries it.
+
 ## [0.7.1] — 2026-10-20
 
 Wraps **`@silverpoint/react` 0.7.0** (0.7.0 wrapped 0.6.0). silverpoint 0.7 took this package's
