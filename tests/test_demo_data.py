@@ -83,3 +83,26 @@ def test_drill_path_names_the_nodes_from_the_root() -> None:
     assert drill_path(BUDGET, parent["id"])[-1] == parent["name"]
     assert drill_path(BUDGET, parent["id"])[0] == root["name"]
     assert drill_path(BUDGET, "no-such-node") == [root["name"]]
+
+
+#: The first vite with the fixes for GHSA-587h-7wmj-h5pm, GHSA-r825-w8mm-5pxw and GHSA-698v-4r3x-3vcv.
+VITE_PATCHED = (8, 3, 3)
+
+
+def _version(spec: str) -> tuple[int, ...]:
+    return tuple(int(part) for part in spec.lstrip("^~=v").split("."))
+
+
+def test_demo_pins_a_patched_vite():
+    """The demo's config and its persisted package.json both pin a vite with the advisories fixed."""
+    import json
+
+    from reflex_base.constants.installer import PackageJson
+
+    demo = Path(__file__).resolve().parents[1] / "silverpoint_react_demo"
+    sys.path.insert(0, str(demo))
+    import rxconfig  # noqa: F401  (raises the framework pin)
+
+    assert _version(PackageJson.DEV_DEPENDENCIES["vite"]) >= VITE_PATCHED
+    persisted = json.loads((demo / "reflex.lock" / "package.json").read_text(encoding="utf-8"))
+    assert _version(persisted["devDependencies"]["vite"]) >= VITE_PATCHED
