@@ -20,7 +20,7 @@ this repository. The essentials:
 
 ## Status: silverpoint feature-005 (agent access)
 
-This repository's half, on branch `feat/agent-skill` (2026-10-21), not released yet:
+This repository's half, released in `v0.8.0` (2026-10-21):
 
 - T-230 done — `reflex-catalog.json` (`scripts/export_catalog.py`, Data Model §2.30), checked in CI,
   attached to each GitHub release. It equals silverpoint's derived pin except `deprecated` (the

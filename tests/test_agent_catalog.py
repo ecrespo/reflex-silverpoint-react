@@ -144,7 +144,8 @@ def test_req553_export_equals_silverpoint_derived_pin(catalog):
     from the PropDocs before they named the drill-down event.
     """
     pin = json.loads((FIXTURES / "reflex-catalog.derived.json").read_text())
-    assert pin.pop("derived")
+    derived = pin.pop("derived")
+    assert derived
     ours = json.loads(json.dumps(catalog))
     for entry in ours["components"]:
         entry["deprecated"] = {}

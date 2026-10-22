@@ -4,7 +4,7 @@ All notable changes to `reflex-silverpoint-react`. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
-## [0.8.0] — unreleased
+## [0.8.0] — 2026-10-21
 
 Wraps **`@silverpoint/react` 0.8.0** (0.7.1 wrapped 0.7.0). silverpoint 0.8 adds agent access (its
 feature-005: the agent catalog, `@silverpoint/mcp` and the skills) and changes no API of
