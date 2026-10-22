@@ -1572,6 +1572,11 @@
           "name": "root_id",
           "js": "rootId",
           "type": "string | null"
+        },
+        {
+          "name": "on_root_change",
+          "js": "onRootChange",
+          "type": "(id: string | null) => void"
         }
       ]
     },
@@ -1611,6 +1616,11 @@
           "name": "root_id",
           "js": "rootId",
           "type": "string | null"
+        },
+        {
+          "name": "on_root_change",
+          "js": "onRootChange",
+          "type": "(id: string | null) => void"
         }
       ]
     },

@@ -60,6 +60,8 @@ jobs:
         run: |
           uv run python scripts/export_catalog.py
           git diff --exit-code -- reflex-catalog.json
+      - name: The reflex-silverpoint skill is current (T-246)
+        run: uv run python scripts/make_skill.py --check
 
   build:
     name: Build and check distribution

@@ -90,6 +90,14 @@ def test_req553_props_carry_python_and_js_names(catalog):
     assert "palette" in {p["name"] for p in catalog["common"]["ui"]}
 
 
+def test_req553_drillable_charts_list_on_root_change(catalog):
+    # Declared on a private base class, so only the chart's PropDocs can name it.
+    event = {"name": "on_root_change", "js": "onRootChange", "type": "(id: string | null) => void"}
+    for slug in ("squarified-treemap", "sunburst-chart"):
+        chart = next(c for c in catalog["charts"] if c["slug"] == slug)
+        assert event in chart["props"], slug
+
+
 def test_req553_deprecated_arguments_are_listed(catalog):
     deprecated = {c["builder"]: c["deprecated"] for c in catalog["components"] if c["deprecated"]}
     assert deprecated == {
@@ -132,13 +140,16 @@ def test_req553_export_equals_silverpoint_derived_pin(catalog):
     """While the two agree: silverpoint's interim pin, read from this repository with ``ast``.
 
     The pin (tests/fixtures/reflex-catalog.derived.json, silverpoint v0.8.0) was derived from 0.7.1
-    wrapping 0.7.0, and its reader cannot see a builder's deprecated arguments.
+    wrapping 0.7.0; its reader cannot see a builder's deprecated arguments, and its chart props came
+    from the PropDocs before they named the drill-down event.
     """
     pin = json.loads((FIXTURES / "reflex-catalog.derived.json").read_text())
     assert pin.pop("derived")
     ours = json.loads(json.dumps(catalog))
     for entry in ours["components"]:
         entry["deprecated"] = {}
+    for entry in ours["charts"]:
+        entry["props"] = [p for p in entry["props"] if p["name"] != "on_root_change"]
     for key in ("version", "wraps"):
         pin.pop(key)
         ours.pop(key)

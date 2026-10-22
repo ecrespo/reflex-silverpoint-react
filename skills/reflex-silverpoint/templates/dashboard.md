@@ -1,0 +1,93 @@
+# Dashboard
+
+`dashboard` lays charts out in a titled, responsive grid of cards; `dashboard_cell` puts a chart in a
+named cell; `dashboard_link` links charts you lay out yourself. The layout is plain data: columns per
+breakpoint, each cell's column and row spans, the row height and the gap. The breakpoints are the
+dashboard's own width: `sm` below 640 px, `md` up to 1024 px, `lg` above; the defaults are 1, 2 and 4
+columns. Each chart is sized to its cell, and `ground`, `substrate`, `mode`, `locale` and `palette`
+pass to every chart inside (a chart's own prop wins).
+
+- `id` is required, and so is `title` (or `label`, for no visible heading).
+- `dashboard_cell(chart, cell="traffic")` matches a cell id of the layout. Children without a cell
+  follow the named cells in source order, with span 1.
+- `dashboard_layout(cells, columns=..., row_height=..., gap=...)` and
+  `dashboard_cell_layout(id, col_span=..., row_span=...)` write the camelCase keys the component
+  reads; a plain dict works too. Spans can be per breakpoint: `col_span={"md": 2, "lg": 3}`.
+- With `link="hour"`, pointing at or focusing an item in one chart marks every item of the other
+  charts with the same `hour`. `on_link_change` receives `{"key": "hour", "value": "18"}`, or `None`
+  when it clears.
+- `heading_level` (2–6) sets the title's heading level; `ssr_width` is the width the grid is laid
+  out for before the browser measures it.
+- The layout values, the link and every chart's props can be state vars.
+
+```python
+import reflex as rx
+from reflex_silverpoint_react import (
+    bar_chart,
+    dashboard,
+    dashboard_cell,
+    dashboard_cell_layout,
+    dashboard_layout,
+    kpi_card,
+    line_chart,
+)
+
+
+class State(rx.State):
+    ops: list[dict] = [
+        {"hour": "00", "hits": 18, "errors": 1},
+        {"hour": "06", "hits": 30, "errors": 3},
+        {"hour": "12", "hits": 64, "errors": 2},
+    ]
+    linked: str = "—"
+
+    @rx.event
+    def on_link(self, link: dict | None):
+        self.linked = f"{link['key']} = {link['value']}" if link else "—"
+
+
+def operations() -> rx.Component:
+    return dashboard(
+        dashboard_cell(kpi_card(title="Revenue", metric="thousands", delta=6.4), cell="revenue"),
+        dashboard_cell(line_chart(data=State.ops, x_key="hour", value_key="hits", title="Traffic"), cell="traffic"),
+        dashboard_cell(bar_chart(data=State.ops, x_key="hour", value_key="errors", title="Errors"), cell="errors"),
+        id="ops",
+        title="Operations",
+        description="Service health over the last day.",
+        layout=dashboard_layout(
+            ["revenue", dashboard_cell_layout("traffic", col_span={"md": 2, "lg": 3}, row_span=2), "errors"],
+            columns={"sm": 1, "md": 2, "lg": 4},
+            row_height=240,
+            gap=16,
+        ),
+        link="hour",
+        on_link_change=State.on_link,
+    )
+```
+
+Charts linked outside a grid:
+
+```python
+import reflex as rx
+from reflex_silverpoint_react import bar_chart, dashboard_link, line_chart
+
+
+class State(rx.State):
+    ops: list[dict] = [{"hour": "00", "hits": 18, "errors": 1}, {"hour": "12", "hits": 64, "errors": 2}]
+
+
+def pair() -> rx.Component:
+    return dashboard_link(
+        rx.el.div(
+            line_chart(data=State.ops, x_key="hour", value_key="hits", title="Hits", id="pair-hits"),
+            bar_chart(data=State.ops, x_key="hour", value_key="errors", title="Errors", id="pair-errors"),
+        ),
+        link="hour",
+    )
+```
+
+## Reference
+
+<!-- generated:dashboard -->
+
+`dashboard_cell` takes `cell`; `dashboard_link` takes `link` and `on_link_change`.
