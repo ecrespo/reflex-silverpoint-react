@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reflex-silverpoint-react"
-version = "0.7.1"
-description = "The 60 silverpoint charts, the Dashboard, 38 UI, composed and overlay components, palettes and a Knight Lab timeline (Renaissance silverpoint drawing style) for Reflex, wrapping @silverpoint/react 0.7"
+version = "0.8.0"
+description = "The 60 silverpoint charts, the Dashboard, 38 UI, composed and overlay components, palettes and a Knight Lab timeline (Renaissance silverpoint drawing style) for Reflex, wrapping @silverpoint/react 0.8"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.11"

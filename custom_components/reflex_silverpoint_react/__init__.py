@@ -1,7 +1,7 @@
 """reflex-silverpoint-react: silverpoint charts and UI components for Reflex.
 
 Charts and interface components drawn in the manner of a Renaissance silverpoint drawing,
-wrapping ``@silverpoint/react`` 0.7.0: the 60 charts, the dashboard, the 38 UI, composed and overlay
+wrapping ``@silverpoint/react`` 0.8.0: the 60 charts, the dashboard, the 38 UI, composed and overlay
 components, the palettes and the Knight Lab timeline.
 """
 

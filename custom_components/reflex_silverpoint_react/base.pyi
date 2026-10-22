@@ -15,7 +15,7 @@ from reflex_components_core.core.breakpoints import Breakpoints
 
 from .palette import Palette, PaletteLike
 
-SILVERPOINT_VERSION = "0.7.0"
+SILVERPOINT_VERSION = "0.8.0"
 SILVERPOINT_LIBRARY = ...
 SILVERPOINT_STYLESHEETS = ("@silverpoint/fonts/fonts.css", "@silverpoint/grounds/styles.css")
 GroundName: TypeAlias = Literal["silverpoint", "cyanotype"]

@@ -1,0 +1,28 @@
+{
+  "name": "reflex-silverpoint",
+  "version": "0.8.0",
+  "description": "Build silverpoint charts, dashboards and UI in Python with Reflex: the reflex-silverpoint skill and the hosted silverpoint MCP server.",
+  "author": {
+    "name": "Ernesto Crespo"
+  },
+  "homepage": "https://github.com/ecrespo/reflex-silverpoint-react",
+  "repository": "https://github.com/ecrespo/reflex-silverpoint-react",
+  "license": "MIT",
+  "keywords": [
+    "reflex",
+    "python",
+    "charts",
+    "dataviz",
+    "svg",
+    "mcp"
+  ],
+  "skills": [
+    "./skills/reflex-silverpoint"
+  ],
+  "mcpServers": {
+    "silverpoint": {
+      "type": "http",
+      "url": "https://silverpointweb.vercel.app/mcp"
+    }
+  }
+}
