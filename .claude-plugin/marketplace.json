@@ -1,0 +1,18 @@
+{
+  "name": "reflex-silverpoint",
+  "owner": {
+    "name": "Ernesto Crespo"
+  },
+  "metadata": {
+    "description": "The reflex-silverpoint plugin: the skill and the hosted MCP server for silverpoint charts and UI in Reflex."
+  },
+  "plugins": [
+    {
+      "name": "reflex-silverpoint",
+      "source": "./",
+      "description": "Build silverpoint charts, dashboards and UI in Python with Reflex: the reflex-silverpoint skill and the hosted silverpoint MCP server.",
+      "version": "0.8.0",
+      "category": "development"
+    }
+  ]
+}
