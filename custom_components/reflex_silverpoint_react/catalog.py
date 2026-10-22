@@ -912,6 +912,12 @@ CHARTS: tuple[ChartInfo, ...] = (
             PropDoc(
                 "root_id", "rootId", "string | null", "The node drawn as root, controlled; the data root by default."
             ),
+            PropDoc(
+                "on_root_change",
+                "onRootChange",
+                "(id: string | null) => void",
+                "A node asked to be drawn as root (`None`: back to the top); pass it back as `root_id`.",
+            ),
         ),
     ),
     ChartInfo(
@@ -933,6 +939,12 @@ CHARTS: tuple[ChartInfo, ...] = (
             PropDoc("depth", "depth", "number", "Rings drawn below the root; all by default."),
             PropDoc(
                 "root_id", "rootId", "string | null", "The node drawn as root, controlled; the data root by default."
+            ),
+            PropDoc(
+                "on_root_change",
+                "onRootChange",
+                "(id: string | null) => void",
+                "A node asked to be drawn as root (`None`: back to the top); pass it back as `root_id`.",
             ),
         ),
     ),

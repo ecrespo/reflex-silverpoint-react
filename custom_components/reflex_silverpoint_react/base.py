@@ -20,7 +20,7 @@ import reflex as rx
 from .palette import PaletteLike, apply_palette
 
 #: The silverpoint npm release these wrappers are written against.
-SILVERPOINT_VERSION = "0.7.0"
+SILVERPOINT_VERSION = "0.8.0"
 
 #: The npm package every chart is imported from (the barrel; it is side-effect free, so the
 #: bundler keeps only the charts a page uses).

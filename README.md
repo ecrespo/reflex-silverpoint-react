@@ -7,7 +7,7 @@ prepared ground, tone built from hatching, and white heightening on the live val
 The hand-drawn irregularity lives only in the ornament. The data geometry is exact, and every chart
 has a `precision` mode that turns the inking off.
 
-It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.7.0** and exposes
+It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.8.0** and exposes
 **all 60 charts**, the **`Dashboard`** (a laid-out, linkable grid of charts), the **17 UI
 components** (buttons, inputs, tabs, cards, alerts…), the **12 composed components** (table,
 pagination, breadcrumb, avatar…), the **7 overlays** and the toaster (modal, drawer, popover,
@@ -17,6 +17,14 @@ readouts and the imperative handle (SVG export and geometry) as Python.
 
 Everything it renders is an npm component of silverpoint, under its parity contract: the same
 markup React, Vue and Angular render.
+
+### New in 0.8.0
+
+- Wraps **`@silverpoint/react` 0.8.0**. silverpoint 0.8 adds agent access and changes no API this
+  package wraps, so the Python builders are unchanged.
+- **Agent access:** the `reflex-silverpoint` skill, a Claude plugin with the hosted silverpoint MCP
+  server, and `reflex-catalog.json`, the Reflex catalog silverpoint's agent catalog joins. See
+  [Use with AI](#use-with-ai).
 
 ### New in 0.7.1
 
@@ -559,6 +567,31 @@ The exported SVG carries its own ground colours, so it renders the same outside 
   `forced-colors: active`; no prop overrides that.
 - Accessors are field names (strings). The JavaScript API also accepts functions; from Python, shape
   your rows instead.
+
+## Use with AI
+
+An assistant writes better `reflex-silverpoint-react` code with the **`reflex-silverpoint` skill**
+([`skills/reflex-silverpoint/`](skills/reflex-silverpoint/SKILL.md)): the builders and their
+snake_case props, State patterns, event payloads, the provider and palettes, composed components and
+overlays, the dashboard and the timeline. Its tables are generated from the package, and every Python
+example in it is imported and rendered by the tests.
+
+In Claude Code, the plugin installs the skill together with the hosted silverpoint MCP server
+(`https://silverpointweb.vercel.app/mcp`), which recommends charts, checks props and draws a chart
+as SVG before you write the code:
+
+```text
+/plugin marketplace add ecrespo/reflex-silverpoint-react
+/plugin install reflex-silverpoint@reflex-silverpoint
+```
+
+The MCP server alone: `claude mcp add --transport http silverpoint https://silverpointweb.vercel.app/mcp`.
+
+[`reflex-catalog.json`](reflex-catalog.json) is this package's catalog for agents: every chart and
+component builder with its props (Python name, JS name and type), the deprecated arguments it still
+accepts, the helpers, the package version and the silverpoint version it wraps. silverpoint's agent
+catalog joins it, so its MCP tools answer with the Reflex names too. `scripts/export_catalog.py`
+writes it, CI fails when it is stale, and each GitHub release carries it.
 
 ## Demo app
 
