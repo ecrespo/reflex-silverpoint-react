@@ -18,6 +18,12 @@ readouts and the imperative handle (SVG export and geometry) as Python.
 Everything it renders is an npm component of silverpoint, under its parity contract: the same
 markup React, Vue and Angular render.
 
+### New in 0.8.1
+
+- A maintenance release on **Reflex 0.10.0** (the latest) and `@silverpoint/react` 0.8.0: the build
+  requires `setuptools>=78.1.1`, the locked dependencies are refreshed and CI runs on Node 24. No
+  API changes.
+
 ### New in 0.8.0
 
 - Wraps **`@silverpoint/react` 0.8.0**. silverpoint 0.8 adds agent access and changes no API this

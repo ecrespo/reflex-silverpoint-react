@@ -3,7 +3,7 @@
 Read [AGENTS.md](AGENTS.md) first: it holds the layout, commands, conventions and release flow of
 this repository. The essentials:
 
-- Reflex custom component wrapping `@silverpoint/react` 0.8.0; package version 0.8.0;
+- Reflex custom component wrapping `@silverpoint/react` 0.8.0; package version 0.8.1;
   Reflex ≥ 0.10.0, Python ≥ 3.11. Everything rendered is an npm component except `sp_trigger`.
 - Test-driven: write the failing test in `tests/` before the implementation.
 - Never edit `*.pyi` by hand — run `uv run python scripts/make_stubs.py`.

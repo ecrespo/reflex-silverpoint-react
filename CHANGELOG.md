@@ -4,6 +4,20 @@ All notable changes to `reflex-silverpoint-react`. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.8.1] — 2026-10-25
+
+Maintenance release: still wraps **`@silverpoint/react` 0.8.0** and requires **Reflex ≥ 0.10.0**
+(0.10.0 is the latest Reflex); the Python builders are unchanged.
+
+### Changed
+
+- The build requires `setuptools>=78.1.1` (the fix for CVE-2025-47273, a path traversal in
+  `PackageIndex`).
+- Locked dependencies refreshed (`certifi` 2026.10.23).
+- CI runs on **Node 24**: every JavaScript action is forced onto Node 24
+  (`FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`), and the demo job compiles the app with Node 24
+  (`actions/setup-node`).
+
 ## [0.8.0] — 2026-10-21
 
 Wraps **`@silverpoint/react` 0.8.0** (0.7.1 wrapped 0.7.0). silverpoint 0.8 adds agent access (its

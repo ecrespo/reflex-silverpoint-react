@@ -12,6 +12,10 @@ on:
 permissions:
   contents: read
 
+env:
+  # Run every JavaScript action on Node 24 (Node 20 is deprecated on GitHub runners).
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 concurrency:
   group: security-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
