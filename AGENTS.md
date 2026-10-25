@@ -6,7 +6,7 @@ Guide for coding agents working in this repository. Humans: see [README.md](READ
 
 A Reflex custom component (published on PyPI as `reflex-silverpoint-react`) that wraps the npm
 package `@silverpoint/react` — charts and UI drawn in the manner of a Renaissance silverpoint
-drawing. Version **0.8.0**, wrapping silverpoint **0.8.0** (`SILVERPOINT_VERSION` in `base.py`). Every
+drawing. Version **0.8.1**, wrapping silverpoint **0.8.0** (`SILVERPOINT_VERSION` in `base.py`). Every
 component it renders is an npm component of `@silverpoint/react` (silverpoint's parity contract);
 the only JS of its own is `sp_trigger` (`assets/trigger.jsx`).
 It requires **Reflex ≥ 0.10.0** and **Python ≥ 3.11**.
@@ -86,7 +86,8 @@ cd silverpoint_react_demo && uv run reflex compile   # what the CI "demo" job ru
 - Branch from `develop` (`feat/…`, `fix/…`, `docs/…`); PR into `develop`, then `develop` into `main`.
 - Conventional commits (`feat:`, `fix:`, `docs:`, `ci:` …).
 - CI: `quality.yml` (ruff, pytest on 3.11–3.13, build + twine + wheel smoke test, demo compile) and
-  `security.yml` (gitleaks, bandit, pip-audit, dependency review, CodeQL).
+  `security.yml` (gitleaks, bandit, pip-audit, dependency review, CodeQL). Every workflow sets
+  `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`; the demo job compiles with Node 24 (`actions/setup-node`).
 - Release: bump `version` in `pyproject.toml` and `.claude-plugin/*.json`, regenerate the catalog
   and the skill, update `CHANGELOG.md`, merge to `main`, then push a tag `vX.Y.Z` matching the
   version. The GitHub release carries `reflex-catalog.json`, which silverpoint pins. `release.yml` re-runs quality and security and publishes to

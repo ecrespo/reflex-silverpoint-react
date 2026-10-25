@@ -11,7 +11,7 @@
       "name": "reflex-silverpoint",
       "source": "./",
       "description": "Build silverpoint charts, dashboards and UI in Python with Reflex: the reflex-silverpoint skill and the hosted silverpoint MCP server.",
-      "version": "0.8.0",
+      "version": "0.8.1",
       "category": "development"
     }
   ]

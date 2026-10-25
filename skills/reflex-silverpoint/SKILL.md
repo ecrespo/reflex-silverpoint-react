@@ -7,7 +7,7 @@ description: Build silverpoint charts, dashboards and UI in Python with Reflex t
 
 # reflex-silverpoint
 
-This skill describes **reflex-silverpoint-react 0.8.0**, which wraps **silverpoint 0.8.0**
+This skill describes **reflex-silverpoint-react 0.8.1**, which wraps **silverpoint 0.8.0**
 (`@silverpoint/react@0.8.0`). If the project pins another version, check the builders and props
 you write against `reflex_silverpoint_react.__all__` and the `.pyi` stubs of that version.
 
