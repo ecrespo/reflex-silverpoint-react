@@ -23,7 +23,7 @@ concurrency:
 jobs:
   secrets:
     name: Secret scan (gitleaks)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
         with:
@@ -37,7 +37,7 @@ jobs:
 
   sast:
     name: SAST (bandit)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
@@ -46,7 +46,7 @@ jobs:
 
   dependencies:
     name: Dependency audit (pip-audit)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
@@ -58,7 +58,7 @@ jobs:
   dependency-review:
     name: Dependency review
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       pull-requests: write
@@ -71,7 +71,7 @@ jobs:
 
   codeql:
     name: CodeQL
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       security-events: write
