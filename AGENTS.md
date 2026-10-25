@@ -86,8 +86,9 @@ cd silverpoint_react_demo && uv run reflex compile   # what the CI "demo" job ru
 - Branch from `develop` (`feat/…`, `fix/…`, `docs/…`); PR into `develop`, then `develop` into `main`.
 - Conventional commits (`feat:`, `fix:`, `docs:`, `ci:` …).
 - CI: `quality.yml` (ruff, pytest on 3.11–3.13, build + twine + wheel smoke test, demo compile) and
-  `security.yml` (gitleaks, bandit, pip-audit, dependency review, CodeQL). Every workflow sets
-  `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`; the demo job compiles with Node 24 (`actions/setup-node`).
+  `security.yml` (gitleaks, bandit, pip-audit, dependency review, CodeQL). Every job runs on
+  `ubuntu-24.04` (pinned, not `ubuntu-latest`), every workflow sets
+  `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`, and the demo job compiles with Node 24 (`actions/setup-node`).
 - Release: bump `version` in `pyproject.toml` and `.claude-plugin/*.json`, regenerate the catalog
   and the skill, update `CHANGELOG.md`, merge to `main`, then push a tag `vX.Y.Z` matching the
   version. The GitHub release carries `reflex-catalog.json`, which silverpoint pins. `release.yml` re-runs quality and security and publishes to

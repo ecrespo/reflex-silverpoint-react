@@ -4,6 +4,13 @@ All notable changes to `reflex-silverpoint-react`. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- CI runners are pinned to `ubuntu-24.04` instead of `ubuntu-latest`, which GitHub is moving to
+  Ubuntu 26.
+
 ## [0.8.1] — 2026-10-25
 
 Maintenance release: still wraps **`@silverpoint/react` 0.8.0** and requires **Reflex ≥ 0.10.0**
