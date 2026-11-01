@@ -1,8 +1,8 @@
 """reflex-silverpoint-react: silverpoint charts and UI components for Reflex.
 
 Charts and interface components drawn in the manner of a Renaissance silverpoint drawing,
-wrapping ``@silverpoint/react`` 0.8.0: the 60 charts, the dashboard, the 38 UI, composed and overlay
-components, the palettes and the Knight Lab timeline.
+wrapping ``@silverpoint/react`` 0.9.0: the 60 charts, the dashboard, the 38 UI, composed and overlay
+components, the palettes, the Knight Lab timeline and Marp slide decks (``sp_deck``).
 """
 
 from .base import (
@@ -177,6 +177,7 @@ from .dashboard import (
     dashboard_layout,
     dashboard_link,
 )
+from .deck import DECK_STYLESHEETS, MARP_VERSION, SilverpointDeck, SpDeck, sp_deck
 from .helpers import chart_ref, download_svg, get_geometry, get_svg, tooltip_template
 from .overlays import (
     SpDrawer,
@@ -277,7 +278,9 @@ __all__ = [
     "CHARTS",
     "COMMON_PROPS",
     "DASHBOARD_DEFAULTS",
+    "DECK_STYLESHEETS",
     "FAMILIES",
+    "MARP_VERSION",
     "PALETTES",
     "PALETTE_JS_FIELDS",
     "PALETTE_PAIRS",
@@ -345,6 +348,7 @@ __all__ = [
     "SankeyChart",
     "ScatterChart",
     "SilverpointChart",
+    "SilverpointDeck",
     "SilverpointProvider",
     "SilverpointUi",
     "SlopeChart",
@@ -358,6 +362,7 @@ __all__ = [
     "SpCheckbox",
     "SpCollapse",
     "SpCollapseItem",
+    "SpDeck",
     "SpDescriptions",
     "SpDivider",
     "SpDrawer",
@@ -482,6 +487,7 @@ __all__ = [
     "sp_checkbox",
     "sp_collapse",
     "sp_collapse_item",
+    "sp_deck",
     "sp_descriptions",
     "sp_divider",
     "sp_drawer",

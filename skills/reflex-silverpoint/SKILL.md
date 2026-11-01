@@ -7,13 +7,13 @@ description: Build silverpoint charts, dashboards and UI in Python with Reflex t
 
 # reflex-silverpoint
 
-This skill describes **reflex-silverpoint-react 0.8.1**, which wraps **silverpoint 0.8.0**
-(`@silverpoint/react@0.8.0`). If the project pins another version, check the builders and props
+This skill describes **reflex-silverpoint-react 0.9.0**, which wraps **silverpoint 0.9.0**
+(`@silverpoint/react@0.9.0`). If the project pins another version, check the builders and props
 you write against `reflex_silverpoint_react.__all__` and the `.pyi` stubs of that version.
 
 `reflex-silverpoint-react` is a Reflex custom component: the 60 silverpoint charts, the dashboard,
-38 UI, composed and overlay components, palettes and a Knight Lab timeline, as snake_case Python
-builders. Everything it renders is the npm component of `@silverpoint/react`, so the drawing is the
+38 UI, composed and overlay components, palettes, a Knight Lab timeline and Marp slide decks, as
+snake_case Python builders. Everything it renders is the npm component of `@silverpoint/react`, so the drawing is the
 one React, Vue and Angular draw: hatched tone, a hand-inked line, prepared paper, deterministic for a
 given `id` or `seed`.
 
@@ -173,6 +173,7 @@ Every chart takes these besides its own:
 |---|---|
 | [dashboard.md](references/dashboard.md) | `dashboard` |
 | [components.md](references/components.md) | `sp_alert`, `sp_avatar`, `sp_avatar_group`, `sp_badge`, `sp_breadcrumb`, `sp_button`, `sp_card`, `sp_checkbox`, `sp_collapse`, `sp_collapse_item`, `sp_descriptions`, `sp_divider`, `sp_empty`, `sp_glyph`, `sp_input`, `sp_input_number`, `sp_pagination`, `sp_progress`, `sp_radio_group`, `sp_rate`, `sp_result`, `sp_segmented`, `sp_skeleton`, `sp_slider`, `sp_statistic`, `sp_steps`, `sp_surface`, `sp_switch`, `sp_tab_panel`, `sp_table`, `sp_tabs`, `sp_tag`, `sp_textarea`, `sp_timeline_list` |
+| [deck.md](references/deck.md) | `sp_deck` |
 | [overlays.md](references/overlays.md) | `sp_drawer`, `sp_dropdown_menu`, `sp_modal`, `sp_popover`, `sp_select`, `sp_toast`, `sp_toaster`, `sp_tooltip` |
 | [timeline.md](references/timeline.md) | `sp_timeline` |
 
@@ -258,6 +259,8 @@ def index() -> rx.Component:
   [references/dashboard.md](references/dashboard.md).
 - **Timeline:** `sp_timeline`, Knight Lab TimelineJS drawn in silverpoint. See
   [references/timeline.md](references/timeline.md).
+- **Deck:** `sp_deck`, a Marp/Marpit Markdown presentation with `silverpoint` chart fences. See
+  [references/deck.md](references/deck.md).
 - **Components and overlays:** [references/components.md](references/components.md),
   [references/overlays.md](references/overlays.md).
 - **React, Vue or Angular** code is the `silverpoint` skill's, not this one's.

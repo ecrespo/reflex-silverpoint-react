@@ -71,9 +71,9 @@ def test_req553_chart_slugs_match_silverpoint(catalog):
 
 def test_req553_component_slugs_match_silverpoint(catalog):
     silverpoint = json.loads((FIXTURES / "silverpoint-slugs.json").read_text())
-    # Besides silverpoint's 38 components: the dashboard and the timeline (catalog entries of their
-    # own there) and the parts a component is built from, which Reflex exposes as builders.
-    parts = {"dashboard", "timeline", "avatar-group", "collapse-item", "tab-panel", "toaster"}
+    # Besides silverpoint's 38 components: the dashboard, the timeline and the deck (catalog entries
+    # of their own there) and the parts a component is built from, which Reflex exposes as builders.
+    parts = {"dashboard", "timeline", "deck", "avatar-group", "collapse-item", "tab-panel", "toaster"}
     assert {c["slug"] for c in catalog["components"]} == set(silverpoint["components"]) | parts
 
 
@@ -151,6 +151,8 @@ def test_req553_export_equals_silverpoint_derived_pin(catalog):
         entry["deprecated"] = {}
     for entry in ours["charts"]:
         entry["props"] = [p for p in entry["props"] if p["name"] != "on_root_change"]
+    # The deck is new in 0.9.0, after the pin was derived.
+    ours["components"] = [entry for entry in ours["components"] if entry["slug"] != "deck"]
     for key in ("version", "wraps"):
         pin.pop(key)
         ours.pop(key)
