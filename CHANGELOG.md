@@ -6,11 +6,23 @@ All notable changes to `reflex-silverpoint-react`. The format follows
 
 ## [Unreleased]
 
+## [0.9.1] — 2026-11-01
+
+Wraps **`@silverpoint/react` 0.9.1** (0.9.0 wrapped 0.9.0). silverpoint 0.9.1 fixes `SpDeck` and
+changes no API; the Python builders are unchanged.
+
 ### Changed
 
-- The README's deck known issues link their upstream reports,
-  [silverpoint#7](https://github.com/ecrespo/silverpoint/issues/7) (`SpDeck` inert under StrictMode) and
-  [silverpoint#8](https://github.com/ecrespo/silverpoint/issues/8) (first `ready` not delivered).
+- Every silverpoint npm dependency moves to 0.9.1, `@silverpoint/marp` included.
+- The demo renders in React StrictMode again (`react_strict_mode=False` is gone), and its deck
+  readouts show the total from the first `ready` instead of `?`.
+
+### Fixed
+
+- Upstream, in `@silverpoint/react` 0.9.1: a deck was inert under React StrictMode in development
+  ([silverpoint#7](https://github.com/ecrespo/silverpoint/issues/7)) and the first `on_ready` was never
+  delivered ([silverpoint#8](https://github.com/ecrespo/silverpoint/issues/8)). The README's
+  "Known issues" section is removed.
 
 ## [0.9.0] — 2026-11-01
 

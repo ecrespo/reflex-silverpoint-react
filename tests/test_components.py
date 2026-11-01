@@ -106,8 +106,8 @@ def test_provider() -> None:
 
 
 def test_version_pins_silverpoint() -> None:
-    assert sp.SILVERPOINT_VERSION == "0.9.0"
-    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.9.0"
+    assert sp.SILVERPOINT_VERSION == "0.9.1"
+    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.9.1"
 
 
 def test_cyanotype_ground() -> None:

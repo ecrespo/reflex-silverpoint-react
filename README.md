@@ -7,7 +7,7 @@ prepared ground, tone built from hatching, and white heightening on the live val
 The hand-drawn irregularity lives only in the ornament. The data geometry is exact, and every chart
 has a `precision` mode that turns the inking off.
 
-It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.9.0** and exposes
+It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.9.1** and exposes
 **all 60 charts**, the **`Dashboard`** (a laid-out, linkable grid of charts), the **17 UI
 components** (buttons, inputs, tabs, cards, alerts…), the **12 composed components** (table,
 pagination, breadcrumb, avatar…), the **7 overlays** and the toaster (modal, drawer, popover,
@@ -18,6 +18,12 @@ readouts and the imperative handle (SVG export and geometry) as Python.
 
 Everything it renders is an npm component of silverpoint, under its parity contract: the same
 markup React, Vue and Angular render.
+
+### New in 0.9.1
+
+- Wraps **`@silverpoint/react` 0.9.1**, which fixes two `SpDeck` bugs of 0.9.0: a deck is no longer
+  inert under React StrictMode in development, and `on_ready` arrives for the first render. Apps no
+  longer need `react_strict_mode=False`. No API changes.
 
 ### New in 0.9.0
 
@@ -589,18 +595,6 @@ a fence that is not valid draws an error figure in its place (`SP026`). For Marp
 `node_modules/@silverpoint/marp/theme.css` as the theme, or `--engine @silverpoint/marp/cli`.
 
 ![A deck in the demo app, driven from Python](docs/deck.png)
-
-### Known issues (silverpoint 0.9.0)
-
-- **React StrictMode leaves a deck inert in development.** `@silverpoint/react` 0.9.0's `SpDeck`
-  keeps its controller in `useState` but destroys it in an effect cleanup; StrictMode's development
-  double-mount therefore leaves it destroyed: no navigation, no events. Reflex renders the app in
-  StrictMode by default, so until silverpoint ships a fix, set `react_strict_mode=False` in
-  `rxconfig.py` (the demo does). Production builds are not affected.
-  Tracked upstream in [silverpoint#7](https://github.com/ecrespo/silverpoint/issues/7).
-- **`on_ready` is not sent for the first render.** The controller emits it in a microtask before
-  `SpDeck` subscribes; it does arrive when the slide count changes. Read `total` from the first
-  `on_page_change`. Tracked upstream in [silverpoint#8](https://github.com/ecrespo/silverpoint/issues/8).
 
 ## Interaction
 

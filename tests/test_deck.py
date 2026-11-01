@@ -1,4 +1,4 @@
-"""0.9: ``sp_deck``, the npm ``SpDeck`` of ``@silverpoint/react/deck`` (silverpoint 0.9.0).
+"""0.9: ``sp_deck``, the npm ``SpDeck`` of ``@silverpoint/react/deck`` (silverpoint 0.9.1).
 
 A Marp/Marpit Markdown deck in the silverpoint style. These tests assert what the builder hands the
 npm component: its import path, its npm dependencies (only a page with a deck installs
@@ -15,7 +15,7 @@ import reflex_silverpoint_react as sp
 deck_module = importlib.import_module("reflex_silverpoint_react.deck")
 
 REACT = f"@silverpoint/react@{sp.SILVERPOINT_VERSION}"
-MARP = "@silverpoint/marp@0.9.0"
+MARP = "@silverpoint/marp@0.9.1"
 MARKDOWN = "---\npaginate: true\n---\n\n# Title\n\n---\n\n## Two\n\n* a\n* b\n"
 
 
@@ -55,10 +55,10 @@ class _DeckState(rx.State):
 # ── Version and import ──────────────────────────────────────────────────────────────────
 
 
-def test_wraps_silverpoint_0_9_0() -> None:
-    assert sp.SILVERPOINT_VERSION == "0.9.0"
-    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.9.0"
-    assert sp.MARP_VERSION == "0.9.0"
+def test_wraps_silverpoint_0_9_1() -> None:
+    assert sp.SILVERPOINT_VERSION == "0.9.1"
+    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.9.1"
+    assert sp.MARP_VERSION == "0.9.1"
 
 
 def test_exported_from_the_root_and_the_deck_module() -> None:
@@ -88,7 +88,7 @@ def test_is_server_renderable_not_no_ssr() -> None:
 
 def test_marp_is_a_dependency_of_the_deck_only() -> None:
     assert MARP in sp.SpDeck.lib_dependencies
-    for dependency in ("@silverpoint/core@0.9.0", "@silverpoint/grounds@0.9.0", "@silverpoint/fonts@0.9.0"):
+    for dependency in ("@silverpoint/core@0.9.1", "@silverpoint/grounds@0.9.1", "@silverpoint/fonts@0.9.1"):
         assert dependency in sp.SpDeck.lib_dependencies
     # Marpit comes with @silverpoint/marp (its dependency); the React deck needs no polyfill.
     assert not [dep for dep in sp.SpDeck.lib_dependencies if dep.startswith("@marp-team/")]

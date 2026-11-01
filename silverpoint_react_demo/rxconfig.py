@@ -7,12 +7,6 @@ PackageJson.DEV_DEPENDENCIES["vite"] = "8.3.4"
 
 config = rx.Config(
     app_name="silverpoint_react_demo",
-    # @silverpoint/react 0.9.0's SpDeck destroys its controller in an effect cleanup but keeps it in
-    # useState, so React's StrictMode double-mount (development only) leaves the deck inert: no
-    # navigation, no events. Production builds are unaffected. Reported upstream as
-    # https://github.com/ecrespo/silverpoint/issues/7; drop this line
-    # once silverpoint ships the fix (see the README, "Known issues").
-    react_strict_mode=False,
     plugins=[
         rx.plugins.SitemapPlugin(),
         rx.plugins.RadixThemesPlugin(theme=rx.theme(appearance="light", accent_color="gray", radius="small")),
