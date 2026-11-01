@@ -7,7 +7,9 @@ this repository. The essentials:
   Reflex ≥ 0.10.0, Python ≥ 3.11. Everything rendered is an npm component except `sp_trigger`.
 - `sp_deck` (0.9.0) wraps `@silverpoint/react/deck`; `@silverpoint/marp` is its own npm dependency.
   The demo sets `react_strict_mode=False` because silverpoint 0.9.0's `SpDeck` is inert under
-  StrictMode in development (an upstream bug); drop it once silverpoint fixes it.
+  StrictMode in development (silverpoint#7; the first `ready` is also lost, silverpoint#8). The
+  maintainer will say when silverpoint ships the fix: then bump, drop the flag and the README's
+  "Known issues".
 - Test-driven: write the failing test in `tests/` before the implementation.
 - Never edit `*.pyi` by hand — run `uv run python scripts/make_stubs.py`.
 - Before committing: `pre-commit run --all-files` (ruff check + format, also on README code blocks;

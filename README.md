@@ -597,9 +597,10 @@ a fence that is not valid draws an error figure in its place (`SP026`). For Marp
   double-mount therefore leaves it destroyed: no navigation, no events. Reflex renders the app in
   StrictMode by default, so until silverpoint ships a fix, set `react_strict_mode=False` in
   `rxconfig.py` (the demo does). Production builds are not affected.
+  Tracked upstream in [silverpoint#7](https://github.com/ecrespo/silverpoint/issues/7).
 - **`on_ready` is not sent for the first render.** The controller emits it in a microtask before
   `SpDeck` subscribes; it does arrive when the slide count changes. Read `total` from the first
-  `on_page_change`.
+  `on_page_change`. Tracked upstream in [silverpoint#8](https://github.com/ecrespo/silverpoint/issues/8).
 
 ## Interaction
 
