@@ -15,6 +15,7 @@ NAV = [
     ("/components", "More components"),
     ("/palettes", "Palettes"),
     ("/timeline", "Timeline"),
+    ("/deck", "Decks"),
     ("/chart/line-chart", "Chart reference"),
 ]
 

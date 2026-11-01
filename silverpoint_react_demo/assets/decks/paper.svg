@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="720" viewBox="0 0 640 720">
+  <defs>
+    <pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(38)">
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#8a8d92" stroke-width="0.7" stroke-opacity="0.55"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="720" fill="#e6dccb"/>
+  <rect width="640" height="720" fill="url(#hatch)"/>
+  <circle cx="330" cy="330" r="170" fill="#ede7da" stroke="#5a5e65" stroke-width="1.2"/>
+  <path d="M190 470 C 260 380, 400 420, 470 300" fill="none" stroke="#5a5e65" stroke-width="1.4"/>
+  <path d="M200 480 C 270 392, 404 432, 476 312" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-opacity="0.8"/>
+</svg>

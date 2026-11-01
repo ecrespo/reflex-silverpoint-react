@@ -10,8 +10,8 @@ This skill describes **reflex-silverpoint-react {{version}}**, which wraps **sil
 you write against `reflex_silverpoint_react.__all__` and the `.pyi` stubs of that version.
 
 `reflex-silverpoint-react` is a Reflex custom component: the 60 silverpoint charts, the dashboard,
-38 UI, composed and overlay components, palettes and a Knight Lab timeline, as snake_case Python
-builders. Everything it renders is the npm component of `@silverpoint/react`, so the drawing is the
+38 UI, composed and overlay components, palettes, a Knight Lab timeline and Marp slide decks, as
+snake_case Python builders. Everything it renders is the npm component of `@silverpoint/react`, so the drawing is the
 one React, Vue and Angular draw: hatched tone, a hand-inked line, prepared paper, deterministic for a
 given `id` or `seed`.
 
@@ -162,6 +162,8 @@ def index() -> rx.Component:
   [references/dashboard.md](references/dashboard.md).
 - **Timeline:** `sp_timeline`, Knight Lab TimelineJS drawn in silverpoint. See
   [references/timeline.md](references/timeline.md).
+- **Deck:** `sp_deck`, a Marp/Marpit Markdown presentation with `silverpoint` chart fences. See
+  [references/deck.md](references/deck.md).
 - **Components and overlays:** [references/components.md](references/components.md),
   [references/overlays.md](references/overlays.md).
 - **React, Vue or Angular** code is the `silverpoint` skill's, not this one's.

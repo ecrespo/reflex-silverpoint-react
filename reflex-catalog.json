@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "package": "reflex-silverpoint-react",
-  "version": "0.8.1",
-  "wraps": "0.8.0",
+  "version": "0.9.0",
+  "wraps": "0.9.0",
   "common": {
     "chart": [
       {
@@ -2282,6 +2282,112 @@
       ],
       "positional": [
         "title"
+      ],
+      "deprecated": {}
+    },
+    {
+      "slug": "deck",
+      "builder": "sp_deck",
+      "cls": "SpDeck",
+      "props": [
+        {
+          "name": "markdown",
+          "js": "markdown",
+          "type": "str | rx.Var"
+        },
+        {
+          "name": "page",
+          "js": "page",
+          "type": "int | rx.Var | None"
+        },
+        {
+          "name": "default_page",
+          "js": "defaultPage",
+          "type": "int | rx.Var | None"
+        },
+        {
+          "name": "theme",
+          "js": "theme",
+          "type": "str | rx.Var | None"
+        },
+        {
+          "name": "ground",
+          "js": "ground",
+          "type": "GroundName | str | rx.Var | None"
+        },
+        {
+          "name": "substrate",
+          "js": "substrate",
+          "type": "Substrate | str | rx.Var | None"
+        },
+        {
+          "name": "mode",
+          "js": "mode",
+          "type": "InkMode | rx.Var | None"
+        },
+        {
+          "name": "palette",
+          "js": "palette",
+          "type": "str | Palette | rx.Var | None"
+        },
+        {
+          "name": "size",
+          "js": "size",
+          "type": "DeckSize | rx.Var | None"
+        },
+        {
+          "name": "show_notes",
+          "js": "showNotes",
+          "type": "bool | rx.Var | None"
+        },
+        {
+          "name": "show_controls",
+          "js": "showControls",
+          "type": "bool | rx.Var | None"
+        },
+        {
+          "name": "keyboard",
+          "js": "keyboard",
+          "type": "bool | rx.Var | None"
+        },
+        {
+          "name": "swipe",
+          "js": "swipe",
+          "type": "bool | rx.Var | None"
+        },
+        {
+          "name": "hash",
+          "js": "hash",
+          "type": "bool | rx.Var | None"
+        },
+        {
+          "name": "interactive",
+          "js": "interactive",
+          "type": "bool | rx.Var | None"
+        },
+        {
+          "name": "label",
+          "js": "label",
+          "type": "str | rx.Var | None"
+        },
+        {
+          "name": "on_page_change",
+          "js": "onPageChange",
+          "type": "Any"
+        },
+        {
+          "name": "on_fragment_change",
+          "js": "onFragmentChange",
+          "type": "Any"
+        },
+        {
+          "name": "on_ready",
+          "js": "onReady",
+          "type": "Any"
+        }
+      ],
+      "positional": [
+        "markdown"
       ],
       "deprecated": {}
     },

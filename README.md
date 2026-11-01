@@ -7,16 +7,26 @@ prepared ground, tone built from hatching, and white heightening on the live val
 The hand-drawn irregularity lives only in the ornament. The data geometry is exact, and every chart
 has a `precision` mode that turns the inking off.
 
-It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.8.0** and exposes
+It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.9.0** and exposes
 **all 60 charts**, the **`Dashboard`** (a laid-out, linkable grid of charts), the **17 UI
 components** (buttons, inputs, tabs, cards, alerts…), the **12 composed components** (table,
 pagination, breadcrumb, avatar…), the **7 overlays** and the toaster (modal, drawer, popover,
-tooltip, select, dropdown menu, toast), the **palettes**, the **Knight Lab timeline**, the
+tooltip, select, dropdown menu, toast), the **palettes**, the **Knight Lab timeline**, **Marp slide
+decks** (`sp_deck`), the
 `SilverpointProvider`, both grounds (`silverpoint` and `cyanotype`), the interaction events, custom
 readouts and the imperative handle (SVG export and geometry) as Python.
 
 Everything it renders is an npm component of silverpoint, under its parity contract: the same
 markup React, Vue and Angular render.
+
+### New in 0.9.0
+
+- Wraps **`@silverpoint/react` 0.9.0**, aligned with silverpoint 0.9.0 and Reflex 0.10.
+- **`sp_deck`** (`SpDeck`, also importable as `SilverpointDeck`): Marp/Marpit Markdown presentations
+  drawn in silverpoint, with the `ground` / `substrate` / `mode` directives, fragmented lists,
+  presenter notes, deep links and `silverpoint` fences that draw live charts inside a slide. Its
+  engine, `@silverpoint/marp`, is installed only by apps that use a deck. See [Slide decks](#slide-decks).
+- The existing charts and components are unchanged.
 
 ### New in 0.8.1
 
@@ -516,6 +526,81 @@ browser logs font-decoding warnings. They come from TimelineJS, not from this pa
 
 ![The palettes page](docs/palettes.png)
 
+## Slide decks
+
+The npm `SpDeck` of `@silverpoint/react/deck` renders a Marp/Marpit Markdown presentation in the
+silverpoint style. Its engine, `@silverpoint/marp` (which brings `@marp-team/marpit`), is an npm
+dependency of `sp_deck` only: Reflex installs it when a page uses a deck, and an app with only
+charts does not get it. The component imports its own stylesheets (`@silverpoint/marp/deck.css`
+after the fonts, the grounds and `ui.css`) and renders on the server, so it needs no `NoSSR`.
+
+```python
+from pathlib import Path
+
+import reflex as rx
+from reflex_silverpoint_react import sp_deck
+
+TALK = Path("assets/talk.md").read_text(encoding="utf-8")  # read at compile time
+
+
+class DeckState(rx.State):
+    page: int = 1
+    total: int = 0
+
+    @rx.event
+    def on_page_change(self, page: int, total: int):
+        self.page, self.total = page, total
+
+
+def talk() -> rx.Component:
+    return sp_deck(
+        TALK,
+        page=DeckState.page,  # controlled; or default_page=1
+        on_page_change=DeckState.on_page_change,  # (page, total)
+        show_notes=True,
+        mode="ink",  # or "precision"
+        hash=True,  # a #<n> deep link
+        palette="sepia",  # a preset's name, for the fence charts
+        id="talk",
+    )
+```
+
+| Python | npm | |
+|---|---|---|
+| `markdown` | `markdown` | The deck (a string or a state var). |
+| `page` / `default_page` | `page` / `defaultPage` | Controlled / uncontrolled page, 1-based. |
+| `theme`, `size` | `theme`, `size` | Marpit theme (`silverpoint`), `"16:9"` or `"4:3"`. |
+| `ground`, `substrate`, `mode` | same | The deck's defaults; directives override them per slide. `mode` is `"ink"` or `"precision"`. |
+| `palette` | `palette` | A preset's name (`"iron_gall"` or `"ironGall"`); not a dict. |
+| `show_notes`, `show_controls` | `showNotes`, `showControls` | Presenter notes (off), controls (on). |
+| `keyboard`, `swipe`, `hash`, `interactive` | same | Keys, swipe, `#<n>` deep link, chart hydration. |
+| `label`, `id` | same | Accessible name; the id that scopes the deck's CSS. |
+| `on_page_change` | `onPageChange` | `(page: int, total: int)` |
+| `on_fragment_change` | `onFragmentChange` | `(page: int, step: int, steps: int)`; a handler may take only `(page, step)`. |
+| `on_ready` | `onReady` | `(total: int)` when the slide count changes. |
+
+A deck is plain Marp Markdown: `---` between slides, directives in the front matter or in
+`<!-- key: value -->` (`_key` for one slide), any other comment a presenter note, each list item a
+fragment. Besides Marpit's own directives (`paginate`, `header`, `footer`, `class`, backgrounds,
+`size`…), `ground`, `substrate` and `mode` move a slide to another ground or to precision; the
+classes are `lead`, `invert`, `plate` and `hatched`. A fence whose language is `silverpoint` holds
+one chart as JSON, `{"chart": "bar-chart", "props": {"title": "Visits"}, "data": [...], "height": 400}`;
+a fence that is not valid draws an error figure in its place (`SP026`). For Marp CLI and VS Code, use
+`node_modules/@silverpoint/marp/theme.css` as the theme, or `--engine @silverpoint/marp/cli`.
+
+![A deck in the demo app, driven from Python](docs/deck.png)
+
+### Known issues (silverpoint 0.9.0)
+
+- **React StrictMode leaves a deck inert in development.** `@silverpoint/react` 0.9.0's `SpDeck`
+  keeps its controller in `useState` but destroys it in an effect cleanup; StrictMode's development
+  double-mount therefore leaves it destroyed: no navigation, no events. Reflex renders the app in
+  StrictMode by default, so until silverpoint ships a fix, set `react_strict_mode=False` in
+  `rxconfig.py` (the demo does). Production builds are not affected.
+- **`on_ready` is not sent for the first render.** The controller emits it in a microtask before
+  `SpDeck` subscribes; it does arrive when the slide count changes. Read `total` from the first
+  `on_page_change`.
+
 ## Interaction
 
 ```python
@@ -579,7 +664,7 @@ The exported SVG carries its own ground colours, so it renders the same outside 
 An assistant writes better `reflex-silverpoint-react` code with the **`reflex-silverpoint` skill**
 ([`skills/reflex-silverpoint/`](skills/reflex-silverpoint/SKILL.md)): the builders and their
 snake_case props, State patterns, event payloads, the provider and palettes, composed components and
-overlays, the dashboard and the timeline. Its tables are generated from the package, and every Python
+overlays, the dashboard, the timeline and the deck. Its tables are generated from the package, and every Python
 example in it is imported and rendered by the tests.
 
 In Claude Code, the plugin installs the skill together with the hosted silverpoint MCP server
@@ -622,6 +707,9 @@ New in 0.7: **More components** (`/components`: the 20 composed components wired
 ground, substrate, mode and palette controls and an event log), **Palettes** (`/palettes`: the
 presets, a palette builder with colour pickers and `check_palette`, a coloured section) and
 **Timeline** (`/timeline`: the Knight Lab timeline on every ground, mode and palette).
+New in 0.9: **Decks** (`/deck`: a showcase deck read from `assets/decks/showcase.md` and driven from
+Python with buttons, toggles, a live readout and an event log; a live Markdown editor beside a
+second deck; and an authoring cheat sheet).
 
 ![Interaction page](docs/interaction.png)
 

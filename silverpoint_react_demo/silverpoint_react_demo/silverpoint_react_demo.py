@@ -12,6 +12,7 @@ Pages:
     /components     composed components and overlays: table, pagination, modal, toasts… (0.7).
     /palettes       Colour for every chart and component: presets and a palette builder (0.7).
     /timeline       Knight Lab TimelineJS drawn in silverpoint (0.7).
+    /deck           Marp/Marpit slide decks with live chart fences (0.9).
 """
 
 from typing import Any
@@ -70,6 +71,7 @@ from .datasets import (
     OPS_HOURLY,
     VOLVELLE_CHART,
 )
+from .deck_pages import deck_page
 from .extra_pages import components_page, palettes_page, timeline_page
 from .layout import button, card, code, page, select
 from .state import SIZES, DashboardState, DemoState, InteractionState, PlaygroundState
@@ -834,3 +836,4 @@ for _ui in UI_COMPONENTS:
 app.add_page(components_page, route="/components", title="More components · silverpoint for Reflex")
 app.add_page(palettes_page, route="/palettes", title="Palettes · silverpoint for Reflex")
 app.add_page(timeline_page, route="/timeline", title="Timeline · silverpoint for Reflex")
+app.add_page(deck_page, route="/deck", title="Slide decks · silverpoint for Reflex")

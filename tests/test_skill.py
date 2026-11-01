@@ -47,7 +47,7 @@ def test_req553_skill_layout():
     expected = {"SKILL.md", *(f"references/charts/{slug}.md" for slug in families)}
     expected |= {
         f"references/{name}.md"
-        for name in ("components", "overlays", "timeline", "dashboard", "palettes", "state-and-events")
+        for name in ("components", "overlays", "timeline", "deck", "dashboard", "palettes", "state-and-events")
     }
     assert set(_files()) == expected
 
