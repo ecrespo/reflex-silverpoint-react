@@ -5,10 +5,14 @@ npm component: its import path, its npm dependencies (only a page with a deck in
 ``@silverpoint/marp``), its stylesheets, its props and its three events.
 """
 
+import importlib
+import inspect
+
 import pytest
 import reflex as rx
 import reflex_silverpoint_react as sp
-from reflex_silverpoint_react import deck as deck_module
+
+deck_module = importlib.import_module("reflex_silverpoint_react.deck")
 
 REACT = f"@silverpoint/react@{sp.SILVERPOINT_VERSION}"
 MARP = "@silverpoint/marp@0.9.0"
@@ -114,8 +118,9 @@ def test_imports_the_four_stylesheets_in_order() -> None:
 
 
 def test_markdown_is_required() -> None:
-    with pytest.raises(TypeError):
-        sp.sp_deck()  # type: ignore[call-arg]
+    markdown = inspect.signature(sp.sp_deck).parameters["markdown"]
+    assert markdown.default is inspect.Parameter.empty
+    assert markdown.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
 
 
 def test_props_render_camel_case() -> None:
