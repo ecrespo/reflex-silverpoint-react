@@ -6,6 +6,12 @@ All notable changes to `reflex-silverpoint-react`. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- The README's deck known issues link their upstream reports,
+  [silverpoint#7](https://github.com/ecrespo/silverpoint/issues/7) (`SpDeck` inert under StrictMode) and
+  [silverpoint#8](https://github.com/ecrespo/silverpoint/issues/8) (first `ready` not delivered).
+
 ## [0.9.0] — 2026-11-01
 
 Wraps **`@silverpoint/react` 0.9.0** (0.8.1 wrapped 0.8.0) and requires **Reflex ≥ 0.10.0**.
