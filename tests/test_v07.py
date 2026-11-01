@@ -46,11 +46,11 @@ class _S(rx.State):
 # ── Version ─────────────────────────────────────────────────────────────────────────────
 
 
-def test_wraps_silverpoint_0_9_0() -> None:
+def test_wraps_silverpoint_0_9_1() -> None:
     # 0.9.0 adds SpDeck (tests/test_deck.py) and changes no other API of @silverpoint/react, core,
     # grounds or fonts: the normalised output of the existing charts is unchanged.
-    assert sp.SILVERPOINT_VERSION == "0.9.0"
-    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.9.0"
+    assert sp.SILVERPOINT_VERSION == "0.9.1"
+    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.9.1"
 
 
 # ── Palettes ────────────────────────────────────────────────────────────────────────────

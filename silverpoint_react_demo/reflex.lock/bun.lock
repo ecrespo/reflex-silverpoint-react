@@ -8,11 +8,11 @@
         "@knight-lab/timelinejs": "3.9.13",
         "@radix-ui/themes": "3.3.0",
         "@react-router/node": "8.4.0",
-        "@silverpoint/core": "0.9.0",
-        "@silverpoint/fonts": "0.9.0",
-        "@silverpoint/grounds": "0.9.0",
-        "@silverpoint/marp": "0.9.0",
-        "@silverpoint/react": "0.9.0",
+        "@silverpoint/core": "0.9.1",
+        "@silverpoint/fonts": "0.9.1",
+        "@silverpoint/grounds": "0.9.1",
+        "@silverpoint/marp": "0.9.1",
+        "@silverpoint/react": "0.9.1",
         "isbot": "5.2.2",
         "lucide-react": "1.26.0",
         "mergician": "v2.0.2",
@@ -290,15 +290,15 @@
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.1", "", {}, "sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw=="],
 
-    "@silverpoint/core": ["@silverpoint/core@0.9.0", "", { "dependencies": { "d3-chord": "^3.0.1", "d3-scale": "^4.0.2", "d3-shape": "^3.2.0" } }, "sha512-ZtGpT33phk59nyyV3KTwWLS2XdpmJFKb7M3jLyWiPkZphYoIvWk8y+X+2OKDUi/9rsgprn6BhFtE5ODSTsUtKA=="],
+    "@silverpoint/core": ["@silverpoint/core@0.9.1", "", { "dependencies": { "d3-chord": "^3.0.1", "d3-scale": "^4.0.2", "d3-shape": "^3.2.0" } }, "sha512-tpS3ysV5dmfH8FJ+Cg1jz9wDmGQECZlBtcp356vCiVwSlhk1wzWJhT4bBcMM2emhpekCeeU1a6iDb9tgv4fFkw=="],
 
-    "@silverpoint/fonts": ["@silverpoint/fonts@0.9.0", "", {}, "sha512-59Rcv8gEQofKyHPqEA4+wpibOW7NGpFcWBYLamDkLBgt5FcyQ6U0J3N4A0O5UQaIKFknN+l22tEuxi3RWyq1fg=="],
+    "@silverpoint/fonts": ["@silverpoint/fonts@0.9.1", "", {}, "sha512-Hpp7a5HCI1Pw6V7P7no5P/GT7PyCvTHVvhgIMONnbykrlpNDGz+0i7/Ck9XuCx0280o2NAGx6BtKHKkytI4MJQ=="],
 
-    "@silverpoint/grounds": ["@silverpoint/grounds@0.9.0", "", { "dependencies": { "@silverpoint/core": "0.9.0", "roughjs": "4.6.6" } }, "sha512-Ugby0kGcWkx998IstPmLVZi23UFiaSN2I/nFcrmt1INHIdX2xhTR4IG8gpdb/oQqVZ73Y8DPLwmIHNv8HRIP+Q=="],
+    "@silverpoint/grounds": ["@silverpoint/grounds@0.9.1", "", { "dependencies": { "@silverpoint/core": "0.9.1", "roughjs": "4.6.6" } }, "sha512-aZNCYC05yo5FhLLrWQ4B9JzkBx9AJ6WndiyQAdzFA3AoBqMh3pwepjtiIz6hsXhb6OeLar8UusPOMuyPVYT/Yg=="],
 
-    "@silverpoint/marp": ["@silverpoint/marp@0.9.0", "", { "dependencies": { "@marp-team/marpit": "^3.2.3", "@silverpoint/core": "0.9.0", "@silverpoint/grounds": "0.9.0" } }, "sha512-Pm7d1Gnc/mbaWIZVF61OZKy+5nAzLUIAKJoFeGn3QuOqlUOL7shlCGSWaBjEtDloV9oRzr/JAu+y95QyD7Wh9g=="],
+    "@silverpoint/marp": ["@silverpoint/marp@0.9.1", "", { "dependencies": { "@marp-team/marpit": "^3.2.3", "@silverpoint/core": "0.9.1", "@silverpoint/grounds": "0.9.1" } }, "sha512-JFcI2Ku02jgYHJ0JxYPP5MGCJELhjZe8b8jS5s1Q89a4emrU6rllB+tP3iE3SooSDue8S80IZ/pl60WDq/Z0dQ=="],
 
-    "@silverpoint/react": ["@silverpoint/react@0.9.0", "", { "dependencies": { "@silverpoint/core": "0.9.0", "@silverpoint/grounds": "0.9.0" }, "peerDependencies": { "@knight-lab/timelinejs": "^3.9.13", "@silverpoint/marp": "0.9.0", "react": "^18.2.0 || ^19.0.0", "react-dom": "^18.2.0 || ^19.0.0" }, "optionalPeers": ["@knight-lab/timelinejs", "@silverpoint/marp"] }, "sha512-lpkB6CGHZaHihTnz+/K0cWZLQCXROGx+xEbRAv+0+rlxYSczFSmdIRK75WsmIWit8AmpocM+eUKOatkCtkEyMA=="],
+    "@silverpoint/react": ["@silverpoint/react@0.9.1", "", { "dependencies": { "@silverpoint/core": "0.9.1", "@silverpoint/grounds": "0.9.1" }, "peerDependencies": { "@knight-lab/timelinejs": "^3.9.13", "@silverpoint/marp": "0.9.1", "react": "^18.2.0 || ^19.0.0", "react-dom": "^18.2.0 || ^19.0.0" }, "optionalPeers": ["@knight-lab/timelinejs", "@silverpoint/marp"] }, "sha512-3IBs2gPIiOYZ9L3CNTN6d5VwAjtDyxU1LPwJdQCK4gi/bVou5g8GCNxhWA5td9nfLrZwasM1mVIHAiW0A8BGAg=="],
 
     "@socket.io/component-emitter": ["@socket.io/component-emitter@3.1.2", "", {}, "sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA=="],
 
