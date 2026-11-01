@@ -6,10 +6,38 @@ All notable changes to `reflex-silverpoint-react`. The format follows
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-11-01
+
+Wraps **`@silverpoint/react` 0.9.0** (0.8.1 wrapped 0.8.0) and requires **Reflex ≥ 0.10.0**.
+silverpoint 0.9 adds slide decks and changes no other API: the existing builders are unchanged.
+
+### Added
+
+- `sp_deck` and its class `SpDeck` (alias `SilverpointDeck`), in the new `deck` module: the npm
+  `SpDeck` of `@silverpoint/react/deck`, a Marp/Marpit Markdown deck drawn in silverpoint. Props:
+  `markdown`, `page`, `default_page`, `theme`, `ground`, `substrate`, `mode` (`ink` | `precision`),
+  `palette` (a preset's name), `size` (`16:9` | `4:3`), `show_notes`, `show_controls`, `keyboard`,
+  `swipe`, `hash`, `interactive`, `label`. Events with int payloads: `on_page_change(page, total)`,
+  `on_fragment_change(page, step, steps)`, `on_ready(total)`.
+- `@silverpoint/marp@0.9.0` is a `lib_dependencies` entry of `SpDeck` only, so only an app that
+  renders a deck installs it (and `@marp-team/marpit` with it). The deck imports
+  `@silverpoint/marp/deck.css` after the fonts, the grounds and `ui.css`.
+- `MARP_VERSION` and `DECK_STYLESHEETS`.
+- The skill's `references/deck.md` and the deck entry of `reflex-catalog.json`.
+- Demo: the **Decks** page (`/deck`): a showcase deck (`assets/decks/showcase.md`) controlled from
+  Python with an event log, a live Markdown editor and an authoring cheat sheet.
+
 ### Changed
 
+- Every silverpoint npm dependency moves to 0.9.0.
 - CI runners are pinned to `ubuntu-24.04` instead of `ubuntu-latest`, which GitHub is moving to
   Ubuntu 26.
+
+### Known issues
+
+- `@silverpoint/react` 0.9.0's `SpDeck` is inert under React StrictMode in development (its
+  controller is destroyed by the double-mount) and never sends the first `ready`. Both are
+  silverpoint's; the demo sets `react_strict_mode=False` until they are fixed upstream.
 
 ## [0.8.1] — 2026-10-25
 

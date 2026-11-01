@@ -6,7 +6,7 @@ Guide for coding agents working in this repository. Humans: see [README.md](READ
 
 A Reflex custom component (published on PyPI as `reflex-silverpoint-react`) that wraps the npm
 package `@silverpoint/react` — charts and UI drawn in the manner of a Renaissance silverpoint
-drawing. Version **0.8.1**, wrapping silverpoint **0.8.0** (`SILVERPOINT_VERSION` in `base.py`). Every
+drawing. Version **0.9.0**, wrapping silverpoint **0.9.0** (`SILVERPOINT_VERSION` in `base.py`). Every
 component it renders is an npm component of `@silverpoint/react` (silverpoint's parity contract);
 the only JS of its own is `sp_trigger` (`assets/trigger.jsx`).
 It requires **Reflex ≥ 0.10.0** and **Python ≥ 3.11**.
@@ -29,6 +29,7 @@ custom_components/reflex_silverpoint_react/
   overlays.py     npm overlays (/ui): sp_modal, sp_drawer, sp_popover, sp_tooltip, sp_select, sp_dropdown_menu,
                   sp_toast, sp_toaster; sp_trigger (SpTrigger, our own JS: a drawn button that keeps cloned props)
   timeline.py     npm SpTimeline (/timeline) + @knight-lab/timelinejs as its npm dependency
+  deck.py         npm SpDeck (/deck) + @silverpoint/marp as its npm dependency; deck.css
   assets/         trigger.jsx (shipped as package data)
   *.pyi           generated stubs — never edit by hand
 scripts/make_stubs.py   regenerates the .pyi stubs (Reflex 0.10 removed `reflex component build`)
@@ -37,8 +38,9 @@ scripts/make_skill.py   writes skills/reflex-silverpoint/ from its templates/ an
 skills/reflex-silverpoint/  the agent skill (generated; prose in templates/)
 .claude-plugin/         the Claude plugin: the skill and the hosted silverpoint MCP server
 tests/                  pytest suite (test_components.py, test_demo_data.py, test_v07.py,
-                        test_agent_catalog.py, test_skill.py, test_plugin.py)
-silverpoint_react_demo/ demo Reflex app (gallery, playground, dashboard, /ui, /components, /palettes, /timeline)
+                        test_agent_catalog.py, test_skill.py, test_plugin.py, test_deck.py)
+silverpoint_react_demo/ demo Reflex app (gallery, playground, dashboard, /ui, /components, /palettes, /timeline,
+                        /deck; react_strict_mode=False until silverpoint fixes SpDeck under StrictMode)
 docs/                   screenshots used by the README
 ```
 

@@ -34,11 +34,16 @@ GENERATED = (
 )
 
 #: References written from a template of the same name.
-REFERENCES = ("components", "overlays", "timeline", "dashboard", "palettes", "state-and-events")
+REFERENCES = ("components", "overlays", "timeline", "deck", "dashboard", "palettes", "state-and-events")
 
 #: Component slugs each reference documents; the rest are in components.md.
 OVERLAYS = ("modal", "drawer", "popover", "tooltip", "select", "dropdown-menu", "toast", "toaster")
-OWN_PAGE = {"dashboard": "dashboard.md", "timeline": "timeline.md", **{s: "overlays.md" for s in OVERLAYS}}
+OWN_PAGE = {
+    "dashboard": "dashboard.md",
+    "timeline": "timeline.md",
+    "deck": "deck.md",
+    **{s: "overlays.md" for s in OVERLAYS},
+}
 
 #: Fences that hold no code to run.
 PROSE = {"sh", "text", "json"}
@@ -232,6 +237,7 @@ def _index(catalog: dict[str, Any]) -> dict[str, Callable[[], str]]:
         "overlays": lambda: _component_entries(catalog, list(OVERLAYS)),
         "dashboard": lambda: _component_entries(catalog, ["dashboard"]),
         "timeline": lambda: _component_entries(catalog, ["timeline"]),
+        "deck": lambda: _component_entries(catalog, ["deck"]),
     }
 
 

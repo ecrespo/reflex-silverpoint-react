@@ -210,3 +210,14 @@ body {
 .demo-stage { border-radius: 4px; transition: background 160ms ease-out; }
 .demo-stage[data-ground='cyanotype'] { background: #1B3F6B; color: #F4F6F8; padding: 8px 18px 18px; }
 .demo-stage[data-ground='cyanotype'] h2 { color: #F4F6F8; }
+
+/* The deck page: the deck on its stage, the readout, the event log and the editor split. */
+.deck-stage { margin: 8px 0 18px; }
+.deck-readout { font-variant-numeric: tabular-nums; margin: 4px 0 10px; }
+.deck-log-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.deck-log { max-block-size: 260px; overflow: auto; margin: 6px 0 0; padding-inline-start: 1.6em; font-size: 0.85rem; }
+.deck-log li { padding: 2px 0; border-bottom: 1px dotted var(--rule); }
+.deck-split { display: grid; grid-template-columns: minmax(280px, 2fr) minmax(320px, 3fr); gap: 18px; align-items: start; margin: 8px 0 24px; }
+.deck-editor textarea,
+textarea.deck-editor { font-family: ui-monospace, 'JetBrains Mono', Menlo, monospace; font-size: 0.82rem; line-height: 1.45; font-variant-ligatures: none; }
+@media (max-width: 860px) { .deck-split { grid-template-columns: 1fr; } }
