@@ -249,8 +249,7 @@ def _readout() -> rx.Component:
         "Page ",
         rx.el.strong(DeckState.page, id="deck-readout-page"),
         " / ",
-        # @silverpoint/react 0.9.0 never sends the first `ready`, so the total is known from the first move.
-        rx.el.strong(rx.cond(DeckState.total > 0, DeckState.total.to_string(), "?"), id="deck-readout-total"),
+        rx.el.strong(DeckState.total, id="deck-readout-total"),
         " · fragment ",
         rx.el.strong(DeckState.step, id="deck-readout-step"),
         " / ",
@@ -364,7 +363,7 @@ def deck_page() -> rx.Component:
                     " Page ",
                     DeckState.draft_page,
                     " / ",
-                    rx.cond(DeckState.draft_total > 0, DeckState.draft_total.to_string(), "?"),
+                    DeckState.draft_total,
                 ),
             ),
             rx.el.div(

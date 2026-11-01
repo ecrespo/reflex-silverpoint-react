@@ -3,11 +3,11 @@
 Read [AGENTS.md](AGENTS.md) first: it holds the layout, commands, conventions and release flow of
 this repository. The essentials:
 
-- Reflex custom component wrapping `@silverpoint/react` 0.9.0; package version 0.9.0;
+- Reflex custom component wrapping `@silverpoint/react` 0.9.1; package version 0.9.1;
   Reflex ≥ 0.10.0, Python ≥ 3.11. Everything rendered is an npm component except `sp_trigger`.
-- `sp_deck` (0.9.0) wraps `@silverpoint/react/deck`; `@silverpoint/marp` is its own npm dependency.
-  The demo sets `react_strict_mode=False` because silverpoint 0.9.0's `SpDeck` is inert under
-  StrictMode in development (an upstream bug); drop it once silverpoint fixes it.
+- `sp_deck` (since 0.9.0) wraps `@silverpoint/react/deck`; `@silverpoint/marp` is its own npm
+  dependency. silverpoint 0.9.1 fixed `SpDeck` under StrictMode (silverpoint#7) and the first `ready`
+  (silverpoint#8), so the demo runs in StrictMode again.
 - Test-driven: write the failing test in `tests/` before the implementation.
 - Never edit `*.pyi` by hand — run `uv run python scripts/make_stubs.py`.
 - Before committing: `pre-commit run --all-files` (ruff check + format, also on README code blocks;
