@@ -15,13 +15,12 @@ and mirror in right-to-left text; 0.7.0's ``left``/``right`` still work, with a 
 
 import warnings
 from collections.abc import Sequence
-from pathlib import Path
 from typing import Any, Literal
 
 import reflex as rx
 from reflex.event import passthrough_event_spec
-from reflex_base.utils.imports import ImportVar
 
+from .assets import TRIGGER_MODULE
 from .base import SILVERPOINT_STYLESHEETS, SILVERPOINT_VERSION, GroundName, InkMode, Substrate
 from .palette import PaletteLike, apply_palette
 from .ui import SILVERPOINT_UI_STYLESHEET, SilverpointUi, UiSize, UiVariant
@@ -42,11 +41,6 @@ _POSITIONS: dict[str, str] = {
 
 _open_spec = passthrough_event_spec(bool)
 _key_spec = passthrough_event_spec(str)
-
-_CORE = f"@silverpoint/core@{SILVERPOINT_VERSION}"
-
-#: The trigger component, as Reflex custom code.
-TRIGGER_CODE = (Path(__file__).parent / "assets" / "trigger.jsx").read_text(encoding="utf-8")
 
 
 def _given(**props: Any) -> dict[str, Any]:
@@ -100,6 +94,10 @@ def _dom_attributes(cls: type[rx.Component], props: dict[str, Any]) -> dict[str,
 class SpTrigger(rx.Component):
     """A native ``<button>`` drawn as ``SpButton`` that keeps every prop an overlay clones onto it."""
 
+    # A module of the package (``assets/trigger.jsx``), not custom code: Reflex writes custom code
+    # into the page module only, and an overlay controlled from state is compiled into a stateful
+    # component module, which must import the trigger it renders (#44).
+    library = TRIGGER_MODULE
     tag = "SilverpointTrigger"
 
     lib_dependencies: list[str] = [  # noqa: RUF012 - Reflex reads it as a class attribute
@@ -128,34 +126,12 @@ class SpTrigger(rx.Component):
     label: rx.Var[str]
 
     def add_imports(self) -> dict[str, Any]:
-        """The stylesheets, React and the ``@silverpoint/core`` functions the trigger draws with.
+        """The stylesheets the trigger is drawn with; its module imports React and the core itself.
 
         Returns:
             The imports.
         """
-        return {
-            "": [*SILVERPOINT_STYLESHEETS, SILVERPOINT_UI_STYLESHEET],
-            "react": [
-                ImportVar(tag="createElement"),
-                ImportVar(tag="forwardRef"),
-                ImportVar(tag="useEffect"),
-                ImportVar(tag="useState"),
-            ],
-            _CORE: [
-                ImportVar(tag="FORCED_PRECISION_QUERY"),
-                ImportVar(tag="resolveUi", package_path="/ui"),
-                ImportVar(tag="uiButtonView", package_path="/ui"),
-                ImportVar(tag="UI_GLYPHS", package_path="/ui"),
-            ],
-        }
-
-    def add_custom_code(self) -> list[str]:
-        """The trigger component.
-
-        Returns:
-            One code block, identical for every trigger, so Reflex emits it once per page.
-        """
-        return [TRIGGER_CODE]
+        return {"": [*SILVERPOINT_STYLESHEETS, SILVERPOINT_UI_STYLESHEET]}
 
     @classmethod
     def create(cls, *children, palette: PaletteLike | None = None, **props) -> rx.Component:

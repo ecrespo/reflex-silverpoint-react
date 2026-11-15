@@ -219,3 +219,6 @@ __marimo__/
 
 # IDE
 .idea/
+
+# Reflex links the package's shared assets (sp_trigger's module) into the working directory.
+/assets/external/

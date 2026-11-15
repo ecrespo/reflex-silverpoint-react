@@ -210,7 +210,8 @@ def budget() -> rx.Component:
 
 Give a chart an `id` and its handle is reachable from Python events: `download_svg(id, filename)`
 downloads a standalone SVG in the browser; `get_svg(id, handler)` sends the markup to a handler (a
-`str`, or `None` when no chart answers) and `get_geometry(id, handler)` the geometry (a `dict`).
+`str`, or `None` when no chart answers). Both put the page's silverpoint stylesheet inside the SVG,
+so the file keeps its ground, substrate and palette when opened on its own and `get_geometry(id, handler)` the geometry (a `dict`).
 `chart_ref(id)` is the name of the Reflex ref those helpers read.
 
 ```python
