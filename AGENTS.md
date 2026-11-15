@@ -6,7 +6,7 @@ Guide for coding agents working in this repository. Humans: see [README.md](READ
 
 A Reflex custom component (published on PyPI as `reflex-silverpoint-react`) that wraps the npm
 package `@silverpoint/react` — charts and UI drawn in the manner of a Renaissance silverpoint
-drawing. Version **0.9.1**, wrapping silverpoint **0.9.1** (`SILVERPOINT_VERSION` in `base.py`). Every
+drawing. Version **0.10.0**, wrapping silverpoint **0.10.0** (`SILVERPOINT_VERSION` in `base.py`). Every
 component it renders is an npm component of `@silverpoint/react` (silverpoint's parity contract);
 the only JS of its own is `sp_trigger` (`assets/trigger.jsx`).
 It requires **Reflex ≥ 0.10.0** and **Python ≥ 3.11**.
@@ -15,7 +15,8 @@ It requires **Reflex ≥ 0.10.0** and **Python ≥ 3.11**.
 
 ```
 custom_components/reflex_silverpoint_react/
-  base.py         SilverpointChart base class, SilverpointProvider, npm versions, stylesheets
+  base.py         SilverpointChart base class, SilverpointProvider (/provider subpath), _SubpathComponent,
+                  npm versions, stylesheets
   charts.py       the 60 chart wrappers (class + snake_case builder per chart)
   catalog.py      CHARTS / FAMILIES / prop docs (drives the gallery, playground and tests)
   dashboard.py    Dashboard, DashboardCell, DashboardLink (subpath imports of @silverpoint/react)
@@ -30,15 +31,18 @@ custom_components/reflex_silverpoint_react/
                   sp_toast, sp_toaster; sp_trigger (SpTrigger, our own JS: a drawn button that keeps cloned props)
   timeline.py     npm SpTimeline (/timeline) + @knight-lab/timelinejs as its npm dependency
   deck.py         npm SpDeck (/deck) + @silverpoint/marp as its npm dependency; deck.css
-  assets/         trigger.jsx (shipped as package data)
+  assets/         trigger.jsx, sp_trigger's JS module (package data), and __init__.py, which hands it to
+                  the compiling app with rx.asset (a module import, never custom code: #44)
   *.pyi           generated stubs — never edit by hand
 scripts/make_stubs.py   regenerates the .pyi stubs (Reflex 0.10 removed `reflex component build`)
 scripts/export_catalog.py  writes reflex-catalog.json, the catalog silverpoint's agent catalog joins
 scripts/make_skill.py   writes skills/reflex-silverpoint/ from its templates/ and reflex-catalog.json
+scripts/check_compiled_trigger.py  CI: every compiled module of the demo that renders sp_trigger imports it
 skills/reflex-silverpoint/  the agent skill (generated; prose in templates/)
 .claude-plugin/         the Claude plugin: the skill and the hosted silverpoint MCP server
 tests/                  pytest suite (test_components.py, test_demo_data.py, test_v07.py,
-                        test_agent_catalog.py, test_skill.py, test_plugin.py, test_deck.py)
+                        test_agent_catalog.py, test_skill.py, test_plugin.py, test_deck.py,
+                        test_issues_44_45.py, test_v010.py)
 silverpoint_react_demo/ demo Reflex app (gallery, playground, dashboard, /ui, /components, /palettes, /timeline,
                         /deck)
 docs/                   screenshots used by the README

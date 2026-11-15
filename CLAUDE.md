@@ -3,12 +3,23 @@
 Read [AGENTS.md](AGENTS.md) first: it holds the layout, commands, conventions and release flow of
 this repository. The essentials:
 
-- Reflex custom component wrapping `@silverpoint/react` 0.9.1; package version 0.9.1;
+- Reflex custom component wrapping `@silverpoint/react` 0.10.0; package version 0.10.0;
   Reflex ≥ 0.10.0, Python ≥ 3.11. Everything rendered is an npm component except `sp_trigger`.
 - `sp_deck` (since 0.9.0) wraps `@silverpoint/react/deck`; `@silverpoint/marp` is its own npm
   dependency. silverpoint 0.9.1 fixed `SpDeck` under StrictMode (silverpoint#7) and the first `ready`
   (silverpoint#8), so the demo runs in StrictMode again.
 - Test-driven: write the failing test in `tests/` before the implementation.
+- `sp_trigger`'s JS is a module (`assets/trigger.jsx`, handed to the app by `rx.asset` in
+  `assets/__init__.py`), never Reflex custom code: custom code reaches the page module only, and a
+  component that reads state is compiled into its own module (#44). CI runs
+  `scripts/check_compiled_trigger.py` on the compiled demo.
+- `download_svg` / `get_svg` embed the page's silverpoint stylesheet in the SVG (`STANDALONE_SVG_JS`
+  in `helpers.py`, #45). silverpoint 0.10.0 ships `standaloneSVG` and `@silverpoint/grounds/styles-text`
+  (silverpoint#14, #19), but the helpers run through `rx.call_script`, which cannot import a module,
+  and the page's rules carry the app's overrides: they keep reading `document.styleSheets`.
+- `SilverpointProvider` comes from `@silverpoint/react/provider` (silverpoint 0.10.0, silverpoint#21);
+  `_SubpathComponent` lives in `base.py`. Since 0.10.0 a dashboard's frame follows the provider
+  (silverpoint#17): upstream behaviour, no wrapper code.
 - Never edit `*.pyi` by hand — run `uv run python scripts/make_stubs.py`.
 - Before committing: `pre-commit run --all-files` (ruff check + format, also on README code blocks;
   `uv lock --check`) and `uv run pytest`.

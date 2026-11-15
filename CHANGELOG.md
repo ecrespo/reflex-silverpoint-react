@@ -6,6 +6,52 @@ All notable changes to `reflex-silverpoint-react`. The format follows
 
 ## [Unreleased]
 
+## [0.10.0] — 2026-11-15
+
+Wraps **`@silverpoint/react` 0.10.0** (0.9.1 wrapped 0.9.1). The Python builders and their props are
+unchanged; `reflex-catalog.json` differs only in its two versions.
+
+### Fixed
+
+- An overlay controlled from state (`open=State.open`) whose trigger is a string or `sp_trigger(...)`
+  no longer crashes the page with `ReferenceError: SilverpointTrigger is not defined`
+  ([#44](https://github.com/ecrespo/reflex-silverpoint-react/issues/44),
+  [silverpoint#13](https://github.com/ecrespo/silverpoint/issues/13)). The trigger was Reflex custom
+  code, which Reflex writes into the page module only; a component that reads state is compiled
+  into a module of its own, which rendered the trigger without defining it. `sp_trigger` is now a JS
+  module of the package (`assets/trigger.jsx`, linked into the app as a shared asset) that every
+  compiled module imports. CI checks the compiled demo with `scripts/check_compiled_trigger.py`.
+- `download_svg` and `get_svg` deliver an SVG that paints itself: the page's silverpoint stylesheet
+  goes inside the markup, in CDATA. Before, the file rendered black outside the app, against what the
+  docstring said ([#45](https://github.com/ecrespo/reflex-silverpoint-react/issues/45),
+  [silverpoint#14](https://github.com/ecrespo/silverpoint/issues/14)).
+- Upstream, in silverpoint 0.10.0: `sp_table` body cells align to the start unless their column says
+  `align: "end"` or `"center"`; they no longer take the right alignment of the charts' data table
+  ([silverpoint#12](https://github.com/ecrespo/silverpoint/issues/12)). A chart whose container is
+  hidden with `display: none` keeps its last measured width and no longer warns `SP003`
+  ([silverpoint#22](https://github.com/ecrespo/silverpoint/issues/22)).
+
+### Changed
+
+- Every silverpoint npm dependency moves to 0.10.0, `@silverpoint/marp` included.
+- A dashboard under `silverpoint_provider` draws its own frame, title and grid with the provider's
+  `ground`, `substrate` and `palette` where it sets none, as its charts already did
+  ([silverpoint#17](https://github.com/ecrespo/silverpoint/issues/17)). Without a provider the markup
+  is unchanged. To keep a cream dashboard under a cyanotype provider, give the dashboard its own
+  `ground` and `substrate`.
+- `silverpoint_provider` (and `silverpoint_palette`) import `SilverpointProvider` from
+  `@silverpoint/react/provider`, the subpath silverpoint 0.10.0 adds
+  ([silverpoint#21](https://github.com/ecrespo/silverpoint/issues/21)), so a page with no chart does
+  not reach the root entry. The private `_SubpathComponent` moves from `dashboard.py` to `base.py`.
+- `download_svg` / `get_svg` keep reading the stylesheet from the page rather than calling the new
+  `standaloneSVG` of `@silverpoint/grounds` with `@silverpoint/grounds/styles-text`: the scripts run
+  through `rx.call_script`, which cannot import a module, and the page's rules carry the app's own
+  overrides and the components' stylesheet. The embedding is the same (CDATA, first child of the root).
+- `reflex_silverpoint_react.assets` is a package (it calls `rx.asset` for the trigger's module), and
+  `overlays.TRIGGER_CODE` is gone. Importing the package in an app links
+  `assets/external/reflex_silverpoint_react/assets/trigger.jsx` into the app's directory, as Reflex
+  does for every shared asset; ignore `assets/external/` in version control.
+
 ## [0.9.1] — 2026-11-01
 
 Wraps **`@silverpoint/react` 0.9.1** (0.9.0 wrapped 0.9.0). silverpoint 0.9.1 fixes `SpDeck` and
@@ -206,6 +252,7 @@ signatures.
   imperative handle (SVG export, geometry).
 
 [0.7.1]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.7.0...v0.7.1
+[0.10.0]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.9.1...v0.10.0
 [0.7.0]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.3.0...v0.6.0
 [0.3.0]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.2.0...v0.3.0

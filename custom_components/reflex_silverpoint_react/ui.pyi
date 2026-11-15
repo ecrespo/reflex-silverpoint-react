@@ -12,7 +12,7 @@ from reflex_base.event import (
 from reflex_base.vars.base import Var
 from reflex_components_core.core.breakpoints import Breakpoints
 
-from .dashboard import _SubpathComponent
+from .base import _SubpathComponent
 from .palette import Palette
 
 SILVERPOINT_UI_STYLESHEET = "@silverpoint/grounds/ui.css"

@@ -3,7 +3,8 @@
 * :func:`tooltip_template` builds the ``tooltip`` render function from a Python format string.
 * :func:`download_svg`, :func:`get_svg` and :func:`get_geometry` reach the chart's imperative
   handle (``ChartHandle``: ``toSVGString()`` and ``getGeometry()``) through the Reflex ref that a
-  component with an ``id`` gets.
+  component with an ``id`` gets. The two SVG helpers put the page's silverpoint stylesheet inside
+  the markup, so the file paints itself outside the app.
 """
 
 import json
@@ -89,10 +90,56 @@ def _handle(chart_id: str) -> str:
     return f"refs[{json.dumps(chart_ref(chart_id))}]?.current"
 
 
+#: A JS function ``(svg) => svg``: the markup of ``toSVGString()`` with the page's silverpoint
+#: stylesheet inside it. ``toSVGString()`` returns the canonical markup, whose strokes and fills are
+#: painted by ``@silverpoint/grounds`` through ``--sp-*`` properties; opened on its own it is black
+#: (#45, silverpoint#14). The rules are read from the page (``document.styleSheets``), so the file
+#: carries exactly what the app paints with, its own overrides included: every rule that names a
+#: ``.sp-`` class or a ``--sp-`` property, also inside ``@media``/``@supports``/``@layer`` groups.
+#: They go in CDATA as the first child of the root ``<svg>``: the stylesheet may hold ``<`` and the
+#: file must stay XML. A value that is not SVG markup, or a page with no such rule, is returned as
+#: it came. A stylesheet from another origin cannot be read and is skipped.
+STANDALONE_SVG_JS = """((svg) => {
+  if (typeof svg !== "string") return svg ?? null;
+  const open = /^<svg(?:[^>"']|"[^"]*"|'[^']*')*>/.exec(svg)?.[0];
+  if (!open) return svg;
+  const ours = (text) => /(?:\\.|--)sp-/.test(text);
+  const collect = (rules) => {
+    const out = [];
+    for (const rule of rules) {
+      if (!ours(rule.cssText)) continue;
+      // A group (@media, @supports, @layer) keeps only our rules; a style rule is kept whole.
+      if (!rule.selectorText && rule.cssRules && rule.cssRules.length > 0) {
+        const inner = collect(rule.cssRules);
+        if (inner.length > 0) out.push(rule.cssText.slice(0, rule.cssText.indexOf("{") + 1) + inner.join("\\n") + "}");
+      } else {
+        out.push(rule.cssText);
+      }
+    }
+    return out;
+  };
+  const css = [];
+  for (const sheet of document.styleSheets) {
+    let rules;
+    try {
+      rules = sheet.cssRules;
+    } catch {
+      continue;
+    }
+    css.push(...collect(rules));
+  }
+  if (css.length === 0) return svg;
+  const style = "<style><![CDATA[" + css.join("\\n").replaceAll("]]>", "]]]]><![CDATA[>") + "]]></style>";
+  return open + style + svg.slice(open.length);
+})"""
+
+
 def download_svg(chart_id: str, filename: str = "silverpoint-chart.svg") -> rx.event.EventSpec:
     """Download the chart as a standalone SVG file, entirely in the browser.
 
-    The SVG carries its own ground colours, so it renders the same outside the app.
+    The file holds the chart's markup and, inside it, the page's silverpoint stylesheet, so it
+    renders with the same ground, substrate and palette outside the app. The typeface is not
+    embedded: a viewer without EB Garamond falls back to its own serif.
 
     Args:
         chart_id: The ``id`` given to the chart.
@@ -107,7 +154,7 @@ def download_svg(chart_id: str, filename: str = "silverpoint-chart.svg") -> rx.e
     console.warn("silverpoint: no chart with id {chart_id}");
     return null;
   }}
-  const svg = handle.toSVGString();
+  const svg = {STANDALONE_SVG_JS}(handle.toSVGString());
   const url = URL.createObjectURL(new Blob([svg], {{ type: "image/svg+xml" }}));
   const link = document.createElement("a");
   link.href = url;
@@ -124,6 +171,9 @@ def download_svg(chart_id: str, filename: str = "silverpoint-chart.svg") -> rx.e
 def get_svg(chart_id: str, callback: Any) -> rx.event.EventSpec:
     """Send the chart's standalone SVG markup to a backend event handler.
 
+    As with :func:`download_svg`, the markup holds the page's silverpoint stylesheet, so it paints
+    itself when saved or sent elsewhere.
+
     Args:
         chart_id: The ``id`` given to the chart.
         callback: Event handler that receives the SVG string (or ``None``).
@@ -131,7 +181,7 @@ def get_svg(chart_id: str, callback: Any) -> rx.event.EventSpec:
     Returns:
         An event that runs the script and calls ``callback`` with the result.
     """
-    return rx.call_script(f"{_handle(chart_id)}?.toSVGString?.() ?? null", callback=callback)
+    return rx.call_script(f"{STANDALONE_SVG_JS}({_handle(chart_id)}?.toSVGString?.() ?? null)", callback=callback)
 
 
 def get_geometry(chart_id: str, callback: Any) -> rx.event.EventSpec:

@@ -109,3 +109,5 @@ jobs:
       - name: reflex compile
         working-directory: silverpoint_react_demo
         run: uv run reflex compile
+      - name: Every compiled module that renders sp_trigger imports it (#44)
+        run: uv run python scripts/check_compiled_trigger.py silverpoint_react_demo/.web

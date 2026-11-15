@@ -5,7 +5,9 @@ named cell; `dashboard_link` links charts you lay out yourself. The layout is pl
 breakpoint, each cell's column and row spans, the row height and the gap. The breakpoints are the
 dashboard's own width: `sm` below 640 px, `md` up to 1024 px, `lg` above; the defaults are 1, 2 and 4
 columns. Each chart is sized to its cell, and `ground`, `substrate`, `mode`, `locale` and `palette`
-pass to every chart inside (a chart's own prop wins).
+pass to every chart inside (a chart's own prop wins). Under a `silverpoint_provider`, the dashboard's
+own frame, title and grid take the provider's ground, substrate and palette where the dashboard sets
+none.
 
 - `id` is required, and so is `title` (or `label`, for no visible heading).
 - `dashboard_cell(chart, cell="traffic")` matches a cell id of the layout. Children without a cell
