@@ -9,7 +9,6 @@ from pathlib import Path
 import pytest
 import reflex as rx
 import reflex_silverpoint_react as sp
-from reflex_silverpoint_react import helpers
 
 ROOT = Path(__file__).parent.parent
 TRIGGER_SOURCE = Path(sp.__file__).parent / "assets" / "trigger.jsx"
@@ -146,7 +145,11 @@ console.log(JSON.stringify(standalone(%(svg)s)));
 
 
 def _standalone(svg: object, sheets: list) -> object:
-    script = HARNESS % {"sheets": json.dumps(sheets), "standalone": helpers.STANDALONE_SVG_JS, "svg": json.dumps(svg)}
+    script = HARNESS % {
+        "sheets": json.dumps(sheets),
+        "standalone": sp.helpers.STANDALONE_SVG_JS,
+        "svg": json.dumps(svg),
+    }
     done = subprocess.run([NODE, "-e", script], capture_output=True, text=True, timeout=60, check=True)
     return json.loads(done.stdout)
 
