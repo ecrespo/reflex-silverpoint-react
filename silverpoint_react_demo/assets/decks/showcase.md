@@ -1,7 +1,7 @@
 ---
 paginate: true
 header: silverpoint · slide decks
-footer: reflex-silverpoint-react 0.9.1
+footer: reflex-silverpoint-react 0.10.0
 ground: silverpoint
 substrate: cream
 ---

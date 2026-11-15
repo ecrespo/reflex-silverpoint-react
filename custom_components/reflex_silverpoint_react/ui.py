@@ -19,8 +19,7 @@ from typing import Any, ClassVar, Literal
 import reflex as rx
 from reflex.event import no_args_event_spec
 
-from .base import SILVERPOINT_STYLESHEETS, GroundName, InkMode, Substrate
-from .dashboard import _SubpathComponent
+from .base import SILVERPOINT_STYLESHEETS, GroundName, InkMode, Substrate, _SubpathComponent
 from .palette import PaletteLike, apply_palette
 
 #: The components' stylesheet, opt-in beside ``styles.css``.

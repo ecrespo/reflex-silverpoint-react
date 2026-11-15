@@ -7,7 +7,7 @@ prepared ground, tone built from hatching, and white heightening on the live val
 The hand-drawn irregularity lives only in the ornament. The data geometry is exact, and every chart
 has a `precision` mode that turns the inking off.
 
-It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.9.1** and exposes
+It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.10.0** and exposes
 **all 60 charts**, the **`Dashboard`** (a laid-out, linkable grid of charts), the **17 UI
 components** (buttons, inputs, tabs, cards, alerts…), the **12 composed components** (table,
 pagination, breadcrumb, avatar…), the **7 overlays** and the toaster (modal, drawer, popover,
@@ -18,6 +18,19 @@ readouts and the imperative handle (SVG export and geometry) as Python.
 
 Everything it renders is an npm component of silverpoint, under its parity contract: the same
 markup React, Vue and Angular render.
+
+### New in 0.10.0
+
+- Wraps **`@silverpoint/react` 0.10.0**. No builder or prop changes.
+- A **dashboard under `silverpoint_provider`** draws its own frame, title and grid with the provider's
+  ground, substrate and palette where it sets none, as its charts already did: one
+  `silverpoint_provider(ground="cyanotype")` now turns the whole dashboard blue.
+- **`sp_table`** body cells align to the start unless their column says `align: "end"` or `"center"`.
+- A chart whose container is hidden with `display: none` keeps its last width and no longer warns `SP003`.
+- `silverpoint_provider` is imported from `@silverpoint/react/provider`, so a page with no chart does
+  not reach the package's root entry.
+- **Fixed:** an overlay controlled from state with a text trigger no longer crashes the page (#44), and
+  `download_svg` / `get_svg` deliver an SVG that paints itself outside the app (#45).
 
 ### New in 0.9.1
 
@@ -642,7 +655,10 @@ rx.button("SVG to Python", on_click=get_svg("hits", State.receive_svg))  # handl
 rx.button("Geometry", on_click=get_geometry("hits", State.receive_geometry))  # handler gets a dict
 ```
 
-The exported SVG carries its own ground colours, so it renders the same outside the app.
+`download_svg` and `get_svg` put the page's silverpoint stylesheet inside the SVG (every rule that
+names a `.sp-` class or a `--sp-` property, your own overrides included), so the file renders with
+the same ground, substrate and palette outside the app. The typeface is not embedded: a viewer
+without EB Garamond falls back to its own serif.
 
 ## Notes
 

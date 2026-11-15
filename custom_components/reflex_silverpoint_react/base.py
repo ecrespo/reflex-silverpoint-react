@@ -13,14 +13,15 @@ Since 0.7.0 the composed components, the overlays (``/ui``) and ``SpTimeline`` (
 npm components too, so everything this package renders is under silverpoint's parity contract.
 """
 
-from typing import Any, Literal
+from typing import Any, ClassVar, Literal
 
 import reflex as rx
+from reflex_base.utils.imports import ImportVar
 
 from .palette import PaletteLike, apply_palette
 
 #: The silverpoint npm release these wrappers are written against.
-SILVERPOINT_VERSION = "0.9.1"
+SILVERPOINT_VERSION = "0.10.0"
 
 #: The npm package every chart is imported from (the barrel; it is side-effect free, so the
 #: bundler keeps only the charts a page uses).
@@ -63,6 +64,22 @@ class _SilverpointBase(rx.Component):
             Side-effect imports of the two stylesheets.
         """
         return {"": list(SILVERPOINT_STYLESHEETS)}
+
+
+class _SubpathComponent(_SilverpointBase):
+    """A component imported from a subpath module of ``@silverpoint/react``."""
+
+    # The module inside the package, e.g. ``/dashboard``.
+    _subpath: ClassVar[str] = ""
+
+    @property
+    def import_var(self) -> ImportVar:
+        """Import the tag from ``@silverpoint/react<subpath>``, keeping the version pin.
+
+        Returns:
+            The import var.
+        """
+        return ImportVar(tag=self.tag, package_path=self._subpath)
 
 
 def _active_item_spec(item):
@@ -185,14 +202,20 @@ class SilverpointChart(_SilverpointBase):
         return super().create(*children, **apply_palette({**props, "palette": palette}))
 
 
-class SilverpointProvider(_SilverpointBase):
+class SilverpointProvider(_SubpathComponent):
     """Sets ground, substrate, mode, locale and palette once for everything below it.
 
     A prop on a chart or component always wins over the provider; palettes merge field by field
     (element → dashboard → provider), and a nested provider's set fields win over the outer one's.
+    A dashboard below it draws its own frame, title and grid with the provider's ground, substrate
+    and palette where it sets none (silverpoint 0.10.0).
+
+    It is imported from ``@silverpoint/react/provider`` (new in silverpoint 0.10.0), so a page with
+    no chart does not reach the root entry.
     """
 
     tag = "SilverpointProvider"
+    _subpath = "/provider"
 
     # Style ground for every chart below: ``"silverpoint"``, ``"cyanotype"`` or a ground object.
     ground: rx.Var[GroundName | str | dict[str, Any]]
