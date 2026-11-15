@@ -1,6 +1,6 @@
 """Marp/Marpit slide decks drawn in silverpoint: ``sp_deck``, the npm ``SpDeck``.
 
-``@silverpoint/react/deck`` (silverpoint 0.9.1) renders a Marp Markdown presentation in the
+``@silverpoint/react/deck`` (silverpoint 0.10.0) renders a Marp Markdown presentation in the
 silverpoint style: the ``silverpoint`` Marpit theme on the library's grounds and substrates, the
 ``ground`` / ``substrate`` / ``mode`` directives per slide, fragmented lists, presenter notes, and
 ```` ```silverpoint ```` code fences that become real, hydrated charts inside a slide.
@@ -20,8 +20,7 @@ from typing import Any, Literal
 import reflex as rx
 from reflex.vars import ObjectVar
 
-from .base import SILVERPOINT_STYLESHEETS, SILVERPOINT_VERSION, GroundName, InkMode, Substrate
-from .dashboard import _SubpathComponent
+from .base import SILVERPOINT_STYLESHEETS, SILVERPOINT_VERSION, GroundName, InkMode, Substrate, _SubpathComponent
 from .palette import PALETTES, Palette
 from .ui import SILVERPOINT_UI_STYLESHEET
 

@@ -8,49 +8,16 @@ from reflex_base.event import (
     EventType,
     PointerEventInfo,
 )
-from reflex_base.utils.imports import ImportVar
 from reflex_base.vars.base import Var
 from reflex_components_core.core.breakpoints import Breakpoints
 
-from .base import _SilverpointBase
+from .base import _SubpathComponent
 from .palette import Palette
 
 Breakpoint: TypeAlias = Literal["sm", "md", "lg"]
 HeadingLevel: TypeAlias = Literal[2, 3, 4, 5, 6]
 PerBreakpoint: TypeAlias = int | dict[Breakpoint, int]
 DASHBOARD_DEFAULTS: dict[str, Any]
-
-class _SubpathComponent(_SilverpointBase):
-    @property
-    def import_var(self) -> ImportVar: ...
-    @classmethod
-    def create(
-        cls,
-        *children,
-        style: Sequence[Mapping[str, Any]] | Mapping[str, Any] | Var[Mapping[str, Any]] | Breakpoints | None = None,
-        key: Any | None = None,
-        id: Any | None = None,
-        ref: Var | None = None,
-        class_name: Any | None = None,
-        custom_attrs: dict[str, Any | Var] | None = None,
-        on_blur: EventType[()] | None = None,
-        on_click: EventType[()] | EventType[PointerEventInfo] | None = None,
-        on_context_menu: EventType[()] | EventType[PointerEventInfo] | None = None,
-        on_double_click: EventType[()] | EventType[PointerEventInfo] | None = None,
-        on_focus: EventType[()] | None = None,
-        on_mount: EventType[()] | None = None,
-        on_mouse_down: EventType[()] | None = None,
-        on_mouse_enter: EventType[()] | None = None,
-        on_mouse_leave: EventType[()] | None = None,
-        on_mouse_move: EventType[()] | None = None,
-        on_mouse_out: EventType[()] | None = None,
-        on_mouse_over: EventType[()] | None = None,
-        on_mouse_up: EventType[()] | None = None,
-        on_scroll: EventType[()] | None = None,
-        on_scroll_end: EventType[()] | None = None,
-        on_unmount: EventType[()] | None = None,
-        **props,
-    ) -> _SubpathComponent: ...
 
 class Dashboard(_SubpathComponent):
     @classmethod

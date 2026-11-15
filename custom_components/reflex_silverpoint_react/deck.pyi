@@ -13,8 +13,7 @@ from reflex_base.event import (
 from reflex_base.vars.base import Var
 from reflex_components_core.core.breakpoints import Breakpoints
 
-from .base import SILVERPOINT_VERSION, GroundName, InkMode, Substrate
-from .dashboard import _SubpathComponent
+from .base import SILVERPOINT_VERSION, GroundName, InkMode, Substrate, _SubpathComponent
 from .palette import Palette
 
 MARP_VERSION = SILVERPOINT_VERSION

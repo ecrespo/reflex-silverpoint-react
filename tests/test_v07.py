@@ -46,11 +46,10 @@ class _S(rx.State):
 # ── Version ─────────────────────────────────────────────────────────────────────────────
 
 
-def test_wraps_silverpoint_0_9_1() -> None:
-    # 0.9.0 adds SpDeck (tests/test_deck.py) and changes no other API of @silverpoint/react, core,
-    # grounds or fonts: the normalised output of the existing charts is unchanged.
-    assert sp.SILVERPOINT_VERSION == "0.9.1"
-    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.9.1"
+def test_wraps_silverpoint_0_10_0() -> None:
+    # 0.10.0 changes no chart's normalised SVG and no prop: see tests/test_v010.py for what it adds.
+    assert sp.SILVERPOINT_VERSION == "0.10.0"
+    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.10.0"
 
 
 # ── Palettes ────────────────────────────────────────────────────────────────────────────
@@ -290,7 +289,8 @@ def test_trigger_forwards_what_an_overlay_clones_onto_it() -> None:
     props = _props(trigger)
     assert trigger.render()["name"] == "SilverpointTrigger"
     assert props['"aria-label"'] == '"Go now"' and props["tabIndex"] == "-1" and props["variant"] == '"primary"'
-    assert len(rx.el.div(trigger, sp.sp_trigger("x"))._get_all_custom_code()) == 1
+    # A module, imported wherever it renders, not custom code of the page (#44).
+    assert not rx.el.div(trigger, sp.sp_trigger("x"))._get_all_custom_code()
 
 
 # ── Timeline ────────────────────────────────────────────────────────────────────────────

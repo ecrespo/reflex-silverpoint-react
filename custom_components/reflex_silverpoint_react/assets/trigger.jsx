@@ -5,7 +5,15 @@
  * props, so those would be lost on it; this button renders the very tree @silverpoint/core's
  * uiButtonView builds (resolveUi resolves ground, substrate, mode, size, frame variant and palette)
  * and adds everything else it is given to the native element.
+ *
+ * A module of its own, imported by every compiled file that renders the trigger: as Reflex custom
+ * code it was written into the page module only, and a controlled overlay, which Reflex compiles
+ * into a stateful component module, rendered an undefined SilverpointTrigger (#44).
  */
+import { createElement, forwardRef, useEffect, useState } from "react";
+import { FORCED_PRECISION_QUERY } from "@silverpoint/core";
+import { resolveUi, uiButtonView, UI_GLYPHS } from "@silverpoint/core/ui";
+
 const SP_TRIGGER_ATTRS = { class: "className", for: "htmlFor", readonly: "readOnly", tabindex: "tabIndex" };
 
 function spTriggerStyle(text) {
@@ -46,7 +54,7 @@ function useSpTriggerForced() {
   return forced;
 }
 
-const SilverpointTrigger = forwardRef(function SilverpointTrigger(
+export const SilverpointTrigger = forwardRef(function SilverpointTrigger(
   { ground, substrate, mode, size, seed, palette, variant, chevron, disabled, label, children, className, id, ...rest },
   ref,
 ) {

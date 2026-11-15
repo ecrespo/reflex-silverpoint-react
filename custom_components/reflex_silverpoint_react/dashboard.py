@@ -10,12 +10,11 @@ and ``DashboardCell``) and ``/dashboard-link`` (``DashboardLink``, the client bo
 linked value). Neither is in the package barrel, so these wrappers import them by subpath.
 """
 
-from typing import Any, ClassVar, Literal
+from typing import Any, Literal
 
 import reflex as rx
-from reflex_base.utils.imports import ImportVar
 
-from .base import GroundName, InkMode, Substrate, _SilverpointBase
+from .base import GroundName, InkMode, Substrate, _SubpathComponent
 from .palette import PaletteLike, apply_palette
 
 Breakpoint = Literal["sm", "md", "lg"]
@@ -50,22 +49,6 @@ def _link_spec(link):
 def _as_link(link: Any) -> Any:
     """Accept ``link="hour"`` as a shorthand for ``link={"key": "hour"}``."""
     return {"key": link} if isinstance(link, str) else link
-
-
-class _SubpathComponent(_SilverpointBase):
-    """A component imported from a subpath module of ``@silverpoint/react``."""
-
-    # The module inside the package, e.g. ``/dashboard``.
-    _subpath: ClassVar[str] = ""
-
-    @property
-    def import_var(self) -> ImportVar:
-        """Import the tag from ``@silverpoint/react<subpath>``, keeping the version pin.
-
-        Returns:
-            The import var.
-        """
-        return ImportVar(tag=self.tag, package_path=self._subpath)
 
 
 class Dashboard(_SubpathComponent):
