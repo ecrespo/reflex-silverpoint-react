@@ -1,4 +1,4 @@
-"""0.10: wraps silverpoint 0.10.0 — the provider on its own subpath, the dashboard under a provider."""
+"""0.10: the provider on its own subpath, the dashboard under a provider (the version lives in test_v011)."""
 
 import reflex as rx
 import reflex_silverpoint_react as sp
@@ -14,13 +14,6 @@ def _modules(component: rx.Component) -> dict[str, list[str]]:
         for entry in compile_imports(component._get_all_imports())
         if entry["lib"].startswith("@silverpoint/react")
     }
-
-
-def test_wraps_silverpoint_0_10_0() -> None:
-    assert sp.SILVERPOINT_VERSION == "0.10.0"
-    assert sp.MARP_VERSION == "0.10.0"
-    for dependency in ("@silverpoint/core@0.10.0", "@silverpoint/grounds@0.10.0", "@silverpoint/fonts@0.10.0"):
-        assert dependency in sp.SilverpointProvider.lib_dependencies
 
 
 def test_provider_is_imported_from_its_own_subpath() -> None:

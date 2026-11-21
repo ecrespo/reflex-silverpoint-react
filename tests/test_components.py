@@ -105,11 +105,6 @@ def test_provider() -> None:
     assert _props(component)["locale"] == '"es-VE"'
 
 
-def test_version_pins_silverpoint() -> None:
-    assert sp.SILVERPOINT_VERSION == "0.10.0"
-    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.10.0"
-
-
 def test_cyanotype_ground() -> None:
     assert _props(sp.bar_chart(ground="cyanotype"))["ground"] == '"cyanotype"'
     assert _props(sp.silverpoint_provider(sp.line_chart(), ground="cyanotype"))["ground"] == '"cyanotype"'

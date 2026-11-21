@@ -6,7 +6,7 @@ Guide for coding agents working in this repository. Humans: see [README.md](READ
 
 A Reflex custom component (published on PyPI as `reflex-silverpoint-react`) that wraps the npm
 package `@silverpoint/react` — charts and UI drawn in the manner of a Renaissance silverpoint
-drawing. Version **0.10.0**, wrapping silverpoint **0.10.0** (`SILVERPOINT_VERSION` in `base.py`). Every
+drawing. Version **0.11.0**, wrapping silverpoint **0.11.0** (`SILVERPOINT_VERSION` in `base.py`). Every
 component it renders is an npm component of `@silverpoint/react` (silverpoint's parity contract);
 the only JS of its own is `sp_trigger` (`assets/trigger.jsx`).
 It requires **Reflex ≥ 0.10.0** and **Python ≥ 3.11**.
@@ -42,7 +42,7 @@ skills/reflex-silverpoint/  the agent skill (generated; prose in templates/)
 .claude-plugin/         the Claude plugin: the skill and the hosted silverpoint MCP server
 tests/                  pytest suite (test_components.py, test_demo_data.py, test_v07.py,
                         test_agent_catalog.py, test_skill.py, test_plugin.py, test_deck.py,
-                        test_issues_44_45.py, test_v010.py)
+                        test_issues_44_45.py, test_v010.py, test_v011.py)
 silverpoint_react_demo/ demo Reflex app (gallery, playground, dashboard, /ui, /components, /palettes, /timeline,
                         /deck)
 docs/                   screenshots used by the README

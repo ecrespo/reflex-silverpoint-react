@@ -7,7 +7,7 @@ prepared ground, tone built from hatching, and white heightening on the live val
 The hand-drawn irregularity lives only in the ornament. The data geometry is exact, and every chart
 has a `precision` mode that turns the inking off.
 
-It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.10.0** and exposes
+It wraps [`@silverpoint/react`](https://www.npmjs.com/package/@silverpoint/react) **0.11.0** and exposes
 **all 60 charts**, the **`Dashboard`** (a laid-out, linkable grid of charts), the **17 UI
 components** (buttons, inputs, tabs, cards, alerts…), the **12 composed components** (table,
 pagination, breadcrumb, avatar…), the **7 overlays** and the toaster (modal, drawer, popover,
@@ -18,6 +18,16 @@ readouts and the imperative handle (SVG export and geometry) as Python.
 
 Everything it renders is an npm component of silverpoint, under its parity contract: the same
 markup React, Vue and Angular render.
+
+### New in 0.11.0
+
+- Wraps **`@silverpoint/react` 0.11.0**. No builder or prop changes.
+- No native browser tooltip over a chart: its accessible name is a `<desc>`, no longer an SVG `<title>`.
+- A dashboard's charts follow a provider change made while the dashboard was hidden.
+- **`sp_button` works as an overlay trigger**: it keeps the ARIA and the press handling an overlay
+  gives its trigger. `sp_trigger` still works.
+- **Fixed:** an overlay's string trigger follows `silverpoint_provider` (#50); it is an `sp_button`
+  now, no longer an `sp_trigger`.
 
 ### New in 0.10.0
 
@@ -152,6 +162,10 @@ stylesheets it needs (`@silverpoint/grounds/styles.css` and the self-hosted EB G
 Tailwind, no CDN.
 
 Requires Reflex 0.10.0 or later (React 19) and Python 3.11 or later.
+
+This package is for Reflex apps. [`silverpoint`](https://github.com/ecrespo/silverpoint-python) is a
+different Python package, for notebooks, Flask, Django, KNIME and Plone; neither package depends on
+the other.
 
 ## Quickstart
 
@@ -492,9 +506,11 @@ dismiss), keyboard and placement from `@silverpoint/core` (APG listbox and menu,
 shift). Overlays render in place (the top layer, no portal), so a section's palette reaches them.
 Sides are logical (`start`/`end`) and mirror in right-to-left text. An overlay clones its `trigger`
 with its ARIA and a toggling click, so the trigger must keep the props it is given: a native
-`rx.el.button`, or `sp_trigger(...)`, the drawn button strings become (`sp_button` drops them in
-silverpoint 0.7.0). `sp_trigger` does not read the provider: give it `ground`, `substrate`, `mode`
-and `palette`.
+`rx.el.button`, `sp_button(...)` (it keeps them since silverpoint 0.11.0), or `sp_trigger(...)`. A
+string becomes an `sp_button`, so it follows `silverpoint_provider`. `sp_button` keeps exactly the
+overlay's ARIA and its press handlers; `sp_trigger` keeps every prop it is given, any other attribute
+included. `sp_trigger` does not read the provider: give it `ground`, `substrate`, `mode` and
+`palette`.
 
 ```python
 sp_modal(
