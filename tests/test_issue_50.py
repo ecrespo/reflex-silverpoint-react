@@ -34,7 +34,7 @@ OVERLAYS = {
 def _trigger(overlay: rx.Component) -> tuple[str, set[str]]:
     """The trigger the overlay renders: its tag and the names of the props it is given."""
     props = dict(prop.split(":", 1) for prop in overlay.render()["props"])
-    match = re.match(r"\(jsx\((\w+), \(\{(.*?)\}\)", props["trigger"], re.S)
+    match = re.match(r"\(jsx\((\w+), \(\{(.*?)\}\)", props["trigger"], re.DOTALL)
     assert match, props["trigger"]
     given = set(re.findall(r"(?:^|,)(\w+):", match[2]))
     return match[1], given
