@@ -368,7 +368,7 @@ sp_pagination(total=240, page_size=10, current=State.page, on_change=State.set_p
 
 OVERLAY_CODE = """sp_modal(
     rx.el.p("Apply the new ground to every chart?"),
-    trigger="Open modal",                       # a string becomes sp_trigger(...)
+    trigger="Open modal",                       # a string becomes sp_button(...)
     title="Apply changes", description="…",
     footer=sp_trigger("Apply", variant="primary", on_click=State.confirm),
     open=State.modal_open, on_open_change=State.set_modal_open,
@@ -612,6 +612,14 @@ def components_page() -> rx.Component:
                         title="A note",
                         closable=True,
                         id="note-popover",
+                        **s,
+                    ),
+                    sp_popover(
+                        rx.el.p("Since silverpoint 0.11.0 an sp_button keeps the trigger's ARIA."),
+                        trigger=sp_button("Button trigger", **s),
+                        title="sp_button as trigger",
+                        closable=True,
+                        id="button-popover",
                         **s,
                     ),
                     sp_tooltip(sp_trigger("Hover or focus me", **s), "Tooltips use the control frame", **s),

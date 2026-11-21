@@ -83,11 +83,15 @@ def test_req553_chart_props_tables_list_python_and_js_names():
     assert "<!-- generated:family -->" in lines and "<!-- /generated:family -->" in lines
 
 
-def test_req547_overlay_triggers_are_never_sp_button():
-    # The prose names the mistake; no example may make it.
-    for name, code in make_skill.extract_examples(_files()):
-        assert not re.search(r"trigger\s*=\s*sp_button", code), name
-    assert "Never `trigger=sp_button(...)`" in (SKILL / "SKILL.md").read_text()
+def test_req547_an_sp_button_trigger_is_shown_because_the_demo_runs_it():
+    # REQ-547: the skill shows only patterns an example app runs. Since silverpoint 0.11.0 (delta-014)
+    # an sp_button is a valid overlay trigger, and the demo's composed page runs one; a string trigger
+    # is an sp_button too (#50).
+    demo = (ROOT / "silverpoint_react_demo" / "silverpoint_react_demo").glob("*.py")
+    assert any(re.search(r"trigger\s*=\s*sp_button\(", f.read_text()) for f in demo)
+    skill = "\n".join(_files().values())
+    assert "Never `trigger=sp_button(...)`" not in skill
+    assert "`trigger=sp_button(" in skill
 
 
 # ── Examples (REQ-557) ──────────────────────────────────────────────────────────────────

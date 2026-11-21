@@ -43,15 +43,6 @@ class _S(rx.State):
         self.value = value
 
 
-# ── Version ─────────────────────────────────────────────────────────────────────────────
-
-
-def test_wraps_silverpoint_0_10_0() -> None:
-    # 0.10.0 changes no chart's normalised SVG and no prop: see tests/test_v010.py for what it adds.
-    assert sp.SILVERPOINT_VERSION == "0.10.0"
-    assert sp.SILVERPOINT_LIBRARY == "@silverpoint/react@0.10.0"
-
-
 # ── Palettes ────────────────────────────────────────────────────────────────────────────
 
 
@@ -247,7 +238,7 @@ def test_overlays_render_the_npm_components() -> None:
 def test_overlay_props_follow_the_api_spec() -> None:
     modal = _props(sp.sp_modal("b", trigger="Open", width=600, dismissible=False))
     assert modal["width"] == '"600px"' and modal["dismissible"] == "false"
-    assert "SilverpointTrigger" in modal["trigger"]
+    assert "jsx(SpButton" in modal["trigger"]  # #50: a string trigger follows the provider
     drawer = _props(sp.sp_drawer("b", side="start", size=420))
     assert drawer["side"] == '"start"' and drawer["extent"] == '"420px"'
     popover = _props(sp.sp_popover("c", trigger="P", side_offset=10, width=280))

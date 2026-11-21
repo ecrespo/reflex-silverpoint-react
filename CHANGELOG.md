@@ -6,6 +6,33 @@ All notable changes to `reflex-silverpoint-react`. The format follows
 
 ## [Unreleased]
 
+## [0.11.0] — 2026-11-21
+
+Wraps **`@silverpoint/react` 0.11.0** (0.10.0 wrapped 0.10.0). The builders and their props are
+unchanged; `reflex-catalog.json` differs only in its two versions.
+
+### Changed (upstream)
+
+- A chart's accessible name is a `<desc id="{id}-title">` instead of an SVG `<title>`, so browsers no
+  longer show a native tooltip over a chart ([silverpoint#29](https://github.com/ecrespo/silverpoint/issues/29)).
+  `aria-labelledby` is unchanged.
+- A dashboard's charts follow a provider change made while the dashboard was hidden: React's dashboard
+  root provides the configuration it read to its charts
+  ([silverpoint#27](https://github.com/ecrespo/silverpoint/issues/27)).
+- `sp_button` works as an overlay's trigger: `SpButton` forwards the `aria-haspopup`,
+  `aria-expanded`, `aria-controls` and `aria-describedby` an overlay clones onto its trigger, and its
+  `pointerdown` handler (silverpoint delta-014). `sp_trigger` is unchanged.
+
+### Fixed
+
+- An overlay's string trigger follows `silverpoint_provider`
+  ([#50](https://github.com/ecrespo/reflex-silverpoint-react/issues/50)). It was an `sp_trigger`, which
+  reads no provider, so under `silverpoint_provider(ground="cyanotype")` it kept the silverpoint
+  ground (dark text on blue). A string in `trigger=` of `sp_modal`, `sp_drawer`, `sp_popover` and
+  `sp_tooltip` is now an `sp_button`, which keeps the overlay's ARIA since silverpoint 0.11.0. The
+  overlay's own `ground`, `substrate`, `mode`, `size` and `palette` still reach it. An explicit
+  `sp_trigger(...)` is unchanged and still reads no provider.
+
 ## [0.10.0] — 2026-11-15
 
 Wraps **`@silverpoint/react` 0.10.0** (0.9.1 wrapped 0.9.1). The Python builders and their props are
@@ -252,6 +279,7 @@ signatures.
   imperative handle (SVG export, geometry).
 
 [0.7.1]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.7.0...v0.7.1
+[0.11.0]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.9.1...v0.10.0
 [0.7.0]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/ecrespo/reflex-silverpoint-react/compare/v0.3.0...v0.6.0
