@@ -8,8 +8,9 @@ top layer, not a portal), so they read ``silverpoint_provider`` and ``silverpoin
 
 The open state is controlled with ``open`` + ``on_open_change`` or held from ``default_open``. A
 ``trigger`` is the element that opens the overlay: the npm component clones it with its ARIA and a
-click that toggles it, so it must be an element that keeps the props it is given, a native
-``rx.el.button`` or :func:`sp_trigger` (strings become one). Sides are logical, ``start``/``end``,
+click that toggles it, so it must be an element that keeps the props it is given: a native
+``rx.el.button``, :func:`sp_button` (since silverpoint 0.11.0; strings become one) or
+:func:`sp_trigger`. Sides are logical, ``start``/``end``,
 and mirror in right-to-left text; 0.7.0's ``left``/``right`` still work, with a deprecation warning.
 """
 
@@ -23,7 +24,7 @@ from reflex.event import passthrough_event_spec
 from .assets import TRIGGER_MODULE
 from .base import SILVERPOINT_STYLESHEETS, SILVERPOINT_VERSION, GroundName, InkMode, Substrate
 from .palette import PaletteLike, apply_palette
-from .ui import SILVERPOINT_UI_STYLESHEET, SilverpointUi, UiSize, UiVariant
+from .ui import SILVERPOINT_UI_STYLESHEET, SilverpointUi, UiSize, UiVariant, sp_button
 
 Side = Literal["top", "end", "bottom", "start"]
 Align = Literal["start", "center", "end"]
@@ -158,9 +159,10 @@ def sp_trigger(
 ) -> rx.Component:
     """A drawn button for opening an overlay: ``SpButton``'s drawing on a button that keeps its props.
 
-    Unlike :func:`sp_button` it can be an overlay's ``trigger``: the overlay's ARIA and toggle land
-    on the native button. Strings passed as ``trigger=`` become one of these. It does not read
-    ``silverpoint_provider``; pass ``ground``, ``substrate``, ``mode`` and ``palette`` directly.
+    An overlay's ``trigger``: the overlay's ARIA and toggle land on the native button, and so does
+    every other prop it is given (:func:`sp_button` keeps only the overlay's). It does not read
+    ``silverpoint_provider``; pass ``ground``, ``substrate``, ``mode`` and ``palette`` directly. A
+    string passed as ``trigger=`` is an :func:`sp_button`, which follows the provider (#50).
 
     Args:
         label: Its text (or a component).
@@ -176,9 +178,14 @@ def sp_trigger(
 
 
 def _as_trigger(trigger: Any, **props: Any) -> Any:
+    """A text trigger becomes an ``sp_button``, which reads ``silverpoint_provider`` (#50).
+
+    Since silverpoint 0.11.0 (delta-014) ``SpButton`` keeps the ARIA and the press handlers the overlay
+    clones onto it; ``props`` are the overlay's own common props, which win over the provider's.
+    """
     if trigger is None:
         return None
-    return sp_trigger(trigger, **props) if isinstance(trigger, (str, rx.Var)) else trigger
+    return sp_button(trigger, **props) if isinstance(trigger, (str, rx.Var)) else trigger
 
 
 def _common(props: dict[str, Any]) -> dict[str, Any]:
@@ -347,8 +354,9 @@ def sp_modal(
 
     Args:
         *children: The body.
-        trigger: What opens it: a string (becomes :func:`sp_trigger`) or an element that keeps the
-            props it is given (``rx.el.button``, :func:`sp_trigger`).
+        trigger: What opens it: a string (becomes :func:`sp_button`, which follows the provider) or an
+            element that keeps the props it is given (``rx.el.button``, :func:`sp_button`,
+            :func:`sp_trigger`).
         title: The heading and accessible name.
         description: A line under the title (the accessible description).
         footer: Actions, aligned to the end.
@@ -520,7 +528,7 @@ def sp_tooltip(
     """A short description of its trigger, shown on hover and on focus; Escape dismisses it.
 
     Args:
-        trigger: The element described (a string becomes :func:`sp_trigger`).
+        trigger: The element described (a string becomes :func:`sp_button`).
         content: The text (the npm ``text``): the trigger's accessible description.
         side: Preferred side (``top``).
         align: Alignment along that side (``center``).

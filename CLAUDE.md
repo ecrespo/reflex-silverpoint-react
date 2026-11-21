@@ -3,7 +3,7 @@
 Read [AGENTS.md](AGENTS.md) first: it holds the layout, commands, conventions and release flow of
 this repository. The essentials:
 
-- Reflex custom component wrapping `@silverpoint/react` 0.10.0; package version 0.10.0;
+- Reflex custom component wrapping `@silverpoint/react` 0.11.0; package version 0.11.0;
   Reflex ≥ 0.10.0, Python ≥ 3.11. Everything rendered is an npm component except `sp_trigger`.
 - `sp_deck` (since 0.9.0) wraps `@silverpoint/react/deck`; `@silverpoint/marp` is its own npm
   dependency. silverpoint 0.9.1 fixed `SpDeck` under StrictMode (silverpoint#7) and the first `ready`

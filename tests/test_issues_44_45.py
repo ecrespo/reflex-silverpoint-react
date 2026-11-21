@@ -61,9 +61,9 @@ def test_trigger_module_exports_the_component_and_imports_what_it_uses() -> None
     assert re.search(r'from "@silverpoint/core/ui";', source) and re.search(r'from "react";', source)
 
 
-@pytest.mark.parametrize("trigger", ["Edit order", "builder"])
-def test_a_controlled_overlay_imports_its_text_trigger(trigger: str) -> None:
-    given = sp.sp_trigger("Edit order") if trigger == "builder" else trigger
+def test_a_controlled_overlay_imports_its_sp_trigger() -> None:
+    # A string trigger is an sp_button since #50 (tests/test_issue_50.py); sp_trigger keeps #44's import.
+    given = sp.sp_trigger("Edit order")
     modal = sp.sp_modal("Body", title="Edit order", trigger=given, open=_S.flag, on_open_change=_S.set_flag)
     assert _imports_trigger(modal)
     assert not modal._get_all_custom_code()

@@ -93,10 +93,10 @@ to add on the JavaScript side, no Tailwind and no CDN. It needs Reflex 0.10.0 or
   differ by hatch density, never by a colour per series.
 - **`silverpoint_provider(...)` sets ground, substrate, mode, locale and palette for a subtree.** A
   prop on the chart wins over its dashboard, and the dashboard over the provider.
-- **Overlay triggers are native:** `trigger="Open"` (the string becomes `sp_trigger`), an
-  `rx.el.button`, or `sp_trigger(...)`. Never `trigger=sp_button(...)`: `SpButton` drops the ARIA and
-  the click the overlay clones onto its trigger. `sp_trigger` reads no provider: give it `ground`,
-  `substrate`, `mode` and `palette` yourself. See [references/overlays.md](references/overlays.md).
+- **Overlay triggers keep the overlay's ARIA:** `trigger="Open"` (the string becomes `sp_button`,
+  which follows the provider), `sp_button(...)`, an `rx.el.button`, or `sp_trigger(...)`.
+  `sp_trigger` reads no provider: give it `ground`, `substrate`, `mode` and `palette` yourself. See
+  [references/overlays.md](references/overlays.md).
 - **`sp_table` does not sort for you.** Sort the rows in `on_sort` with `sort_rows(rows, key,
   order)`, then hand them back.
 - **`gauge_arc` and `meter_chart` take `percent`** (0–100) instead of `data`; `ridgeline_chart` needs
